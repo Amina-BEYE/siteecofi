@@ -1,97 +1,159 @@
 <?php
-// admin/TEST_ULTRA_SIMPLE.php
+// admin/login.php
 session_start();
+require_once __DIR__ . '/../config.php';
+
+// Rediriger si déjà connecté
+if (isset($_SESSION['user_id'])) {
+    header('Location: dashboard.php');
+    exit();
+}
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    
+    if (empty($username) || empty($password)) {
+        $error = "Veuillez remplir tous les champs";
+    } else {
+        try {
+            // PostgreSQL utilise des placeholders avec $1, $2, etc.
+            $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE nom_utilisateur = $1");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user && password_verify($password, $user['mot_de_passe'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['nom_utilisateur'];
+                $_SESSION['user_role'] = $user['role'];
+                header('Location: dashboard.php');
+                exit();
+            } else {
+                $error = "Nom d'utilisateur ou mot de passe incorrect";
+            }
+        } catch (PDOException $e) {
+            $error = "Erreur de base de données: " . $e->getMessage();
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Test Ultra Simple</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Dashboard ECOFI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial; padding: 50px; text-align: center; }
-        .box { display: inline-block; padding: 30px; background: #f5f5f5; border-radius: 10px; }
-        input { padding: 10px; margin: 10px; width: 200px; display: block; }
-        button { padding: 10px 30px; background: #667eea; color: white; border: none; cursor: pointer; }
-        .result { margin-top: 20px; padding: 15px; background: #e3f2fd; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25);
+            width: 400px;
+            padding: 40px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            height: 60px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            border-color: #FF8533;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #FF8533;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ff6b1a;
+            transform: translateY(-2px);
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .info {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>Test de Connexion Direct</h1>
+    <div class="login-container">
+        <div class="logo">
+            <img src="../IMG/logo-ecofi.png" alt="ECOFI" onerror="this.src='https://via.placeholder.com/60x60?text=ECOFI'">
+        </div>
+        <h2>Connexion Admin</h2>
         
-        <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            
-            echo "<div class='result'>";
-            echo "<h3>Résultat :</h3>";
-            
-            try {
-                // 1. Connexion DB
-                $pdo = new PDO("pgsql:host=localhost;dbname=ecofi_db", "postgres", "admin123");
-                echo "✅ Connexion DB OK<br>";
-                
-                // 2. Chercher l'admin
-                $stmt = $pdo->prepare("SELECT * FROM administrateurs WHERE username = ?");
-                $stmt->execute([$username]);
-                $admin = $stmt->fetch();
-                
-                if ($admin) {
-                    echo "✅ Utilisateur '$username' trouvé<br>";
-                    echo "Hash: " . substr($admin['password_hash'], 0, 30) . "...<br>";
-                    
-                    // 3. Vérifier le mot de passe
-                    if (password_verify($password, $admin['password_hash'])) {
-                        echo "✅ Mot de passe CORRECT<br>";
-                        
-                        // 4. Créer la session
-                        $_SESSION['admin_id'] = $admin['id'];
-                        $_SESSION['admin_nom'] = $admin['nom_complet'];
-                        $_SESSION['admin_email'] = $admin['email'];
-                        $_SESSION['admin_logged_in'] = true;
-                        
-                        echo "<div style='background: #4CAF50; color: white; padding: 10px; margin-top: 10px;'>";
-                        echo "🎉 CONNEXION RÉUSSIE !<br>";
-                        echo "Session créée. Redirection...";
-                        echo "</div>";
-                        
-                        // Redirection après 2 secondes
-                        echo "<script>
-                            setTimeout(function() {
-                                window.location.href = 'DASHBOARD_SIMPLE.php';
-                            }, 2000);
-                        </script>";
-                        
-                    } else {
-                        echo "❌ Mot de passe INCORRECT<br>";
-                    }
-                } else {
-                    echo "❌ Utilisateur '$username' NON trouvé<br>";
-                }
-                
-            } catch (Exception $e) {
-                echo "❌ Erreur: " . $e->getMessage() . "<br>";
-            }
-            
-            echo "</div>";
-        }
-        ?>
+        <?php if ($error): ?>
+            <div class="error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
         
         <form method="POST">
-            <input type="text" name="username" value="admin" placeholder="Nom d'utilisateur" required>
-            <input type="password" name="password" value="admin123" placeholder="Mot de passe" required>
-            <button type="submit">Tester la connexion</button>
+            <div class="form-group">
+                <label>Nom d'utilisateur</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit">Se connecter</button>
         </form>
         
-        <div style="margin-top: 20px; font-size: 12px; color: #666;">
-            <p>Utilisateur: <strong>admin</strong></p>
-            <p>Mot de passe: <strong>admin123</strong></p>
+        <div class="info">
+            Identifiants: admin / admin123
         </div>
-    </div>
-    
-    <div style="margin-top: 30px;">
-        <a href="login.php">Page login normale</a> | 
-        <a href="check_session.php">Vérifier session</a>
     </div>
 </body>
 </html>
