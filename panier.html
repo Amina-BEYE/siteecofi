@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>panier - Etablissement de conseils sur le foncier et l'immobilier</title>
+    <title>Devis & Paiement - ECOFI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -615,7 +615,6 @@
         }
 
         /* Panier déroulant */
-        /* ===== STYLES DU PANIER ===== */
         .cart-wrapper {
             position: relative;
             margin-left: 1rem;
@@ -961,8 +960,8 @@
             transform: translateY(-2px);
         }
 
-        /* ===== MODAL DE PAIEMENT ===== */
-        .payment-modal-overlay {
+        /* ===== MODAL DE DEVIS (3 PHASES) ===== */
+        .quote-flow-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -976,24 +975,25 @@
             padding: 1rem;
         }
 
-        .payment-modal-overlay.active {
+        .quote-flow-modal-overlay.active {
             display: flex;
             animation: fadeIn 0.3s ease;
         }
 
-        .payment-modal {
+        .quote-flow-modal {
             background: linear-gradient(145deg, #ffffff, #f8f9fa);
             border-radius: 20px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
             animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 133, 51, 0.2);
         }
 
-        .payment-modal-header {
+        .quote-flow-modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1003,13 +1003,16 @@
             border-radius: 20px 20px 0 0;
         }
 
-        .payment-modal-header h3 {
+        .quote-flow-modal-header h3 {
             font-size: 1.5rem;
             color: var(--primary-color);
             margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .payment-modal-close {
+        .quote-flow-modal-close {
             background: none;
             border: none;
             font-size: 2rem;
@@ -1025,218 +1028,25 @@
             background: rgba(255, 133, 51, 0.1);
         }
 
-        .payment-modal-close:hover {
+        .quote-flow-modal-close:hover {
             color: var(--accent-color);
             background: rgba(255, 133, 51, 0.2);
             transform: rotate(90deg);
         }
 
-        .payment-modal-body {
+        .quote-flow-modal-body {
             padding: 2rem;
         }
 
-        .payment-summary {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #eee;
-        }
-
-        .payment-summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .payment-summary-item:last-child {
-            border-bottom: none;
-        }
-
-        .payment-summary-total {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 2px solid var(--accent-color);
-        }
-
-        /* Style pour tous les logos de paiement */
-        .payment-method {
-            background: white;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            padding: 1.2rem 0.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            height: 130px;
-            /* Hauteur fixe pour uniformité */
-            justify-content: center;
-        }
-
-        /* Remplacer la section .payment-methods par ceci */
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(2, 2fr);
-            /* 4 colonnes de taille égale */
-            gap: 0.8rem;
-            margin-bottom: 2rem;
-        }
-
-        .payment-method:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 133, 51, 0.15);
-        }
-
-        .payment-method.selected {
-            border-color: var(--accent-color);
-            background: rgba(255, 133, 51, 0.05);
-            box-shadow: 0 0 0 3px rgba(255, 133, 51, 0.1);
-        }
-
-        /* Style unifié pour tous les logos */
-        .payment-logo {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-            margin-bottom: 0.3rem;
-            transition: transform 0.3s ease;
-        }
-
-        .payment-method:hover .payment-logo {
-            transform: scale(1.1);
-        }
-
-        .payment-method span {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--primary-color);
-        }
-
-        .payment-method small {
-            color: var(--gray-color);
-            font-size: 0.75rem;
-        }
-
-        .payment-form {
-            margin-top: 1.5rem;
-        }
-
-        .payment-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .payment-input:focus {
-            border-color: var(--accent-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 133, 51, 0.1);
-        }
-
-        .payment-phone-input {
-            display: flex;
-            gap: 10px;
-        }
-
-        .payment-phone-input select {
-            width: 100px;
-            padding: 1rem;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .payment-phone-input input {
-            flex: 1;
-        }
-
-        .payment-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .payment-btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .payment-btn-primary {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        .payment-btn-primary:hover {
-            background: #ff6b1a;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 133, 51, 0.3);
-        }
-
-        .payment-btn-secondary {
-            background: #f1f1f1;
-            color: var(--gray-color);
-        }
-
-        .payment-btn-secondary:hover {
-            background: #e1e1e1;
-            transform: translateY(-2px);
-        }
-
-        /* ===== FORMULAIRE DE LIVRAISON AMÉLIORÉ ===== */
-        .livraison-form {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            border: 1px solid #eee;
-        }
-
-        .livraison-form h4 {
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid var(--accent-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .livraison-form h5 {
-            color: var(--primary-color);
-            margin: 1rem 0 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Barre de progression */
-        .livraison-progress {
+        /* Barre de progression à 3 étapes */
+        .progress-steps {
             display: flex;
             justify-content: space-between;
             margin-bottom: 2rem;
             position: relative;
         }
 
-        .livraison-progress::before {
+        .progress-steps::before {
             content: '';
             position: absolute;
             top: 15px;
@@ -1247,7 +1057,7 @@
             z-index: 1;
         }
 
-        .progress-step {
+        .step {
             position: relative;
             z-index: 2;
             background: white;
@@ -1255,84 +1065,99 @@
             font-size: 0.9rem;
             color: #999;
             font-weight: 600;
+            text-align: center;
+            flex: 1;
         }
 
-        .progress-step.active {
+        .step.active {
             color: var(--accent-color);
         }
 
-        .progress-step.active::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
+        .step.active .step-number {
             background: var(--accent-color);
-            border-radius: 50%;
-        }
-
-        /* Bouton GPS */
-        .gps-location-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-color: var(--accent-color);
+        }
+
+        .step-number {
+            display: block;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            line-height: 26px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        /* Étape 1 : Récapitulatif du devis */
+        .quote-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
             margin-bottom: 1.5rem;
-            transition: all 0.3s;
-            border: none;
-            width: 100%;
+            border-left: 4px solid var(--accent-color);
         }
 
-        .gps-location-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        .quote-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
         }
 
-        .gps-location-btn i {
+        .quote-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .quote-total-row {
             font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* Formulaire */
-        .form-grid {
-            display: grid;
-            gap: 1rem;
+        /* Étape 2 : Formulaire d'identification */
+        .step-form {
+            display: block;
         }
 
-        .form-group-full {
+        .step-form.hidden {
+            display: none;
+        }
+
+        .form-group {
             margin-bottom: 1rem;
         }
 
-        .form-group-full label {
+        .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 0.3rem;
             font-weight: 500;
             color: var(--primary-color);
-            font-size: 0.9rem;
         }
 
-        .livraison-input,
-        .livraison-input select {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            padding: 12px;
+            border: 2px solid #f1f1f1;
+            border-radius: 5px;
+            font-size: 14px;
             transition: all 0.3s;
-            background: #f8f9fa;
         }
 
-        .livraison-input:focus,
-        select:focus {
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
             border-color: var(--accent-color);
             outline: none;
-            background: white;
             box-shadow: 0 0 0 3px rgba(255, 133, 51, 0.1);
         }
 
@@ -1344,246 +1169,92 @@
         .phone-input-group select {
             width: 100px;
             padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 8px;
+            border: 2px solid #f1f1f1;
+            border-radius: 5px;
             background: #f8f9fa;
         }
 
-        .livraison-textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            background: #f8f9fa;
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        /* Navigation entre étapes */
-        .livraison-nav {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        /* Carte récapitulative */
-        .recap-card {
+        /* Étape 3 : Validation et confirmation */
+        .validation-card {
             background: #f8f9fa;
             border-radius: 10px;
             padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-left: 4px solid var(--accent-color);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #f39c12;
         }
 
-        .recap-item {
+        .validation-item {
             display: flex;
             padding: 8px 0;
             border-bottom: 1px dashed #ddd;
         }
 
-        .recap-item:last-child {
-            border-bottom: none;
-        }
-
-        .recap-label {
+        .validation-label {
             width: 120px;
             font-weight: 600;
             color: var(--primary-color);
         }
 
-        .recap-value {
+        .validation-value {
             flex: 1;
             color: #666;
         }
 
-        /* Frais de livraison */
-        .delivery-fees {
-            background: linear-gradient(135deg, #fef9e7, #fff);
-            border: 2px solid #f39c12;
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1rem 0;
-        }
-
-        .delivery-fees span:first-child {
-            font-weight: 600;
-            color: #f39c12;
-        }
-
-        .delivery-fees span:last-child {
-            font-weight: bold;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-        }
-
-        .delivery-info {
+        .validation-gps {
             background: #e8f4fd;
-            border-left: 4px solid #3498db;
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #2c3e50;
         }
 
-        /* Indicateur vidéo sur l'image */
-        .video-indicator-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 133, 51, 0.9);
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-color), #ff6b1a);
             color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 5;
-            pointer-events: none;
-            animation: pulse 2s infinite;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            margin-top: 1rem;
         }
 
-        .video-indicator-badge i {
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff6b1a, var(--accent-color));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 133, 51, 0.3);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 1rem;
+            background: #f1f1f1;
+            color: var(--gray-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
             font-size: 1rem;
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
+        .btn-secondary:hover {
+            background: #e1e1e1;
         }
 
-        /* Overlay de lecture */
-        .video-play-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+        .nav-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 6;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
-        .product-img-modern.has-video:hover .video-play-overlay {
-            opacity: 1;
-        }
-
-        /* Bouton play petit */
-        .video-play-btn-small {
-            width: 50px;
-            height: 50px;
-            background: var(--accent-color);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            transform: scale(0.9);
-        }
-
-        .video-play-btn-small:hover {
-            transform: scale(1.1);
-            background: #ff6b1a;
-            box-shadow: 0 0 20px rgba(255, 133, 51, 0.5);
-        }
-
-        /* Image thumbnail */
-        .video-thumbnail {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-            z-index: 1;
-        }
-
-        /* Vidéo en lecture */
-        .product-video.playing {
-            display: block !important;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 10;
-        }
-
-        .product-video.playing+.video-thumbnail {
-            opacity: 0;
-        }
-
-        /* Animation de chargement */
-        .video-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 133, 51, 0.3);
-            border-top: 3px solid var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 20;
-            display: none;
-        }
-
-        .product-img-modern.has-video.loading .video-loading {
-            display: block;
-        }
-
-        .payment-secure-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            color: var(--gray-color);
-            font-size: 0.9rem;
-        }
-
-        .payment-secure-badge i {
-            color: var(--accent-color);
-        }
-
-        .payment-cash-info {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-left: 3px solid var(--accent-color);
-        }
-
-        .payment-cash-info p {
-            margin: 0;
-            color: var(--gray-color);
+        .nav-buttons .btn {
+            flex: 1;
         }
 
         /* ===== MODAL DE FACTURE ===== */
@@ -2715,7 +2386,7 @@
             color: #e74c3c;
         }
 
-        /* ===== MODAL DEVIS ===== */
+        /* ===== MODAL DEVIS (ancien - conservé pour compatibilité) ===== */
         .quote-modal-overlay {
             position: fixed;
             top: 0;
@@ -2788,87 +2459,6 @@
 
         .quote-modal-body {
             padding: 2rem;
-        }
-
-        .quote-items {
-            margin-bottom: 1.5rem;
-        }
-
-        .quote-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .quote-item-info {
-            font-weight: 500;
-        }
-
-        .quote-item-price {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .quote-total {
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-align: right;
-            margin: 1.5rem 0;
-            padding-top: 1rem;
-            border-top: 2px solid var(--accent-color);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: var(--primary-color);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #f1f1f1;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: var(--accent-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 133, 51, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--accent-color), #ff6b1a);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #ff6b1a, var(--accent-color));
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 133, 51, 0.3);
         }
 
         /* ===== SECTION CONTACT ===== */
@@ -3511,10 +3101,6 @@
             .cart-dropdown {
                 width: 350px;
             }
-
-            .payment-methods {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -3685,8 +3271,9 @@
                                     <button class="cart-btn cart-btn-danger" onclick="viderPanier()">
                                         <i class="fas fa-trash"></i> Vider
                                     </button>
-                                    <button class="cart-btn cart-btn-primary" onclick="procederAuPaiement()">
-                                        <i class="fas fa-credit-card"></i> Payer
+                                    <!-- NOUVEAU : Bouton pour Demander un Devis (remplace Payer) -->
+                                    <button class="cart-btn cart-btn-primary" onclick="demanderDevis()">
+                                        <i class="fas fa-file-invoice"></i> Demander un devis
                                     </button>
                                 </div>
                             </div>
@@ -3995,7 +3582,100 @@
         </div>
     </div>
 
-    <!-- Modal Devis -->
+    <!-- NOUVEAU : MODAL DE DEVIS EN 3 PHASES -->
+    <div class="quote-flow-modal-overlay" id="quoteFlowModal">
+        <div class="quote-flow-modal">
+            <div class="quote-flow-modal-header">
+                <h3><i class="fas fa-file-invoice" style="color: var(--accent-color);"></i> Demande de Devis</h3>
+                <button class="quote-flow-modal-close" onclick="closeQuoteFlowModal()">&times;</button>
+            </div>
+            <div class="quote-flow-modal-body">
+                <!-- Barre de progression -->
+                <div class="progress-steps">
+                    <div class="step active" id="step1Indicator">
+                        <span class="step-number">1</span>
+                        <span>Devis</span>
+                    </div>
+                    <div class="step" id="step2Indicator">
+                        <span class="step-number">2</span>
+                        <span>Identification</span>
+                    </div>
+                    <div class="step" id="step3Indicator">
+                        <span class="step-number">3</span>
+                        <span>Validation</span>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 1 : Récapitulatif du devis -->
+                <div id="step1">
+                    <h4 style="margin-bottom: 1rem;">Récapitulatif de votre demande</h4>
+                    <div class="quote-summary" id="quoteSummary">
+                        <!-- Rempli par JS -->
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn-secondary" onclick="closeQuoteFlowModal()">Annuler</button>
+                        <button class="btn-primary" onclick="goToStep2()">Suivant <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 2 : Formulaire d'identification -->
+                <div id="step2" style="display: none;">
+                    <h4 style="margin-bottom: 1rem;">Vos informations</h4>
+                    <form id="identificationForm">
+                        <div class="form-group">
+                            <label>Nom complet *</label>
+                            <input type="text" id="quoteName" required placeholder="Votre nom">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="quoteEmail" required placeholder="votre@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Téléphone *</label>
+                            <div class="phone-input-group">
+                                <select id="quotePrefix">
+                                    <option value="77">77</option>
+                                    <option value="78">78</option>
+                                    <option value="70">70</option>
+                                    <option value="75">75</option>
+                                    <option value="76">76</option>
+                                </select>
+                                <input type="tel" id="quotePhone" required placeholder="000 00 00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Message (optionnel)</label>
+                            <textarea id="quoteMessage" placeholder="Précisions sur votre demande..."></textarea>
+                        </div>
+                    </form>
+                    <div class="nav-buttons">
+                        <button class="btn-secondary" onclick="goToStep1()"><i class="fas fa-arrow-left"></i> Retour</button>
+                        <button class="btn-primary" onclick="goToStep3()">Suivant <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 3 : Validation et confirmation -->
+                <div id="step3" style="display: none;">
+                    <h4 style="margin-bottom: 1rem;">Validation de votre demande</h4>
+                    <div class="validation-card" id="validationCard">
+                        <!-- Rempli par JS -->
+                    </div>
+                    <div class="validation-gps" id="gpsInfo" style="display: none;">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span id="gpsCoordinates"></span>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn-secondary" onclick="goToStep2()"><i class="fas fa-arrow-left"></i> Retour</button>
+                        <button class="btn-primary" onclick="confirmQuote()">
+                            <i class="fas fa-check-circle"></i> Confirmer la demande
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Devis (ancien - conservé pour compatibilité) -->
     <div class="quote-modal-overlay" id="quoteModal">
         <div class="quote-modal">
             <div class="quote-modal-header">
@@ -4009,20 +3689,20 @@
                 <div class="quote-total" id="quoteTotal">Total: 0 FCFA</div>
                 <form id="quoteForm">
                     <div class="form-group">
-                        <label for="quoteName">Nom complet</label>
-                        <input type="text" id="quoteName" required placeholder="Votre nom">
+                        <label for="quoteNameOld">Nom complet</label>
+                        <input type="text" id="quoteNameOld" required placeholder="Votre nom">
                     </div>
                     <div class="form-group">
-                        <label for="quoteEmail">Email</label>
-                        <input type="email" id="quoteEmail" required placeholder="votre@email.com">
+                        <label for="quoteEmailOld">Email</label>
+                        <input type="email" id="quoteEmailOld" required placeholder="votre@email.com">
                     </div>
                     <div class="form-group">
-                        <label for="quotePhone">Téléphone</label>
-                        <input type="tel" id="quotePhone" required placeholder="77 123 45 67">
+                        <label for="quotePhoneOld">Téléphone</label>
+                        <input type="tel" id="quotePhoneOld" required placeholder="77 123 45 67">
                     </div>
                     <div class="form-group">
-                        <label for="quoteMessage">Message (optionnel)</label>
-                        <textarea id="quoteMessage" placeholder="Votre message..."></textarea>
+                        <label for="quoteMessageOld">Message (optionnel)</label>
+                        <textarea id="quoteMessageOld" placeholder="Votre message..."></textarea>
                     </div>
                     <button type="submit" class="btn-primary" onclick="submitQuote(event)">
                         <i class="fas fa-paper-plane"></i> Envoyer la demande
@@ -4032,51 +3712,6 @@
         </div>
     </div>
 
-    <!-- Modal de Paiement -->
-    <div class="payment-modal-overlay" id="paymentModal">
-        <div class="payment-modal">
-            <div class="payment-modal-header">
-                <h3><i class="fas fa-credit-card" style="color: var(--accent-color);"></i> Paiement sécurisé</h3>
-                <button class="payment-modal-close" onclick="closePaymentModal()">&times;</button>
-            </div>
-            <div class="payment-modal-body">
-                <div class="payment-summary" id="paymentSummary">
-                    <!-- Le résumé sera chargé ici -->
-                </div>
-
-                <h4 style="margin-bottom: 1rem;">Choisissez votre mode de paiement</h4>
-                <div class="payment-methods" id="paymentMethods">
-                    <div class="payment-method" onclick="selectPaymentMethod('wave')" id="method-wave">
-                        <img src="IMG/wave-logo.webp" alt="Wave" class="payment-logo">
-                        <small>Paiement mobile</small>
-                    </div>
-                    <div class="payment-method" onclick="selectPaymentMethod('orange')" id="method-orange">
-                        <img src="IMG/orange-money-logo.jpg" alt="Orange Money" class="payment-logo">
-                        <small>Paiement mobile</small>
-                    </div>
-                    <div class="payment-method" onclick="selectPaymentMethod('card')" id="method-card">
-                        <img src="IMG/carte.png" alt="Carte bancaire" class="payment-logo">
-                        <small>Visa, Mastercard</small>
-                    </div>
-                    <div class="payment-method" onclick="selectPaymentMethod('cash')" id="method-cash">
-                        <img src="IMG/livraison.jfif" alt="Paiement à la livraison" class="payment-logo">
-                        <small>Payer à la réception</small>
-                    </div>
-                </div>
-
-                <div id="paymentFormContainer">
-                    <!-- Le formulaire de paiement sera chargé ici -->
-                </div>
-
-                <div class="payment-secure-badge">
-                    <i class="fas fa-lock"></i>
-                    <span>Paiement 100% sécurisé - Vos données sont protégées</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Facture -->
     <!-- Modal de Facture -->
     <div class="facture-modal-overlay" id="factureModal">
         <div class="facture-modal">
@@ -4963,717 +4598,254 @@
             afficherNotification('Panier vidé');
         }
 
-        // ========== FONCTIONS DE PAIEMENT ==========
-        // ========== DONNÉES GÉOGRAPHIQUES ==========
-        function procederAuPaiement() {
+        // ========== NOUVEAU : FONCTIONS DU DEVIS EN 3 PHASES ==========
+        function demanderDevis() {
             if (panier.length === 0) {
                 afficherNotification('Votre panier est vide', 'error');
                 return;
             }
 
-            const total = panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
+            currentQuoteItems = panier.map(item => ({
+                nom: item.nom,
+                prix: item.prix,
+                quantite: item.quantite,
+                total: item.prix * item.quantite
+            }));
+
+            mettreAJourStep1();
+            document.getElementById('quoteFlowModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function mettreAJourStep1() {
+            const total = currentQuoteItems.reduce((sum, item) => sum + item.total, 0);
             const totalAvecPromo = currentPromoCode ? total * (1 - currentPromoCode.reduction / 100) : total;
 
-            document.getElementById('paymentSummary').innerHTML = `
-        <div class="payment-summary-item">
-            <span>Nombre d'articles :</span>
-            <span>${panier.reduce((sum, item) => sum + item.quantite, 0)}</span>
-        </div>
-        <div class="payment-summary-item">
+            let itemsHtml = '';
+            currentQuoteItems.forEach(item => {
+                itemsHtml += `
+            <div class="quote-item-row">
+                <span>${item.nom} x${item.quantite}</span>
+                <span>${item.total.toFixed(0)} FCFA</span>
+            </div>
+        `;
+            });
+
+            itemsHtml += `
+        <div class="quote-item-row" style="font-weight: bold; margin-top: 10px;">
             <span>Sous-total :</span>
             <span>${total.toFixed(0)} FCFA</span>
         </div>
-        ${currentPromoCode ? `
-        <div class="payment-summary-item" style="color: #27ae60;">
-            <span>Réduction (${currentPromoCode.code}) :</span>
-            <span>-${(total - totalAvecPromo).toFixed(0)} FCFA</span>
-        </div>
-        ` : ''}
-        <div class="payment-summary-total">
-            <span>Total à payer :</span>
+    `;
+
+            if (currentPromoCode) {
+                itemsHtml += `
+            <div class="quote-item-row" style="color: #27ae60;">
+                <span>Réduction (${currentPromoCode.code}) :</span>
+                <span>-${(total - totalAvecPromo).toFixed(0)} FCFA</span>
+            </div>
+        `;
+            }
+
+            itemsHtml += `
+        <div class="quote-total-row">
+            <span>Total TTC :</span>
             <span>${totalAvecPromo.toFixed(0)} FCFA</span>
         </div>
     `;
 
-            document.getElementById('paymentModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            document.getElementById('quoteSummary').innerHTML = itemsHtml;
         }
 
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.remove('active');
+        function goToStep2() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('step3').style.display = 'none';
+
+            document.getElementById('step1Indicator').classList.remove('active');
+            document.getElementById('step2Indicator').classList.add('active');
+            document.getElementById('step3Indicator').classList.remove('active');
+        }
+
+        function goToStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+
+            document.getElementById('step1Indicator').classList.add('active');
+            document.getElementById('step2Indicator').classList.remove('active');
+            document.getElementById('step3Indicator').classList.remove('active');
+        }
+
+        function goToStep3() {
+            const name = document.getElementById('quoteName').value;
+            const email = document.getElementById('quoteEmail').value;
+            const prefix = document.getElementById('quotePrefix').value;
+            const phone = document.getElementById('quotePhone').value;
+
+            if (!name || !email || !phone) {
+                afficherNotification('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                afficherNotification('Email invalide', 'error');
+                return;
+            }
+
+            if (phone.length < 7) {
+                afficherNotification('Téléphone invalide', 'error');
+                return;
+            }
+
+            const total = currentQuoteItems.reduce((sum, item) => sum + item.total, 0);
+            const totalAvecPromo = currentPromoCode ? total * (1 - currentPromoCode.reduction / 100) : total;
+
+            const validationHtml = `
+        <div class="validation-item">
+            <span class="validation-label">Nom :</span>
+            <span class="validation-value">${name}</span>
+        </div>
+        <div class="validation-item">
+            <span class="validation-label">Email :</span>
+            <span class="validation-value">${email}</span>
+        </div>
+        <div class="validation-item">
+            <span class="validation-label">Téléphone :</span>
+            <span class="validation-value">${prefix} ${phone}</span>
+        </div>
+        <div class="validation-item">
+            <span class="validation-label">Articles :</span>
+            <span class="validation-value">${currentQuoteItems.length}</span>
+        </div>
+        <div class="validation-item">
+            <span class="validation-label">Total :</span>
+            <span class="validation-value" style="color: var(--accent-color); font-weight: bold;">${totalAvecPromo.toFixed(0)} FCFA</span>
+        </div>
+    `;
+
+            document.getElementById('validationCard').innerHTML = validationHtml;
+
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+
+            document.getElementById('step1Indicator').classList.remove('active');
+            document.getElementById('step2Indicator').classList.remove('active');
+            document.getElementById('step3Indicator').classList.add('active');
+        }
+
+        function closeQuoteFlowModal() {
+            document.getElementById('quoteFlowModal').classList.remove('active');
             document.body.style.overflow = 'auto';
-            selectedPaymentMethod = null;
-            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
-            document.getElementById('paymentFormContainer').innerHTML = '';
+
+            // Reset
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('step1Indicator').classList.add('active');
+            document.getElementById('step2Indicator').classList.remove('active');
+            document.getElementById('step3Indicator').classList.remove('active');
+            document.getElementById('identificationForm').reset();
         }
 
-        const regionsSenegal = {
-            "Dakar": {
-                "Dakar": ["Plateau", "Gueule Tapée", "Fass", "Médina", "Grand Dakar", "Dieuppeul", "Hann", "Bel Air", "Sicap", "Liberté", "Point E", "Fann", "Ouakam", "Ngor", "Yoff", "Almadies", "Mermoz", "Sacre Coeur"],
-                "Pikine": ["Pikine Est", "Pikine Ouest", "Tivaouane Diacksao", "Yeumbeul", "Keur Massar", "Malika"],
-                "Guédiawaye": ["Golf Sud", "Sam Notaire", "Wakhinane", "Ndiarème", "Médina Gounass"],
-                "Rufisque": ["Rufisque Est", "Rufisque Ouest", "Bargny", "Sangalkam", "Sendou"]
-            },
-            "Thiès": {
-                "Thiès": ["Nguinth", "Sicap", "Mbour 2", "Médina Fall", "Escale", "Gouye Mouride", "Cité Sonatel", "Pintade", "Fadial"],
-                "Mbour": ["Mbour 1", "Mbour 2", "Mbour 3", "Saly", "Ngaparou", "Sindia", "Malicounda", "Sandiara"],
-                "Tivaouane": ["Tivaouane", "Mékhé", "Pambal", "Darou Khoudoss", "Niakhène", "Mérina Dakhar"]
-            },
-            "Saint-Louis": {
-                "Saint-Louis": ["Saint-Louis", "Santhiaba", "Guet Ndar", "Ndar Toute", "Goxu Mbath", "Lodo", "Sorre", "Khour", "Diougop"],
-                "Dagana": ["Dagana", "Richard Toll", "Rosso", "Ndombo", "Mbane"],
-                "Podor": ["Podor", "Ndioum", "Aéré Lao", "Golléré", "Démette", "Bode Lao", "Dionawar"]
-            },
-            "Ziguinchor": {
-                "Ziguinchor": ["Ziguinchor", "Boucotte", "Kandé", "Néma", "Santhiaba", "Belfort", "Escale", "Sibassor", "Djibélor"],
-                "Bignona": ["Bignona", "Thionck Essyl", "Diouloulou", "Mlomp", "Oussouye", "Kartiack", "Djinaky"],
-                "Oussouye": ["Oussouye", "Mlomp", "Cabrousse", "Diembéring", "Bouyouye"]
-            },
-            "Diourbel": {
-                "Diourbel": ["Diourbel", "Ndiarème", "Gouye", "Samba Diop", "Ndindy", "Mbacké", "Taïba", "Ndoulo"],
-                "Bambey": ["Bambey", "Ngoye", "Lambaye", "Dinguiraye", "Gawane", "Baba Garage"],
-                "Mbacké": ["Mbacké", "Touba", "Missirah", "Dalla Ngabou", "Darou Marnane", "Kael", "Sadio"]
-            },
-            "Fatick": {
-                "Fatick": ["Fatick", "Diakhao", "Niakhar", "Fimela", "Diosso", "Loul Sessène", "Mbassis"],
-                "Foundiougne": ["Foundiougne", "Passy", "Sokone", "Djilor", "Bassoul", "Toubacouta", "Niodior", "Djirnda"],
-                "Gossas": ["Gossas", "Colobane", "Ouadiour"]
-            },
-            "Kaolack": {
-                "Kaolack": ["Kaolack", "Médina", "Ndorong", "Léona", "Mbellacadiao", "Sagne", "Kahone", "Gandiaye"],
-                "Nioro du Rip": ["Nioro", "Keur Madiabel", "Porokhane", "Kaymor", "Ngayène", "Médina Sabakh"],
-                "Guinguinéo": ["Guinguinéo", "Mbadakhoune", "Fass"]
-            },
-            "Kolda": {
-                "Kolda": ["Kolda", "Dabo", "Saré Bidji", "Dioulacolon", "Médina El Hadj", "Guinaw Rail"],
-                "Vélingara": ["Vélingara", "Kounkané", "Bounkiling", "Saré Coly Sallé", "Némataba", "Pakour"],
-                "Sédhiou": ["Sédhiou", "Marsassoum", "Diattacounda", "Sakar", "Djirédji"]
-            },
-            "Louga": {
-                "Louga": ["Louga", "Ndiagne", "Keur Momar Sarr", "Thiambène", "Potou", "Linguère", "Dahra"],
-                "Linguère": ["Linguère", "Dahra", "Barkedji", "Sagatta", "Thiamène", "Mboula", "Affé"],
-                "Kébémer": ["Kébémer", "Darou Mousty", "Ndande", "Guéoul", "Loro"]
-            },
-            "Tambacounda": {
-                "Tambacounda": ["Tambacounda", "Missirah", "Kothiary", "Nétteboulou", "Makacolibantang", "Sinthiou Malème"],
-                "Kédougou": ["Kédougou", "Salémata", "Saraya", "Bandafassi", "Fongolembi", "Dindéfelo"],
-                "Bakel": ["Bakel", "Kidira", "Bélé", "Gabou", "Moudéry", "Ballou"]
-            },
-            "Matam": {
-                "Matam": ["Matam", "Ourossogui", "Nabadji Civol", "Thilogne", "Bokidiawé", "Agnam"],
-                "Kanel": ["Kanel", "Sinthiou Bamambé", "Wouro Madiou", "Odobere", "Agnam"],
-                "Ranérou": ["Ranérou", "Louguéré Thioly", "Vélingara"]
-            },
-            "Kaffrine": {
-                "Kaffrine": ["Kaffrine", "Nganda", "Kahi", "Missirah", "Birkelane", "Malem Hodar"],
-                "Birkelane": ["Birkelane", "Mabo", "Keur Mboucki"],
-                "Koungheul": ["Koungheul", "Lour Escale", "Ribot Escale", "Maka"]
-            }
-        };
+        function confirmQuote() {
+            const name = document.getElementById('quoteName').value;
+            const email = document.getElementById('quoteEmail').value;
+            const prefix = document.getElementById('quotePrefix').value;
+            const phone = document.getElementById('quotePhone').value;
+            const message = document.getElementById('quoteMessage').value;
 
-        // ========== FONCTIONS POUR LA GÉOLOCALISATION ==========
-        // ========== FONCTIONS POUR LA GÉOLOCALISATION ==========
-        // ========== FONCTIONS POUR LA GÉOLOCALISATION ==========
-        function getLocation() {
-            const gpsBtn = document.getElementById('gpsLocationBtn');
-            if (!gpsBtn) return;
+            const total = currentQuoteItems.reduce((sum, item) => sum + item.total, 0);
+            const totalAvecPromo = currentPromoCode ? total * (1 - currentPromoCode.reduction / 100) : total;
 
-            const originalText = gpsBtn.innerHTML;
+            // Générer la facture de devis
+            const date = new Date();
+            const numeroFacture = 'DEV-' + date.getFullYear() +
+                (date.getMonth() + 1).toString().padStart(2, '0') +
+                date.getDate().toString().padStart(2, '0') +
+                '-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
 
-            gpsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Localisation...';
-            gpsBtn.disabled = true;
-
-            if (navigator.geolocation) {
-                // Options optimisées pour plus de rapidité
-                const options = {
-                    enableHighAccuracy: false, // Désactivé pour plus de rapidité
-                    timeout: 5000, // 5 secondes max
-                    maximumAge: 60000 // Accepter une position vieille de 60 secondes
-                };
-
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-
-                        document.getElementById('livraisonLatitude').value = latitude;
-                        document.getElementById('livraisonLongitude').value = longitude;
-
-                        // Afficher les coordonnées GPS immédiatement
-                        document.getElementById('gpsInfo').style.display = 'flex';
-                        document.getElementById('gpsCoordinates').innerHTML =
-                            `Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)}`;
-
-                        afficherNotification('Position obtenue !');
-
-                        // Essayer de déterminer la région approximativement (rapide)
-                        const regionSelect = document.getElementById('livraisonRegion');
-                        if (latitude > 14.7 && latitude < 14.9 && longitude > -17.0 && longitude < -16.8) {
-                            regionSelect.value = "Dakar";
-                        } else if (latitude > 14.7 && latitude < 15.0 && longitude > -17.1 && longitude < -16.8) {
-                            regionSelect.value = "Thiès";
-                        } else {
-                            regionSelect.value = "Thiès"; // Valeur par défaut
-                        }
-                        updateDepartements();
-
-                        // Reverse geocoding en arrière-plan (ne bloque pas)
-                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=fr`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.address) {
-                                    // Remplir les champs si disponibles (optionnel)
-                                    if (data.address.city || data.address.town || data.address.village) {
-                                        setTimeout(() => {
-                                            const ville = data.address.city || data.address.town || data.address.village;
-                                            const departementSelect = document.getElementById('livraisonDepartement');
-
-                                            for (let option of departementSelect.options) {
-                                                if (option.text.toLowerCase().includes(ville.toLowerCase())) {
-                                                    departementSelect.value = option.value;
-                                                    updateCommunes();
-                                                    break;
-                                                }
-                                            }
-                                        }, 100);
-                                    }
-
-                                    if (data.address.suburb || data.address.neighbourhood) {
-                                        document.getElementById('livraisonQuartier').value =
-                                            data.address.suburb || data.address.neighbourhood;
-                                    }
-
-                                    if (data.address.road) {
-                                        let adresse = data.address.road;
-                                        if (data.address.house_number) {
-                                            adresse = data.address.house_number + ' ' + adresse;
-                                        }
-                                        document.getElementById('livraisonAdresse').value = adresse;
-                                    }
-                                }
-                            })
-                            .catch(error => console.log('Reverse geocoding non disponible'));
-
-                        gpsBtn.innerHTML = '<i class="fas fa-check-circle"></i> OK';
-                        setTimeout(() => {
-                            gpsBtn.innerHTML = originalText;
-                            gpsBtn.disabled = false;
-                        }, 2000);
-                    },
-                    function (error) {
-                        let message = 'Erreur de localisation';
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                message = 'Veuillez autoriser la géolocalisation';
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                message = 'Position non disponible';
-                                break;
-                            case error.TIMEOUT:
-                                message = 'Délai dépassé';
-                                break;
-                        }
-                        afficherNotification(message, 'error');
-
-                        gpsBtn.innerHTML = originalText;
-                        gpsBtn.disabled = false;
-                    },
-                    options // Utiliser les options optimisées
-                );
-            } else {
-                afficherNotification('Géolocalisation non supportée', 'error');
-                gpsBtn.innerHTML = originalText;
-                gpsBtn.disabled = false;
-            }
-        }
-
-        // ========== FONCTIONS POUR LE PAIEMENT À LA LIVRAISON ==========
-        function validerLivraison() {
-            const nom = document.getElementById('livraisonNom')?.value;
-            const email = document.getElementById('livraisonEmail')?.value;
-            const prefix = document.getElementById('livraisonPrefix')?.value;
-            const phone = document.getElementById('livraisonPhone')?.value;
-            const region = document.getElementById('livraisonRegion')?.value;
-            const departement = document.getElementById('livraisonDepartement')?.value;
-            const commune = document.getElementById('livraisonCommune')?.value;
-            const quartier = document.getElementById('livraisonQuartier')?.value;
-            const adresse = document.getElementById('livraisonAdresse')?.value || ''; // Optionnel
-            const instructions = document.getElementById('livraisonInstructions')?.value || '';
-            const latitude = document.getElementById('livraisonLatitude')?.value;
-            const longitude = document.getElementById('livraisonLongitude')?.value;
-            const fraisLivraison = calculerFraisLivraison();
-
-            // Validation des champs obligatoires (sans l'adresse)
-            if (!nom || !email || !phone || !region || !departement || !commune || !quartier) {
-                afficherNotification('Veuillez remplir tous les champs obligatoires', 'error');
-                return;
-            }
-
-            if (!email.includes('@') || !email.includes('.')) {
-                afficherNotification('Email invalide', 'error');
-                return;
-            }
-
-            if (phone.length < 7) {
-                afficherNotification('Téléphone invalide', 'error');
-                return;
-            }
-
-            // Construction de l'adresse complète (avec ou sans rue)
-            let adresseComplete = '';
-            if (adresse) {
-                adresseComplete = `${adresse}, ${quartier}, ${commune}, ${departement}, ${region}`;
-            } else {
-                adresseComplete = `${quartier}, ${commune}, ${departement}, ${region}`;
-            }
-
-            livraisonInfo = {
-                nom: nom,
-                email: email,
-                prefix: prefix,
-                phone: phone,
-                telephone: prefix + phone,
-                region: region,
-                departement: departement,
-                commune: commune,
-                quartier: quartier,
-                adresse: adresse,
-                adresseComplete: adresseComplete,
-                instructions: instructions,
-                fraisLivraison: fraisLivraison,
-                latitude: latitude,
-                longitude: longitude
+            const facture = {
+                type: 'devis',
+                numero: numeroFacture,
+                date: date.toLocaleDateString('fr-FR'),
+                heure: date.toLocaleTimeString('fr-FR'),
+                client: {
+                    nom: name,
+                    email: email,
+                    telephone: prefix + phone
+                },
+                articles: currentQuoteItems,
+                sousTotal: total,
+                reduction: currentPromoCode ? currentPromoCode.reduction : 0,
+                codePromo: currentPromoCode ? currentPromoCode.code : null,
+                total: totalAvecPromo,
+                modePaiement: 'Devis',
+                statut: 'DEMANDE ENREGISTRÉE'
             };
 
-            afficherNotification('Commande confirmée ! Génération de la facture...', 'success');
+            // Simuler l'envoi à une base de données
+            sauvegarderDevis({
+                client: facture.client,
+                articles: facture.articles,
+                total_ht: facture.sousTotal,
+                total_ttc: facture.total,
+                notes: message
+            });
 
-            setTimeout(() => {
-                const facture = genererFactureLivraison();
-                finaliserPaiement(facture);
-            }, 1500);
+            closeQuoteFlowModal();
+            afficherFacture(facture);
+            viderPanier();
+
+            afficherNotification('Votre demande de devis a été envoyée !');
         }
 
-
-
-        // ========== FONCTIONS POUR LE PAIEMENT À LA LIVRAISON ==========
-        function calculerFraisLivraison() {
-            const region = document.getElementById('livraisonRegion')?.value;
-            const fraisElement = document.getElementById('deliveryFeesAmount');
-
-            let frais = 0;
-            if (region === 'Thiès') {
-                frais = 0;
-            } else if (region === 'Dakar') {
-                frais = 2000;
-            } else if (['Diourbel', 'Fatick', 'Kaolack', 'Louga'].includes(region)) {
-                frais = 3500;
-            } else if (region) {
-                frais = 5000;
-            }
-
-            if (fraisElement) fraisElement.textContent = frais + ' FCFA';
-            return frais;
+        // ========== FONCTIONS DEVIS (anciennes) ==========
+        function demanderDevisOld(produit) {
+            currentQuoteItems = [{
+                nom: produit.name,
+                prix: parseFloat(produit.price.replace(/[^0-9]/g, '')),
+                quantite: 1
+            }];
+            mettreAJourQuoteModal();
+            document.getElementById('quoteModal').classList.add('active');
         }
 
-        // ========== FONCTIONS POUR LA SÉLECTION RÉGION/DÉPARTEMENT/COMMUNE ==========
-        function updateDepartements() {
-            const region = document.getElementById('livraisonRegion').value;
-            const departementSelect = document.getElementById('livraisonDepartement');
-            const communeSelect = document.getElementById('livraisonCommune');
+        function mettreAJourQuoteModal() {
+            const quoteItems = document.getElementById('quoteItems');
+            const total = currentQuoteItems.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
 
-            departementSelect.innerHTML = '<option value="">Sélectionnez un département</option>';
-            communeSelect.innerHTML = '<option value="">Sélectionnez une commune</option>';
+            quoteItems.innerHTML = currentQuoteItems.map(item => `
+        <div class="quote-item">
+            <span class="quote-item-info">${item.nom} x${item.quantite}</span>
+            <span class="quote-item-price">${(item.prix * item.quantite).toFixed(0)} FCFA</span>
+        </div>
+    `).join('');
 
-            if (region && regionsSenegal[region]) {
-                const departements = Object.keys(regionsSenegal[region]);
-                departements.sort().forEach(dept => {
-                    const option = document.createElement('option');
-                    option.value = dept;
-                    option.textContent = dept;
-                    departementSelect.appendChild(option);
-                });
-                departementSelect.disabled = false;
-            } else {
-                departementSelect.disabled = true;
-                communeSelect.disabled = true;
-            }
+            document.getElementById('quoteTotal').textContent = `Total: ${total.toFixed(0)} FCFA`;
         }
 
-        function updateCommunes() {
-            const region = document.getElementById('livraisonRegion').value;
-            const departement = document.getElementById('livraisonDepartement').value;
-            const communeSelect = document.getElementById('livraisonCommune');
-
-            communeSelect.innerHTML = '<option value="">Sélectionnez une commune</option>';
-
-            if (region && departement && regionsSenegal[region] && regionsSenegal[region][departement]) {
-                const communes = regionsSenegal[region][departement];
-                communes.sort().forEach(commune => {
-                    const option = document.createElement('option');
-                    option.value = commune;
-                    option.textContent = commune;
-                    communeSelect.appendChild(option);
-                });
-                communeSelect.disabled = false;
-            } else {
-                communeSelect.disabled = true;
-            }
+        function closeQuoteModal() {
+            document.getElementById('quoteModal').classList.remove('active');
+            currentQuoteItems = [];
         }
 
-        // ========== MISE À JOUR DE LA MÉTHODE DE PAIEMENT ==========
-        // ========== MISE À JOUR DE LA MÉTHODE DE PAIEMENT ==========
-        function selectPaymentMethod(method) {
-            selectedPaymentMethod = method;
-            document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
-            document.getElementById(`method-${method}`).classList.add('selected');
+        function submitQuote(event) {
+            event.preventDefault();
+            const name = document.getElementById('quoteNameOld').value;
+            const email = document.getElementById('quoteEmailOld').value;
+            const phone = document.getElementById('quotePhoneOld').value;
 
-            const formContainer = document.getElementById('paymentFormContainer');
-
-            if (method === 'cash') {
-                formContainer.innerHTML = `
-            <div class="livraison-form">
-                <h4><i class="fas fa-map-marker-alt"></i> Informations de livraison</h4>
-                
-                <!-- Bouton de localisation GPS -->
-                <button type="button" class="gps-location-btn" id="gpsLocationBtn" onclick="getLocation()">
-                    <i class="fas fa-satellite-dish"></i>
-                    Utiliser ma position GPS
-                </button>
-                
-                <!-- Champs cachés pour les coordonnées GPS -->
-                <input type="hidden" id="livraisonLatitude" value="">
-                <input type="hidden" id="livraisonLongitude" value="">
-                <input type="hidden" id="livraisonPrecision" value="">
-                
-                <div class="form-grid">
-                    <div class="form-group-full">
-                        <label>Nom complet *</label>
-                        <input type="text" id="livraisonNom" class="livraison-input" placeholder="Votre nom et prénom" required>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Email *</label>
-                        <input type="email" id="livraisonEmail" class="livraison-input" placeholder="votre@email.com" required>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Téléphone *</label>
-                        <div class="phone-input-group">
-                            <select id="livraisonPrefix">
-                                <option value="77">77</option>
-                                <option value="78">78</option>
-                                <option value="70">70</option>
-                                <option value="75">75</option>
-                                <option value="76">76</option>
-                            </select>
-                            <input type="tel" id="livraisonPhone" class="livraison-input" placeholder="000 00 00" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Région *</label>
-                        <select id="livraisonRegion" class="livraison-input" required onchange="updateDepartements()">
-                            <option value="">Sélectionnez une région</option>
-                            <option value="Dakar">Dakar</option>
-                            <option value="Thiès">Thiès</option>
-                            <option value="Diourbel">Diourbel</option>
-                            <option value="Fatick">Fatick</option>
-                            <option value="Kaolack">Kaolack</option>
-                            <option value="Kolda">Kolda</option>
-                            <option value="Louga">Louga</option>
-                            <option value="Matam">Matam</option>
-                            <option value="Saint-Louis">Saint-Louis</option>
-                            <option value="Tambacounda">Tambacounda</option>
-                            <option value="Kaffrine">Kaffrine</option>
-                            <option value="Kédougou">Kédougou</option>
-                            <option value="Sédhiou">Sédhiou</option>
-                            <option value="Ziguinchor">Ziguinchor</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Département *</label>
-                        <select id="livraisonDepartement" class="livraison-input" required onchange="updateCommunes()" disabled>
-                            <option value="">Sélectionnez d'abord une région</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Commune *</label>
-                        <select id="livraisonCommune" class="livraison-input" required disabled>
-                            <option value="">Sélectionnez d'abord un département</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Quartier *</label>
-                        <input type="text" id="livraisonQuartier" class="livraison-input" placeholder="Ex: Nguinth" required>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Adresse complète (optionnel)</label>
-                        <textarea id="livraisonAdresse" class="livraison-textarea" placeholder="Numéro, rue, point de repère..."></textarea>
-                    </div>
-                    
-                    <div class="form-group-full">
-                        <label>Instructions spéciales (optionnel)</label>
-                        <textarea id="livraisonInstructions" class="livraison-textarea" placeholder="Indiquez un point de repère..."></textarea>
-                    </div>
-                    
-                    <div class="delivery-info" id="gpsInfo" style="display: none;">
-                        <i class="fas fa-map-pin"></i>
-                        <span id="gpsCoordinates"></span>
-                    </div>
-                </div>
-                
-                <div class="delivery-fees" id="deliveryFeesDisplay">
-                    <span><i class="fas fa-truck"></i> Frais de livraison :</span>
-                    <span id="deliveryFeesAmount">0 FCFA</span>
-                </div>
-                
-                <div class="payment-actions" style="margin-top: 2rem;">
-                    <button class="payment-btn payment-btn-secondary" onclick="closePaymentModal()">Annuler</button>
-                    <button class="payment-btn payment-btn-primary" onclick="validerLivraison()">
-                        <i class="fas fa-check"></i> Confirmer la commande
-                    </button>
-                </div>
-            </div>
-        `;
-
-                // Initialiser les sélecteurs
-                setTimeout(() => {
-                    if (livraisonInfo) {
-                        document.getElementById('livraisonNom').value = livraisonInfo.nom || '';
-                        document.getElementById('livraisonEmail').value = livraisonInfo.email || '';
-                        document.getElementById('livraisonPrefix').value = livraisonInfo.prefix || '77';
-                        document.getElementById('livraisonPhone').value = livraisonInfo.phone || '';
-                        document.getElementById('livraisonRegion').value = livraisonInfo.region || '';
-                        updateDepartements();
-                        setTimeout(() => {
-                            document.getElementById('livraisonDepartement').value = livraisonInfo.departement || '';
-                            updateCommunes();
-                            setTimeout(() => {
-                                document.getElementById('livraisonCommune').value = livraisonInfo.commune || '';
-                            }, 100);
-                        }, 100);
-                        document.getElementById('livraisonQuartier').value = livraisonInfo.quartier || '';
-                        document.getElementById('livraisonAdresse').value = livraisonInfo.adresse || '';
-                        document.getElementById('livraisonInstructions').value = livraisonInfo.instructions || '';
-                    }
-
-                    // Ajouter un écouteur pour calculer les frais quand la région change
-                    document.getElementById('livraisonRegion').addEventListener('change', calculerFraisLivraison);
-                }, 100);
-
-            } else if (method === 'wave') {
-                formContainer.innerHTML = `
-            <div class="payment-form">
-                <h4><i class="fas fa-mobile-alt"></i> Paiement Wave</h4>
-                <div class="payment-phone-input">
-                    <select id="paymentPrefix">
-                        <option value="77">77</option>
-                        <option value="78">78</option>
-                        <option value="70">70</option>
-                        <option value="75">75</option>
-                        <option value="76">76</option>
-                    </select>
-                    <input type="tel" id="paymentPhone" class="payment-input" placeholder="000 00 00" required>
-                </div>
-                <input type="email" id="paymentEmail" class="payment-input" placeholder="Email pour la facture" required>
-                <input type="text" id="paymentNom" class="payment-input" placeholder="Nom complet" required>
-                <div class="payment-info" style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                    <i class="fas fa-info-circle" style="color: #2196F3;"></i>
-                    <span>Vous serez redirigé vers l'application Wave pour effectuer le paiement.</span>
-                </div>
-                <div class="payment-actions">
-                    <button class="payment-btn payment-btn-secondary" onclick="closePaymentModal()">Annuler</button>
-                    <button class="payment-btn payment-btn-primary" onclick="payerWave()">
-                        <i class="fas fa-mobile-alt"></i> Payer avec Wave
-                    </button>
-                </div>
-            </div>
-        `;
-            } else if (method === 'orange') {
-                formContainer.innerHTML = `
-            <div class="payment-form">
-                <h4><i class="fas fa-mobile-alt"></i> Paiement Orange Money</h4>
-                <div class="payment-phone-input">
-                    <select id="paymentPrefix">
-                        <option value="77">77</option>
-                        <option value="78">78</option>
-                        <option value="70">70</option>
-                        <option value="75">75</option>
-                        <option value="76">76</option>
-                    </select>
-                    <input type="tel" id="paymentPhone" class="payment-input" placeholder="000 00 00" required>
-                </div>
-                <input type="email" id="paymentEmail" class="payment-input" placeholder="Email pour la facture" required>
-                <input type="text" id="paymentNom" class="payment-input" placeholder="Nom complet" required>
-                <div class="payment-info" style="background: #fff3e0; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                    <i class="fas fa-info-circle" style="color: #FF9800;"></i>
-                    <span>Vous serez redirigé vers l'application Orange Money pour effectuer le paiement.</span>
-                </div>
-                <div class="payment-actions">
-                    <button class="payment-btn payment-btn-secondary" onclick="closePaymentModal()">Annuler</button>
-                    <button class="payment-btn payment-btn-primary" onclick="payerOrangeMoney()">
-                        <i class="fas fa-mobile-alt"></i> Payer avec Orange Money
-                    </button>
-                </div>
-            </div>
-        `;
-            } else if (method === 'card') {
-                formContainer.innerHTML = `
-            <div class="payment-form">
-                <h4><i class="fas fa-credit-card"></i> Paiement par carte bancaire</h4>
-                <div style="background: #ffebee; padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <i class="fas fa-tools" style="font-size: 2rem; color: #f44336; margin-bottom: 0.5rem;"></i>
-                    <h5 style="color: #f44336; margin-bottom: 0.5rem;">Service temporairement indisponible</h5>
-                    <p style="color: #666;">Le paiement par carte bancaire sera disponible prochainement.</p>
-                </div>
-                <div class="payment-actions" style="margin-top: 1rem;">
-                    <button class="payment-btn payment-btn-secondary" onclick="closePaymentModal()">Fermer</button>
-                    <button class="payment-btn payment-btn-primary" onclick="selectPaymentMethod('cash')">
-                        <i class="fas fa-truck"></i> Paiement à la livraison
-                    </button>
-                </div>
-            </div>
-        `;
-            }
-        }
-
-        // ========== FONCTIONS DE PAIEMENT SPÉCIFIQUES ==========
-        function payerWave() {
-            const nom = document.getElementById('paymentNom')?.value;
-            const email = document.getElementById('paymentEmail')?.value;
-            const phone = document.getElementById('paymentPhone')?.value;
-
-            if (!nom || !email || !phone) {
+            if (!name || !email || !phone) {
                 afficherNotification('Veuillez remplir tous les champs', 'error');
                 return;
             }
 
-            afficherNotification('Redirection vers Wave...', 'success');
-
-            setTimeout(() => {
-                const facture = genererFacture('Wave');
-                finaliserPaiement(facture);
-            }, 1500);
+            afficherNotification('Demande de devis envoyée avec succès !');
+            closeQuoteModal();
+            document.getElementById('quoteForm').reset();
         }
-
-        function payerOrangeMoney() {
-            const nom = document.getElementById('paymentNom')?.value;
-            const email = document.getElementById('paymentEmail')?.value;
-            const phone = document.getElementById('paymentPhone')?.value;
-
-            if (!nom || !email || !phone) {
-                afficherNotification('Veuillez remplir tous les champs', 'error');
-                return;
-            }
-
-            afficherNotification('Redirection vers Orange Money...', 'success');
-
-            setTimeout(() => {
-                const facture = genererFacture('Orange Money');
-                finaliserPaiement(facture);
-            }, 1500);
-        }
-
-        // ========== FONCTIONS POUR LE PAIEMENT À LA LIVRAISON ==========
-        function calculerFraisLivraison() {
-            const region = document.getElementById('livraisonRegion')?.value;
-            const fraisElement = document.getElementById('deliveryFeesAmount');
-
-            let frais = 0;
-            if (region === 'Thiès') {
-                frais = 0;
-            } else if (region === 'Dakar') {
-                frais = 2000;
-            } else if (['Diourbel', 'Fatick', 'Kaolack', 'Louga'].includes(region)) {
-                frais = 3500;
-            } else if (region) {
-                frais = 5000;
-            }
-
-            if (fraisElement) fraisElement.textContent = frais + ' FCFA';
-            return frais;
-        }
-
-        // UNE SEULE fonction validerLivraison (supprimez l'autre)
-        function validerLivraison() {
-            const nom = document.getElementById('livraisonNom')?.value;
-            const email = document.getElementById('livraisonEmail')?.value;
-            const prefix = document.getElementById('livraisonPrefix')?.value;
-            const phone = document.getElementById('livraisonPhone')?.value;
-            const region = document.getElementById('livraisonRegion')?.value;
-            const departement = document.getElementById('livraisonDepartement')?.value;
-            const commune = document.getElementById('livraisonCommune')?.value;
-            const quartier = document.getElementById('livraisonQuartier')?.value;
-            const adresse = document.getElementById('livraisonAdresse')?.value || ''; // Optionnel
-            const instructions = document.getElementById('livraisonInstructions')?.value || '';
-            const latitude = document.getElementById('livraisonLatitude')?.value;
-            const longitude = document.getElementById('livraisonLongitude')?.value;
-            const precision = document.getElementById('livraisonPrecision')?.value;
-            const fraisLivraison = calculerFraisLivraison();
-
-            // Validation des champs obligatoires (sans l'adresse)
-            if (!nom || !email || !phone || !region || !departement || !commune || !quartier) {
-                afficherNotification('Veuillez remplir tous les champs obligatoires', 'error');
-                return;
-            }
-
-            if (!email.includes('@') || !email.includes('.')) {
-                afficherNotification('Email invalide', 'error');
-                return;
-            }
-
-            if (phone.length < 7) {
-                afficherNotification('Téléphone invalide', 'error');
-                return;
-            }
-
-            // Construction de l'adresse complète (avec ou sans rue)
-            let adresseComplete = '';
-            if (adresse) {
-                adresseComplete = `${adresse}, ${quartier}, ${commune}, ${departement}, ${region}`;
-            } else {
-                adresseComplete = `${quartier}, ${commune}, ${departement}, ${region}`;
-            }
-
-            livraisonInfo = {
-                nom: nom,
-                email: email,
-                prefix: prefix,
-                phone: phone,
-                telephone: prefix + phone,
-                region: region,
-                departement: departement,
-                commune: commune,
-                quartier: quartier,
-                adresse: adresse,
-                adresseComplete: adresseComplete,
-                instructions: instructions,
-                fraisLivraison: fraisLivraison,
-                latitude: latitude,
-                longitude: longitude,
-                precision: precision
-            };
-
-            // Afficher un message selon que l'utilisateur a utilisé le GPS ou non
-            let message = 'Commande enregistrée !';
-            if (latitude && longitude) {
-                message = `Position GPS enregistrée (${parseFloat(latitude).toFixed(6)}, ${parseFloat(longitude).toFixed(6)}) ! Génération de la facture...`;
-            } else {
-                message = 'Commande enregistrée avec adresse manuelle ! Génération de la facture...';
-            }
-
-            afficherNotification(message, 'success');
-
-            setTimeout(() => {
-                const facture = genererFactureLivraison();
-                finaliserPaiement(facture);
-            }, 1500);
-        }
-
 
         // ========== FONCTIONS DE GÉNÉRATION DE FACTURES ==========
         function genererFacture(modePaiement) {
@@ -5686,19 +4858,14 @@
             const total = panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
             const totalAvecPromo = currentPromoCode ? total * (1 - currentPromoCode.reduction / 100) : total;
 
-            const telephone = document.getElementById('paymentPhone')?.value ||
-                (document.getElementById('paymentPrefix')?.value + document.getElementById('paymentPhone')?.value) || 'Non renseigné';
-            const email = document.getElementById('paymentEmail')?.value || 'client@ecofi.sn';
-            const nom = document.getElementById('paymentNom')?.value || 'Client ECOFI';
-
             return {
                 numero: numeroFacture,
                 date: date.toLocaleDateString('fr-FR'),
                 heure: date.toLocaleTimeString('fr-FR'),
                 client: {
-                    nom: nom,
-                    email: email,
-                    telephone: telephone
+                    nom: 'Client ECOFI',
+                    email: 'client@ecofi.sn',
+                    telephone: 'Non renseigné'
                 },
                 articles: panier.map(item => ({
                     nom: item.nom,
@@ -5715,59 +4882,11 @@
             };
         }
 
-        function genererFactureLivraison() {
-            const date = new Date();
-            const numeroFacture = 'FAC-LIV-' + date.getFullYear() +
-                (date.getMonth() + 1).toString().padStart(2, '0') +
-                date.getDate().toString().padStart(2, '0') +
-                '-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-
-            const totalArticles = panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
-            const fraisLivraison = livraisonInfo?.fraisLivraison || 0;
-            const totalAvecPromo = currentPromoCode ? totalArticles * (1 - currentPromoCode.reduction / 100) : totalArticles;
-            const totalFinal = totalAvecPromo + fraisLivraison;
-
-            const adresseComplete = livraisonInfo?.adresseComplete ||
-                `${livraisonInfo?.adresse}, ${livraisonInfo?.quartier}, ${livraisonInfo?.commune}, ${livraisonInfo?.departement}, ${livraisonInfo?.region}`;
-
-            return {
-                type: 'livraison',
-                numero: numeroFacture,
-                date: date.toLocaleDateString('fr-FR'),
-                heure: date.toLocaleTimeString('fr-FR'),
-                client: {
-                    nom: livraisonInfo?.nom || 'Non renseigné',
-                    email: livraisonInfo?.email || 'non@renseigne.com',
-                    telephone: livraisonInfo?.telephone || 'Non renseigné',
-                    adresse: adresseComplete,
-                    instructions: livraisonInfo?.instructions || 'Aucune',
-                    gps: (livraisonInfo?.latitude && livraisonInfo?.longitude) ?
-                        `Lat: ${livraisonInfo.latitude}, Lon: ${livraisonInfo.longitude} (précision: ${livraisonInfo.precision})` :
-                        'Non fournie'
-                },
-                articles: panier.map(item => ({
-                    nom: item.nom,
-                    prix: item.prix,
-                    quantite: item.quantite,
-                    total: item.prix * item.quantite
-                })),
-                sousTotal: totalArticles,
-                reduction: currentPromoCode ? currentPromoCode.reduction : 0,
-                codePromo: currentPromoCode ? currentPromoCode.code : null,
-                fraisLivraison: fraisLivraison,
-                total: totalFinal,
-                modePaiement: 'Paiement à la livraison',
-                statut: 'COMMANDE CONFIRMÉE'
-            };
-        }
-
         function finaliserPaiement(facture) {
-            closePaymentModal();
             afficherFacture(facture);
             viderPanier();
         }
 
-        // ========== AJOUTER LA FONCTION D'AFFICHAGE DE FACTURE AVEC INFOS GPS ==========
         function afficherFacture(facture) {
             const modal = document.getElementById('factureModal');
             const content = document.getElementById('factureContent');
@@ -5784,16 +4903,11 @@
         `;
             });
 
-            const livraisonInfoHtml = facture.type === 'livraison' ? `
+            const livraisonInfoHtml = facture.type === 'devis' ? `
         <div style="background: #fef9e7; padding: 1.5rem; border-radius: 10px; margin: 1.5rem 0; border-left: 4px solid #f39c12;">
-            <h4 style="color: #f39c12; margin-bottom: 1rem;"><i class="fas fa-truck"></i> INFORMATIONS DE LIVRAISON</h4>
-            <p><strong>Adresse :</strong> ${facture.client.adresse}</p>
-            <p><strong>Instructions :</strong> ${facture.client.instructions || 'Aucune'}</p>
-            ${facture.client.gps && facture.client.gps !== 'Non fournie' ? `
-            <p style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #f39c12;">
-                <strong><i class="fas fa-satellite-dish"></i> Coordonnées GPS :</strong> ${facture.client.gps}
-            </p>
-            ` : ''}
+            <h4 style="color: #f39c12; margin-bottom: 1rem;"><i class="fas fa-file-invoice"></i> DEMANDE DE DEVIS</h4>
+            <p><strong>Statut :</strong> En attente de validation</p>
+            <p><strong>Message :</strong> Votre demande a bien été enregistrée. Notre équipe vous contactera dans les plus brefs délais.</p>
         </div>
     ` : '';
 
@@ -5803,18 +4917,18 @@
                 <div class="facture-logo">
                     <img src="IMG/logo-ecofi.png" alt="ECOFI Logo" style="height: 60px;" onerror="this.src='https://via.placeholder.com/60x60?text=ECOFI'">
                     <div>
-                        <div class="facture-titre">FACTURE</div>
+                        <div class="facture-titre">${facture.type === 'devis' ? 'DEVIS' : 'FACTURE'}</div>
                         <div class="facture-soustitre">Établissement de conseils sur le foncier et l'immobilier</div>
                     </div>
                 </div>
-                <span class="facture-badge" style="background: ${facture.type === 'livraison' ? '#f39c12' : '#27ae60'};">${facture.statut}</span>
+                <span class="facture-badge" style="background: ${facture.type === 'devis' ? '#f39c12' : '#27ae60'};">${facture.statut}</span>
             </div>
             
             <div class="facture-info">
                 <div>
-                    <p><strong>N° Facture :</strong> ${facture.numero}</p>
+                    <p><strong>N° ${facture.type === 'devis' ? 'Devis' : 'Facture'} :</strong> ${facture.numero}</p>
                     <p><strong>Date :</strong> ${facture.date} à ${facture.heure}</p>
-                    <p><strong>Paiement :</strong> ${facture.modePaiement}</p>
+                    <p><strong>Type :</strong> ${facture.modePaiement}</p>
                 </div>
                 <div>
                     <p><strong>Client :</strong> ${facture.client.nom}</p>
@@ -5848,12 +4962,6 @@
                 <div class="facture-total-ligne" style="color: #27ae60;">
                     <span>Réduction (${facture.codePromo}) :</span>
                     <span>-${facture.reduction}%</span>
-                </div>
-                ` : ''}
-                ${facture.fraisLivraison ? `
-                <div class="facture-total-ligne">
-                    <span>Frais de livraison :</span>
-                    <span>${facture.fraisLivraison.toFixed(0)} FCFA</span>
                 </div>
                 ` : ''}
                 <div class="facture-total-final">
@@ -5895,7 +5003,6 @@
         }
 
         // ========== TÉLÉCHARGEMENT FACTURE ==========
-        // ========== TÉLÉCHARGEMENT FACTURE EN PDF (AVEC LOGO) ==========
         function telechargerFacture() {
             if (!currentFacture) {
                 afficherNotification('Aucune facture disponible', 'error');
@@ -5908,7 +5015,6 @@
 
             setTimeout(() => {
                 try {
-                    // Créer un élément temporaire
                     const element = document.createElement('div');
                     element.innerHTML = genererHTMLFacture(facture);
                     element.style.position = 'absolute';
@@ -5920,7 +5026,6 @@
                     element.style.fontFamily = 'Arial, sans-serif';
                     document.body.appendChild(element);
 
-                    // Options pour html2canvas
                     const options = {
                         scale: 2,
                         logging: false,
@@ -5928,15 +5033,7 @@
                         useCORS: true,
                         backgroundColor: '#ffffff',
                         windowWidth: 800,
-                        windowHeight: element.scrollHeight,
-                        onclone: function (clonedDoc) {
-                            // S'assurer que le logo est bien visible
-                            const logo = clonedDoc.getElementById('logo-facture');
-                            if (logo) {
-                                logo.style.display = 'block';
-                                logo.style.margin = '0 auto';
-                            }
-                        }
+                        windowHeight: element.scrollHeight
                     };
 
                     html2canvas(element, options).then(canvas => {
@@ -5993,180 +5090,56 @@
             });
 
             const sousTotal = facture.sousTotal || 0;
-            const fraisLivraison = facture.fraisLivraison || 0;
             const total = facture.total || 0;
-
-            // Logo en base64 (vous devez remplacer par le vrai logo)
-            // Pour obtenir le vrai logo en base64, utilisez ce site : https://www.base64-image.org/
-            const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAADxJREFUaIHt0IEJAAAIw0D2n7oLu4ETBCu4B/gkAQAAgM+JAgAAwBMFAACAJwoAAABPFAAA4J0CAAD//8MGHXgSudr4AAAAAElFTkSuQmCC';
 
             return `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Facture ${facture.numero}</title>
+    <title>${facture.type === 'devis' ? 'Devis' : 'Facture'} ${facture.numero}</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 20px;
-            color: #333; 
-            line-height: 1.4;
-            background: white;
-        }
-        .facture { 
-            max-width: 100%; 
-            margin: 0 auto; 
-        }
-        .header { 
-            text-align: center; 
-            border-bottom: 2px solid #FF8533; 
-            padding-bottom: 20px; 
-            margin-bottom: 20px; 
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        .logo {
-            width: 70px;
-            height: 60px;
-            object-fit: contain;
-        }
-        .titre-facture {
-            font-size: 28px;
-            color: #FF8533;
-            font-weight: bold;
-            margin: 0;
-        }
-        .sous-titre {
-            color: #666;
-            font-size: 14px;
-            margin: 5px 0;
-        }
-        .badge { 
-            background: ${facture.type === 'livraison' ? '#f39c12' : '#27ae60'}; 
-            color: white; 
-            padding: 5px 15px; 
-            border-radius: 20px; 
-            display: inline-block; 
-            font-weight: bold;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        .info { 
-            display: flex; 
-            justify-content: space-between; 
-            background: #f8f9fa; 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            font-size: 14px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; line-height: 1.4; background: white; }
+        .facture { max-width: 100%; margin: 0 auto; }
+        .header { text-align: center; border-bottom: 2px solid #FF8533; padding-bottom: 20px; margin-bottom: 20px; }
+        .logo-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .logo { width: 70px; height: 60px; object-fit: contain; }
+        .titre-facture { font-size: 28px; color: #FF8533; font-weight: bold; margin: 0; }
+        .sous-titre { color: #666; font-size: 14px; margin: 5px 0; }
+        .badge { background: ${facture.type === 'devis' ? '#f39c12' : '#27ae60'}; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold; font-size: 14px; margin-top: 10px; }
+        .info { display: flex; justify-content: space-between; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
         .info p { margin: 5px 0; }
         .info strong { color: #FF8533; }
-        .livraison { 
-            background: #fef9e7; 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin: 20px 0; 
-            border-left: 4px solid #f39c12; 
-            font-size: 14px;
-        }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin: 20px 0; 
-            font-size: 14px;
-        }
-        th { 
-            background: #FF8533; 
-            color: white; 
-            padding: 10px; 
-            text-align: left; 
-            font-weight: 600;
-        }
-        td { 
-            padding: 10px; 
-            border-bottom: 1px solid #eee; 
-        }
-        .total { 
-            margin-top: 20px; 
-            padding: 15px; 
-            border: 2px solid #FF8533; 
-            border-radius: 8px; 
-            background: #fff9f5;
-        }
-        .total-ligne { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 8px 0; 
-            border-bottom: 1px dashed #ddd; 
-            font-size: 14px;
-        }
-        .total-final { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 10px 0; 
-            font-size: 18px; 
-            font-weight: bold; 
-            color: #FF8533; 
-            border-top: 2px solid #FF8533; 
-            margin-top: 10px; 
-        }
-        .footer { 
-            margin-top: 30px; 
-            text-align: center; 
-            font-size: 11px; 
-            color: #666; 
-            border-top: 1px solid #ddd; 
-            padding-top: 15px; 
-        }
-        .signature { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-top: 40px; 
-        }
-        .signature div { 
-            width: 200px; 
-            text-align: center; 
-        }
-        .signature-line { 
-            border-top: 1px solid #333; 
-            margin-top: 30px; 
-            padding-top: 5px; 
-        }
-        .gps-info {
-            background: #e8f4fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-        .gps-info strong { color: #3498db; }
+        .devis-info { background: #fef9e7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f39c12; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th { background: #FF8533; color: white; padding: 10px; text-align: left; font-weight: 600; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+        .total { margin-top: 20px; padding: 15px; border: 2px solid #FF8533; border-radius: 8px; background: #fff9f5; }
+        .total-ligne { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #ddd; font-size: 14px; }
+        .total-final { display: flex; justify-content: space-between; padding: 10px 0; font-size: 18px; font-weight: bold; color: #FF8533; border-top: 2px solid #FF8533; margin-top: 10px; }
+        .footer { margin-top: 30px; text-align: center; font-size: 11px; color: #666; border-top: 1px solid #ddd; padding-top: 15px; }
+        .signature { display: flex; justify-content: space-between; margin-top: 40px; }
+        .signature div { width: 200px; text-align: center; }
+        .signature-line { border-top: 1px solid #333; margin-top: 30px; padding-top: 5px; }
     </style>
 </head>
 <body>
     <div class="facture">
         <div class="header">
             <div class="logo-container">
-                <img id="logo-facture" src="${logoBase64}" alt="ECOFI Logo" class="logo" onerror="this.style.display='none'">
+                <img src="IMG/logo-ecofi.png" alt="ECOFI Logo" class="logo" onerror="this.style.display='none'">
                 <div>
-                    <div class="titre-facture">FACTURE</div>
+                    <div class="titre-facture">${facture.type === 'devis' ? 'DEVIS' : 'FACTURE'}</div>
                     <div class="sous-titre">Établissement de conseils<br>sur le foncier et l'immobilier</div>
                 </div>
             </div>
-            <div class="badge">${facture.statut || 'FACTURE'}</div>
+            <div class="badge">${facture.statut || (facture.type === 'devis' ? 'DEVIS' : 'FACTURE')}</div>
         </div>
         
         <div class="info">
             <div>
-                <p><strong>N° Facture :</strong> ${facture.numero}</p>
+                <p><strong>N° ${facture.type === 'devis' ? 'Devis' : 'Facture'} :</strong> ${facture.numero}</p>
                 <p><strong>Date :</strong> ${facture.date} à ${facture.heure}</p>
-                <p><strong>Paiement :</strong> ${facture.modePaiement}</p>
+                <p><strong>Type :</strong> ${facture.modePaiement}</p>
             </div>
             <div>
                 <p><strong>Client :</strong> ${facture.client?.nom || 'Non renseigné'}</p>
@@ -6175,16 +5148,10 @@
             </div>
         </div>
         
-        ${facture.type === 'livraison' && facture.client?.adresse ? `
-        <div class="livraison">
-            <h3 style="color: #f39c12; margin: 0 0 10px 0; font-size: 16px;">INFORMATIONS DE LIVRAISON</h3>
-            <p><strong>Adresse :</strong> ${facture.client.adresse}</p>
-            <p><strong>Instructions :</strong> ${facture.client.instructions || 'Aucune'}</p>
-            ${facture.client.gps && facture.client.gps !== 'Non fournie' ? `
-            <div class="gps-info">
-                <strong>📍 Coordonnées GPS :</strong> ${facture.client.gps}
-            </div>
-            ` : ''}
+        ${facture.type === 'devis' ? `
+        <div class="devis-info">
+            <h3 style="color: #f39c12; margin: 0 0 10px 0; font-size: 16px;">DEMANDE DE DEVIS</h3>
+            <p>Votre demande a bien été enregistrée. Notre équipe vous contactera dans les plus brefs délais.</p>
         </div>
         ` : ''}
         
@@ -6213,12 +5180,6 @@
                 <span>-${facture.reduction}%</span>
             </div>
             ` : ''}
-            ${fraisLivraison > 0 ? `
-            <div class="total-ligne">
-                <span>Frais de livraison :</span>
-                <span>${fraisLivraison.toFixed(0)} FCFA</span>
-            </div>
-            ` : ''}
             <div class="total-final">
                 <span>TOTAL TTC :</span>
                 <span>${total.toFixed(0)} FCFA</span>
@@ -6239,7 +5200,6 @@
         <div class="footer">
             <p><strong>ECOFI</strong> - Zac Nguinth, Thiès - Sénégal</p>
             <p>Tél : 33 998 50 72 / 71 039 75 75 | Email : service.ecofi01@gmail.com</p>
-            <p>RCCM: SN-THS-2023-B-00123 | NINEA: 12345678A1</p>
             <p>Merci de votre confiance !</p>
         </div>
     </div>
@@ -6278,50 +5238,15 @@
             });
         }
 
-        // ========== FONCTIONS DEVIS ==========
-        function demanderDevis(produit) {
-            currentQuoteItems = [{
-                nom: produit.name,
-                prix: parseFloat(produit.price.replace(/[^0-9]/g, '')),
-                quantite: 1
-            }];
-            mettreAJourQuoteModal();
-            document.getElementById('quoteModal').classList.add('active');
+        // ========== SAUVEGARDE SIMULÉE ==========
+        function sauvegarderDevis(devisData) {
+            console.log('Devis sauvegardé (simulation):', devisData);
+            // Dans la réalité, vous enverriez une requête fetch à votre API
         }
 
-        function mettreAJourQuoteModal() {
-            const quoteItems = document.getElementById('quoteItems');
-            const total = currentQuoteItems.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
-
-            quoteItems.innerHTML = currentQuoteItems.map(item => `
-        <div class="quote-item">
-            <span class="quote-item-info">${item.nom} x${item.quantite}</span>
-            <span class="quote-item-price">${(item.prix * item.quantite).toFixed(0)} FCFA</span>
-        </div>
-    `).join('');
-
-            document.getElementById('quoteTotal').textContent = `Total: ${total.toFixed(0)} FCFA`;
-        }
-
-        function closeQuoteModal() {
-            document.getElementById('quoteModal').classList.remove('active');
-            currentQuoteItems = [];
-        }
-
-        function submitQuote(event) {
-            event.preventDefault();
-            const name = document.getElementById('quoteName').value;
-            const email = document.getElementById('quoteEmail').value;
-            const phone = document.getElementById('quotePhone').value;
-
-            if (!name || !email || !phone) {
-                afficherNotification('Veuillez remplir tous les champs', 'error');
-                return;
-            }
-
-            afficherNotification('Demande de devis envoyée avec succès !');
-            closeQuoteModal();
-            document.getElementById('quoteForm').reset();
+        function sauvegarderCommande(commandeData) {
+            console.log('Commande sauvegardée (simulation):', commandeData);
+            // Dans la réalité, vous enverriez une requête fetch à votre API
         }
 
         // ========== MENU MOBILE ==========
@@ -6389,95 +5314,17 @@
             }
         });
 
-        // ========== FONCTIONS POUR LA BASE DE DONNÉES ==========
-        function sauvegarderDevis(devisData) {
-            fetch('api.php?action=ajouter_devis', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'data=' + encodeURIComponent(JSON.stringify(devisData))
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        afficherNotification('Devis enregistré ! N° ' + data.numero_devis);
-                    }
-                })
-                .catch(error => console.error('Erreur:', error));
-        }
-
-        function sauvegarderCommande(commandeData) {
-            fetch('api.php?action=ajouter_commande', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'data=' + encodeURIComponent(JSON.stringify(commandeData))
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        afficherNotification('Commande enregistrée ! N° ' + data.numero_commande);
-                    }
-                })
-                .catch(error => console.error('Erreur:', error));
-        }
-
-        // Modifiez votre fonction finaliserPaiement
-        function finaliserPaiement(facture) {
-            // Sauvegarder dans la base de données
-            const commandeData = {
-                client: {
-                    nom: facture.client.nom,
-                    email: facture.client.email,
-                    telephone: facture.client.telephone,
-                    adresse: facture.client.adresse
-                },
-                articles: facture.articles,
-                total_ht: facture.sousTotal,
-                total_ttc: facture.total,
-                frais_livraison: facture.fraisLivraison || 0,
-                mode_paiement: facture.modePaiement,
-                code_promo: facture.codePromo,
-                reduction: facture.reduction,
-                livraison: livraisonInfo
-            };
-
-            sauvegarderCommande(commandeData);
-
-            closePaymentModal();
-            afficherFacture(facture);
-            viderPanier();
-        }
-
-        // Modifiez submitQuote
-        function submitQuote(event) {
-            event.preventDefault();
-            const name = document.getElementById('quoteName').value;
-            const email = document.getElementById('quoteEmail').value;
-            const phone = document.getElementById('quotePhone').value;
-            const message = document.getElementById('quoteMessage').value;
-
-            if (!name || !email || !phone) {
-                afficherNotification('Veuillez remplir tous les champs', 'error');
-                return;
+        document.getElementById('quoteFlowModal')?.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeQuoteFlowModal();
             }
+        });
 
-            const devisData = {
-                client: {
-                    nom: name,
-                    email: email,
-                    telephone: phone
-                },
-                articles: currentQuoteItems,
-                total_ht: currentQuoteItems.reduce((sum, item) => sum + (item.prix * item.quantite), 0),
-                total_ttc: currentQuoteItems.reduce((sum, item) => sum + (item.prix * item.quantite), 0),
-                notes: message
-            };
-
-            sauvegarderDevis(devisData);
-
-            afficherNotification('Demande de devis envoyée avec succès !');
-            closeQuoteModal();
-            document.getElementById('quoteForm').reset();
-        }
+        document.getElementById('factureModal')?.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeFactureModal();
+            }
+        });
     </script>
 </body>
 
