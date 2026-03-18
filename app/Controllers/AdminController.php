@@ -1,141 +1,94 @@
 <?php
 
-namespace App\Controllers;
-
-use App\Core\Controller;
-use App\Services\AdminService;
-use Exception;
-
-class AdminController extends Controller
+class AdminController
 {
-    private AdminService $adminService;
-
-    public function __construct()
+    private function render($view, $data = [])
     {
-        $this->adminService = new AdminService();
+        extract($data);
+        require __DIR__ . '/../admin/Views/layouts/adminPage.php';
     }
 
-    public function handle(): array
+    public function dashboard()
     {
-        $message = '';
-        $messageType = 'success';
-
-        try {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $action = $_POST['action'] ?? '';
-
-                if ($action === 'add_category') {
-                    $nom = $this->clean($_POST['nom'] ?? '');
-                    $description = $this->clean($_POST['description'] ?? '');
-
-                    if ($nom === '') {
-                        throw new Exception('Le nom de la catégorie est obligatoire.');
-                    }
-
-                    $this->adminService->createCategory($nom, $description);
-                    $message = 'Catégorie ajoutée avec succès.';
-                }
-
-                if ($action === 'update_category') {
-                    $id = (int)($_POST['id'] ?? 0);
-                    $nom = $this->clean($_POST['nom'] ?? '');
-                    $description = $this->clean($_POST['description'] ?? '');
-
-                    if ($id <= 0 || $nom === '') {
-                        throw new Exception('Informations catégorie invalides.');
-                    }
-
-                    $this->adminService->updateCategory($id, $nom, $description);
-                    $message = 'Catégorie modifiée avec succès.';
-                }
-
-                if ($action === 'delete_category') {
-                    $id = (int)($_POST['id'] ?? 0);
-
-                    if ($id <= 0) {
-                        throw new Exception('ID catégorie invalide.');
-                    }
-
-                    $this->adminService->deleteCategory($id);
-                    $message = 'Catégorie supprimée avec succès.';
-                }
-
-                if ($action === 'add_product') {
-                    $data = $this->buildProductData($_POST);
-                    $this->adminService->createProduct($data);
-                    $message = 'Produit ajouté avec succès.';
-                }
-
-                if ($action === 'update_product') {
-                    $id = (int)($_POST['id'] ?? 0);
-
-                    if ($id <= 0) {
-                        throw new Exception('ID produit invalide.');
-                    }
-
-                    $data = $this->buildProductData($_POST);
-                    $this->adminService->updateProduct($id, $data);
-                    $message = 'Produit modifié avec succès.';
-                }
-
-                if ($action === 'delete_product') {
-                    $id = (int)($_POST['id'] ?? 0);
-
-                    if ($id <= 0) {
-                        throw new Exception('ID produit invalide.');
-                    }
-
-                    $this->adminService->deleteProduct($id);
-                    $message = 'Produit supprimé avec succès.';
-                }
-            }
-        } catch (Exception $e) {
-            $message = $e->getMessage();
-            $messageType = 'error';
-        }
-
-        $editCategory = null;
-        $editProduct = null;
-
-        if (isset($_GET['edit_category'])) {
-            $editCategory = $this->adminService->getCategoryById((int)$_GET['edit_category']);
-        }
-
-        if (isset($_GET['edit_product'])) {
-            $editProduct = $this->adminService->getProductById((int)$_GET['edit_product']);
-        }
-
-        return [
-            'message' => $message,
-            'messageType' => $messageType,
-            'categories' => $this->adminService->getCategories(),
-            'products' => $this->adminService->getProducts(),
-            'editCategory' => $editCategory,
-            'editProduct' => $editProduct
-        ];
+        $this->render('/../admin/Views/layouts/dashboardv2.php', [
+            'currentPage' => 'dashboard',
+            'pageTitle'   => 'Tableau de bord',
+            'view'        => '/dashboardv2.php',
+        ]);
     }
 
-    private function buildProductData(array $post): array
+    public function auth()
     {
-        $categorie_id = (int)($post['categorie_id'] ?? 0);
-        $nom = $this->clean($post['nom'] ?? '');
-
-        if ($categorie_id <= 0 || $nom === '') {
-            throw new Exception('La catégorie et le nom du produit sont obligatoires.');
-        }
-
-        return [
-            'categorie_id' => $categorie_id,
-            'nom' => $nom,
-            'description' => $this->clean($post['description'] ?? ''),
-            'prix' => $this->toNullableDecimal($post['prix'] ?? ''),
-            'ancien_prix' => $this->toNullableDecimal($post['ancien_prix'] ?? ''),
-            'image' => $this->clean($post['image'] ?? ''),
-            'note' => $this->toNullableDecimal($post['note'] ?? ''),
-            'nb_avis' => (int)($post['nb_avis'] ?? 0),
-            'type_media' => $this->clean($post['type_media'] ?? 'image'),
-            'media_src' => $this->clean($post['media_src'] ?? ''),
-            'actif' => isset($post['actif']) ? 1 : 0
-        ];
+        $this->render('partials/auth.php', [
+            'currentPage' => 'auth',
+            'pageTitle'   => 'Authentification & rôles',
+            'view'        => 'partials/auth.php',
+        ]);
     }
+
+    public function clients()
+    {
+        $this->render('partials/clients.php', [
+            'currentPage' => 'clients',
+            'pageTitle'   => 'Clients & contacts',
+            'view'        => 'partials/clients.php',
+        ]);
+    }
+
+    public function products()
+    {
+        $this->render('partials/products.php', [
+            'currentPage' => 'products',
+            'pageTitle'   => 'Produits & stock',
+            'view'        => 'partials/products.php',
+        ]);
+    }
+
+
+    public function orders(){
+        require_once __DIR__ . '/../admin/Models/OrderModel.php';
+
+        $model = new OrderModel();
+
+        $orders = $model->getAllOrders();
+        $quotes = $model->getAllQuotes();
+
+        $this->render('/../admin/Views/layouts/orders.php', [
+            'currentPage' => 'orders',
+            'pageTitle'   => 'Commandes & devis',
+            'view'        => '/orders.php',
+            'orders'      => $orders,
+            'quotes'      => $quotes
+        ]);
+
+    }
+
+    public function employees()
+    {
+        $this->render('partials/employees.php', [
+            'currentPage' => 'employees',
+            'pageTitle'   => 'Personnel',
+            'view'        => 'partials/employees.php',
+        ]);
+    }
+
+    public function notifications()
+    {
+        $this->render('partials/notifications.php', [
+            'currentPage' => 'notifications',
+            'pageTitle'   => 'Notifications',
+            'view'        => 'partials/notifications.php',
+        ]);
+    }
+
+    public function notFound()
+    {
+        $this->render('partials/404.php', [
+            'currentPage' => '',
+            'pageTitle'   => 'Page introuvable',
+            'view'        => 'partials/404.php',
+        ]);
+    }
+
+    
 }

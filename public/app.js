@@ -591,3 +591,122 @@ function initModals() {
         }
     });
 }
+
+// =========================
+// DEVIS
+// =========================
+
+function formatPrice(value) {
+    return new Intl.NumberFormat('fr-FR').format(Number(value || 0)) + ' FCFA';
+}
+
+function openQuoteModal() {
+    if (!panier || panier.length === 0) {
+        afficherNotification('Votre panier est vide.');
+        return;
+    }
+
+    const quoteItems = document.getElementById('quoteItems');
+    const quoteTotal = document.getElementById('quoteTotal');
+    const modal = document.getElementById('quoteModal');
+
+    let html = '';
+    let total = 0;
+
+    panier.forEach(item => {
+        const prix = Number(item.prix || 0);
+        const quantite = Number(item.quantite || 1);
+        const totalLigne = prix * quantite;
+        total += totalLigne;
+
+        html += `
+            <div class="quote-item-row" style="padding:12px 0; border-bottom:1px solid #eee;">
+                <div><strong>${item.nom}</strong></div>
+                <div>Quantité : ${quantite}</div>
+                <div>Prix unitaire : ${formatPrice(prix)}</div>
+                <div>Total : ${formatPrice(totalLigne)}</div>
+            </div>
+        `;
+    });
+
+    quoteItems.innerHTML = html;
+    quoteTotal.innerHTML = `Total estimé : ${formatPrice(total)}`;
+    modal.style.display = 'flex';
+}
+
+function closeQuoteModal() {
+    document.getElementById('quoteModal').style.display = 'none';
+}
+
+async function submitQuote(event) {
+    event.preventDefault();
+
+    if (!panier || panier.length === 0) {
+        afficherNotification('Votre panier est vide.');
+        return;
+    }
+
+   
+
+    const nom = document.getElementById('quoteName').value.trim();
+    const email = document.getElementById('quoteEmail').value.trim();
+    const telephone = document.getElementById('quotePhone').value.trim();
+    const message = document.getElementById('quoteMessage').value.trim();
+
+    if (!nom || !email || !telephone) {
+        afficherNotification('Veuillez remplir les champs obligatoires.');
+        return;
+    }
+
+    const payload = {
+        nom,
+        email,
+        telephone,
+        message,
+        items: panier.map(item => ({
+            id: item.id ?? null,
+            nom: item.nom,
+            prix: Number(item.prix || 0),
+            quantite: Number(item.quantite || 1)
+        }))
+    };
+
+    try {
+        const response = await fetch('/SITEECOFI/app/api/submit_quote.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Erreur lors de l’envoi du devis.');
+        }
+
+        afficherNotification('Votre demande de devis a bien été envoyée.');
+
+        panier.length = 0;
+        mettreAJourPanier();
+
+        document.getElementById('quoteForm').reset();
+        closeQuoteModal();
+
+        if (result.pdf_url) {
+            window.open(result.pdf_url, '_blank');
+        }
+
+    } catch (error) {
+        afficherNotification(error.message);
+    }
+}
+
+document.getElementById('quoteForm').addEventListener('submit', submitQuote);
+
+document.getElementById('quoteModal').addEventListener('click', function (e) {
+    if (e.target === this) {
+        closeQuoteModal();
+    }
+});

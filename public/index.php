@@ -106,8 +106,11 @@ $tel_mobile = "71 039 75 75";
                                     <button class="cart-btn cart-btn-danger" onclick="viderPanier()">
                                         <i class="fas fa-trash"></i> Vider
                                     </button>
-                                    <button class="cart-btn cart-btn-primary" onclick="procederAuPaiement()">
+<!--                                     <button class="cart-btn cart-btn-primary" onclick="procederAuPaiement()">
                                         <i class="fas fa-credit-card"></i> Payer
+                                    </button> -->
+                                    <button class="cart-btn cart-btn-primary" onclick="openQuoteModal(event)">
+                                        <i class="fas fa-paper-plane"></i> Demande de devis
                                     </button>
                                 </div>
                             </div>
