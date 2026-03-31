@@ -673,14 +673,20 @@ async function submitQuote(event) {
 
     try {
         const response = await fetch('/SITEECOFI/app/api/submit_quote.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
+        const text = await response.text();
+
+        console.log('RAW RESPONSE:', text);
+
+        const result = JSON.parse(text); // parse manuel
+
+        console.log('JSON OK:', result);
 
         if (!response.ok || !result.success) {
             throw new Error(result.message || 'Erreur lors de l’envoi du devis.');

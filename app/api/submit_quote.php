@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+ob_start();
+
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../Core/Database.php';
@@ -10,9 +12,31 @@ use App\Core\Database;
 use PDO;
 use Throwable;
 
+function logDebug(string $message, $data = null): void
+{
+    $logFile = __DIR__ . '/debug.log';
+
+    $entry = '[' . date('Y-m-d H:i:s') . '] ' . $message;
+
+    if ($data !== null) {
+        if (is_array($data) || is_object($data)) {
+            $entry .= ' | ' . print_r($data, true);
+        } else {
+            $entry .= ' | ' . $data;
+        }
+    }
+
+    file_put_contents($logFile, $entry . PHP_EOL, FILE_APPEND);
+}
+
 function jsonResponse(array $data, int $status = 200): void
 {
     http_response_code($status);
+
+    if (ob_get_length()) {
+        ob_clean();
+    }
+
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -23,9 +47,27 @@ function generateQuoteNumber(): string
 }
 
 try {
-    $input = json_decode(file_get_contents('php://input'), true);
+    $rawInput = file_get_contents('php://input');
+    logDebug('RAW INPUT', $rawInput);
+
+    $input = json_decode($rawInput, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        logDebug('JSON ERROR', json_last_error_msg());
+
+        jsonResponse([
+            'success' => false,
+            'message' => 'JSON invalide.',
+            'error' => json_last_error_msg(),
+            'raw_input' => $rawInput
+        ], 400);
+    }
+
+    logDebug('PARSED INPUT', $input);
 
     if (!is_array($input)) {
+        logDebug('INVALID INPUT TYPE', gettype($input));
+
         jsonResponse([
             'success' => false,
             'message' => 'Données invalides.'
@@ -38,7 +80,18 @@ try {
     $message = trim((string) ($input['message'] ?? ''));
     $items = $input['items'] ?? [];
 
+    logDebug('CLIENT DATA', [
+        'nom' => $nom,
+        'email' => $email,
+        'telephone' => $telephone,
+        'message' => $message
+    ]);
+
+    logDebug('ITEMS', $items);
+
     if ($nom === '' || $email === '' || $telephone === '') {
+        logDebug('VALIDATION ERROR', 'Nom, email et téléphone obligatoires');
+
         jsonResponse([
             'success' => false,
             'message' => 'Nom, email et téléphone sont obligatoires.'
@@ -46,6 +99,8 @@ try {
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        logDebug('VALIDATION ERROR', 'Adresse email invalide : ' . $email);
+
         jsonResponse([
             'success' => false,
             'message' => 'Adresse email invalide.'
@@ -53,6 +108,8 @@ try {
     }
 
     if (!is_array($items) || count($items) === 0) {
+        logDebug('VALIDATION ERROR', 'Panier vide ou items invalide');
+
         jsonResponse([
             'success' => false,
             'message' => 'Le panier est vide.'
@@ -61,6 +118,8 @@ try {
 
     $pdo = Database::getConnection();
     $pdo->beginTransaction();
+
+    logDebug('DB', 'Transaction démarrée');
 
     // Rechercher le client par email
     $stmtClient = $pdo->prepare("
@@ -71,6 +130,8 @@ try {
     ");
     $stmtClient->execute([':email' => $email]);
     $client = $stmtClient->fetch(PDO::FETCH_ASSOC);
+
+    logDebug('CLIENT SEARCH RESULT', $client);
 
     if ($client) {
         $clientId = (int) $client['id'];
@@ -85,6 +146,12 @@ try {
             ':telephone' => $telephone,
             ':id' => $clientId
         ]);
+
+        logDebug('CLIENT UPDATED', [
+            'client_id' => $clientId,
+            'nom' => $nom,
+            'telephone' => $telephone
+        ]);
     } else {
         $insertClient = $pdo->prepare("
             INSERT INTO clients (nom, email, telephone)
@@ -97,12 +164,21 @@ try {
         ]);
 
         $clientId = (int) $pdo->lastInsertId();
+
+        logDebug('CLIENT INSERTED', [
+            'client_id' => $clientId,
+            'nom' => $nom,
+            'email' => $email,
+            'telephone' => $telephone
+        ]);
     }
 
     // Calcul total
     $totalHt = 0.0;
 
-    foreach ($items as $item) {
+    foreach ($items as $index => $item) {
+        logDebug('ITEM LOOP #' . $index, $item);
+
         $prix = (float) ($item['prix'] ?? 0);
         $quantite = max(1, (int) ($item['quantite'] ?? 1));
         $totalHt += $prix * $quantite;
@@ -110,6 +186,12 @@ try {
 
     $totalTtc = $totalHt;
     $numeroDevis = generateQuoteNumber();
+
+    logDebug('DEVIS TOTALS', [
+        'total_ht' => $totalHt,
+        'total_ttc' => $totalTtc,
+        'numero_devis' => $numeroDevis
+    ]);
 
     // Insertion devis
     $insertDevis = $pdo->prepare("
@@ -126,6 +208,11 @@ try {
     ]);
 
     $devisId = (int) $pdo->lastInsertId();
+
+    logDebug('DEVIS INSERTED', [
+        'devis_id' => $devisId,
+        'numero_devis' => $numeroDevis
+    ]);
 
     // Insertion lignes devis
     $insertLine = $pdo->prepare("
@@ -147,18 +234,25 @@ try {
         )
     ");
 
-    foreach ($items as $item) {
+    foreach ($items as $index => $item) {
         $nomProduit = trim((string) ($item['nom'] ?? 'Produit sans nom'));
         $prixUnitaire = (float) ($item['prix'] ?? 0);
         $quantite = max(1, (int) ($item['quantite'] ?? 1));
         $totalLigne = $prixUnitaire * $quantite;
 
-        // Important :
-        // on utilise produit_id seulement si c'est un vrai id SQL
         $produitId = null;
         if (isset($item['produit_id']) && is_numeric($item['produit_id'])) {
             $produitId = (int) $item['produit_id'];
         }
+
+        logDebug('INSERT LIGNE #' . $index, [
+            'devis_id' => $devisId,
+            'produit_id' => $produitId,
+            'nom_produit' => $nomProduit,
+            'prix_unitaire' => $prixUnitaire,
+            'quantite' => $quantite,
+            'total_ligne' => $totalLigne
+        ]);
 
         $insertLine->bindValue(':devis_id', $devisId, PDO::PARAM_INT);
 
@@ -176,27 +270,31 @@ try {
     }
 
     $pdo->commit();
+    logDebug('DB', 'Transaction commit OK');
 
-    // TODO : envoyer un email de confirmation au client
     jsonResponse([
         'success' => true,
-        'message' => 'Votre demande de devis a été envoyée avec succès ! Nous vous contacterons bientôt.'
-    ]);
- /*    jsonResponse([
-        'success' => true,
-        'message' => 'Devis enregistré avec succès.',
+        'message' => 'Votre demande de devis a été envoyée avec succès ! Nous vous contacterons bientôt.',
         'devis_id' => $devisId,
-        'numero_devis' => $numeroDevis,
-        'pdf_url' => '/SITEECOFI/app/api/generate_quote_pdf.php?id=' . $devisId
-    ]); */
+        'numero_devis' => $numeroDevis
+    ]);
 
 } catch (Throwable $e) {
     if (isset($pdo) && $pdo instanceof PDO && $pdo->inTransaction()) {
         $pdo->rollBack();
+        logDebug('DB', 'Transaction rollback');
     }
+
+    logDebug('ERROR', [
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ]);
 
     jsonResponse([
         'success' => false,
-        'message' => 'Erreur serveur : ' . $e->getMessage()
+        'message' => 'Erreur serveur.',
+        'error' => $e->getMessage()
     ], 500);
 }
