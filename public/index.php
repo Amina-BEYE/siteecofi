@@ -666,6 +666,7 @@ $tel_mobile = "71 039 75 75";
                         <li><a href="#apropos"><i class="fas fa-info-circle"></i> À propos</a></li>
                         <li><a href="#services"><i class="fas fa-cogs"></i> Nos services</a></li>
                         <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                        <li><a href="/SITEECOFI/app/admin/Views/login.php"><i class="fas fa-user"></i> Espace personnel</a></li>
                     </ul>
                 </div>
 

@@ -172,7 +172,7 @@ $adminName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'Administrateu
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-clock"></i> Dernières commandes</h3>
-        <a href="/SITEECOFI/app/admin/admin.php?page=orders" class="btn">Voir toutes</a>
+        <a href="/SITEECOFI/app/admin/adminPage.php?page=orders" class="btn">Voir toutes</a>
     </div>
     <div class="table-container">
         <table>
@@ -207,7 +207,7 @@ $adminName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'Administrateu
                             <span class="badge <?= $badgeClass ?>"><?= ucfirst(str_replace('_', ' ', $statut)) ?></span>
                         </td>
                         <td>
-                            <a href="/SITEECOFI/app/admin/admin.php?page=orders&action=view&id=<?= $cmd['id'] ?>" class="btn-small">
+                            <a href="/SITEECOFI/app/admin/adminPage.php?page=orders&action=view&id=<?= $cmd['id'] ?>" class="btn-small">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </td>
@@ -226,7 +226,7 @@ $adminName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'Administrateu
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-exclamation-triangle"></i> Stock faible</h3>
-            <a href="/SITEECOFI/app/admin/admin.php?page=products" class="btn-small">Gérer</a>
+            <a href="/SITEECOFI/app/admin/adminPage.php?page=products" class="btn-small">Gérer</a>
         </div>
         <div class="table-container">
             <table>
@@ -257,7 +257,7 @@ $adminName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? 'Administrateu
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-user-plus"></i> Nouveaux clients</h3>
-            <a href="/SITEECOFI/app/admin/admin.php?page=clients" class="btn-small">Voir tous</a>
+            <a href="/SITEECOFI/app/admin/adminPage.php?page=clients" class="btn-small">Voir tous</a>
         </div>
         <div class="table-container">
             <table>

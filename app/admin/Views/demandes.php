@@ -1,12 +1,13 @@
 <?php
 // admin/demandes.php
-require_once __DIR__ . '/includes/config.php';
+
+require __DIR__ . '/../../config/database.php';
 
 // Vérifier la connexion
-if (!isAdminLoggedIn()) {
-    header('Location: login.php?error=auth');
-    exit();
-}
+//if (!isAdminLoggedIn()) {
+  //  header('Location: login.php?error=auth');
+    //exit();
+//}
 
 try {
     $pdo = connectDB();

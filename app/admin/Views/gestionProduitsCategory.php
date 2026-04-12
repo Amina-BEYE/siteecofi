@@ -188,9 +188,24 @@ $editProduct = $data['editProduct'];
     </div>
 
     <div class="container">
-        <?php if ($message !== ''): ?>
-            <div class="alert <?= $messageType === 'error' ? 'error' : 'success' ?>">
-                <?= htmlspecialchars($message) ?>
+      <?php if (!empty($message)): ?>
+            <div class="dialog-overlay" id="dialogOverlay">
+                <div class="dialog-box <?= $messageType === 'error' ? 'error' : 'success' ?>">
+                    
+                    <div class="dialog-icon">
+                        <i class="fas <?= $messageType === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle' ?>"></i>
+                    </div>
+
+                    <h3>
+                        <?= $messageType === 'error' ? 'Erreur' : 'Succès' ?>
+                    </h3>
+
+                    <p><?= htmlspecialchars($message) ?></p>
+
+                    <div class="dialog-actions">
+                        <button class="btn" onclick="closeDialog()">OK</button>
+                    </div>
+                </div>
             </div>
         <?php endif; ?>
 

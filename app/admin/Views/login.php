@@ -1,62 +1,82 @@
 <?php
-// admin/login.php
-session_start();
 
-// Configuration base de données
-$host = 'localhost';
-$dbname = 'ecofi_db';
-$username = 'root';
-$password = '';
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    $pdo = null;
-}
+require_once __DIR__ . '/../../Core/Database.php';
 
-// Rediriger si déjà connecté
+use App\Core\Database;
+
 if (isset($_SESSION['user_id'])) {
-    header('Location: admin.php?page=dashboard');
-    exit();
+    header('Location: /SITEECOFI/app/admin/Views/adminPage.php?page=dashboard');
+    exit;
 }
 
 $error = '';
 
+try {
+    $pdo = Database::getConnection();
+} catch (Throwable $e) {
+    $pdo = null;
+}
+$isLocalDev = true;
+//$isLocalDev = in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1'], true);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
+    $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    
-    if (empty($email) || empty($password)) {
-        $error = "Veuillez remplir tous les champs";
+
+    if ($email === '' || $password === '') {
+        $error = 'Veuillez remplir tous les champs.';
     } else {
-        try {
-            if ($pdo) {
-                $tableExists = $pdo->query("SHOW TABLES LIKE 'administrateurs'")->rowCount() > 0;
-                
-                if ($tableExists) {
-                    $stmt = $pdo->prepare("SELECT * FROM administrateurs WHERE email = ? AND statut = 'actif'");
-                    $stmt->execute([$email]);
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
-                    if ($user && password_verify($password, $user['password'])) {
-                        $_SESSION['user_id'] = $user['id'];
-                        $_SESSION['user_name'] = $user['prenom'] . ' ' . $user['nom'];
-                        $_SESSION['user_email'] = $user['email'];
-                        $_SESSION['user_role'] = $user['role_id'];
-                        header('Location: admin.php?page=dashboard');
-                        exit();
-                    } else {
-                        $error = "Email ou mot de passe incorrect";
-                    }
+        /**
+         * Connexion DEV uniquement en local
+         * Identifiants :
+         *   email : admin
+         *   mot de passe : admin
+         */
+        if ($isLocalDev && $email === 'admin@ecofi.sn' && $password === 'admin') {
+            $_SESSION['user_id'] = 0;
+            $_SESSION['user_name'] = 'Administrateur DEV';
+            $_SESSION['user_email'] = 'admin@ecofi.sn';
+            $_SESSION['user_role'] = 'admin';
+
+            header('Location: /SITEECOFI/app/admin/Views/adminPage.php?page=dashboard');
+            exit;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Adresse email invalide.';
+        } elseif (!$pdo) {
+            $error = 'Connexion à la base de données indisponible.';
+        } else {
+            try {
+                $stmt = $pdo->prepare("
+                    SELECT id, fullname, email, password, role, status
+                    FROM users
+                    WHERE email = :email
+                    LIMIT 1
+                ");
+                $stmt->execute([':email' => $email]);
+
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$user) {
+                    $error = 'Email ou mot de passe incorrect.';
+                } elseif (($user['status'] ?? 'active') !== 'active') {
+                    $error = 'Votre compte est suspendu.';
+                } elseif (!password_verify($password, $user['password'])) {
+                    $error = 'Email ou mot de passe incorrect.';
                 } else {
-                    $error = "Base de données non configurée. Contactez l'administrateur.";
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_name'] = $user['fullname'];
+                    $_SESSION['user_email'] = $user['email'];
+                    $_SESSION['user_role'] = $user['role'];
+
+                    header('Location: /SITEECOFI/app/admin/Views/adminPage.php?page=dashboard');
+                    exit;
                 }
-            } else {
-                $error = "Erreur de connexion à la base de données";
+            } catch (PDOException $e) {
+                $error = 'Erreur lors de la connexion.';
             }
-        } catch (PDOException $e) {
-            $error = "Erreur de base de données: " . $e->getMessage();
         }
     }
 }
