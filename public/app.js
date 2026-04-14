@@ -2,160 +2,157 @@
 // DONNÉES DES PRODUITS
 // =========================
 
-const   serviceData = {
-            briques: {
-                title: "Production de briques et pavés",
-                description: "Découvrez notre gamme complète de briques et pavés fabriqués avec les meilleurs matériaux.",
-                products: [
-                    { name: "Brique hourdis", desc: "Brique spéciale pour planchers", price: "490 FCFA/unité", img: "../app/IMG/brique-hourdis.jpg", oldPrice: "630 FCFA", rating: 4.5, reviews: 45 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "8.500 FCFA/m²", img: "../app/IMG/pave3.jpeg", oldPrice: "9.500 FCFA", rating: 4.5, reviews: 28 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "8.500 FCFA/m²", img: "../app/IMG/pave6.jpeg", rating: 4, reviews: 19 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.000 FCFA/m²", img: "../app/IMG/pave5.jpeg", oldPrice: "8.000 FCFA", rating: 4.5, reviews: 32 },
-                    { name: "Pavé drainant", desc: "Pavé perméable pour gestion des eaux de pluie", price: "7.000 FCFA/m²", img: "../app/IMG/pave4.jpeg", rating: 5, reviews: 41 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave1.jpeg", oldPrice: "8.500 FCFA", rating: 4.5, reviews: 37 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave7.jpeg", rating: 4, reviews: 23 },
-                    { name: "Brique creuse", desc: "Brique à alvéoles pour isolation thermique", price: "300-1.020 FCFA/unité", img: "../app/IMG/brique-creuse.jpg", oldPrice: "1.200 FCFA", rating: 4.5, reviews: 52 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave2.jpeg", rating: 4, reviews: 16 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave16.jpeg", oldPrice: "8.500 FCFA", rating: 4.5, reviews: 29 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave8.jpeg", rating: 4, reviews: 21 },
-                    { name: "Brique pleine", desc: "Brique décorative pour finitions", price: "670-1020 FCFA/m²", img: "../app/IMG/brique-pleine.jpg", oldPrice: "1.200 FCFA", rating: 4.5, reviews: 33 },
-                    { name: "Pavé hexagone", desc: "Pavé pour aménagement d'allées et terrasses", price: "8.500 FCFA/m²", img: "../app/IMG/pave-hexagone.jpg", rating: 5, reviews: 27 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.000 FCFA/m²", img: "../app/IMG/pave9.jpeg", oldPrice: "8.000 FCFA", rating: 4, reviews: 18 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave10.jpeg", rating: 4.5, reviews: 24 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave11.jpeg", rating: 4, reviews: 15 },
-                    { name: "Bordure", desc: "Bordure pour allées et jardins", price: "5.700 FCFA/unité", img: "../app/IMG/bordure.jpg", oldPrice: "6.500 FCFA", rating: 4.5, reviews: 31 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave12.jpeg", rating: 4, reviews: 22 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "8.500 FCFA/m²", img: "../app/IMG/pave13.jpeg", oldPrice: "9.500 FCFA", rating: 4.5, reviews: 26 },
-                    { name: "Pavé savon", desc: "Pavé au fini lisse, surface antidérapante", price: "8.500 FCFA/m²", img: "../app/IMG/pave-savon.jpg", rating: 5, reviews: 34 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave14.jpeg", oldPrice: "8.500 FCFA", rating: 4, reviews: 19 },
-                    { name: "Pavé", desc: "Pavé pour aménagement d'allées et terrasses", price: "7.500 FCFA/m²", img: "../app/IMG/pave15.jpeg", rating: 4.5, reviews: 23 },
-                    { name: "Pavé autobloquant", desc: "Pavé autobloquant pour allées", price: "6.550-7.600 FCFA/m²", img: "../app/IMG/paves-autobloquant.jpg", oldPrice: "8.500 FCFA", rating: 4.5, reviews: 42 },
-                    { name: "Aglos", desc: "Agglos pour construction", price: "360-630 FCFA", img: "../app/IMG/aglos.jpg", rating: 4, reviews: 37 }
-                ]
+const serviceData = {
+    briques: {
+        title: "Production de briques et pavés",
+        description: "...",
+        products: [
+            { id: 1, name: "Brique hourdis", desc: "...", price: "490 FCFA/unité", img: "../app/IMG/brique-hourdis.jpg", oldPrice: "630 FCFA", rating: 4.5, reviews: 45 },
+            { id: 2, name: "Pavé", desc: "...", price: "8.500 FCFA/m²", img: "../app/IMG/pave3.jpeg", oldPrice: "9.500 FCFA", rating: 4.5, reviews: 28 },
+            { id: 3, name: "Pavé", desc: "...", price: "8.500 FCFA/m²", img: "../app/IMG/pave6.jpeg", rating: 4, reviews: 19 },
+            { id: 4, name: "Pavé", desc: "...", price: "7.000 FCFA/m²", img: "../app/IMG/pave5.jpeg", oldPrice: "8.000 FCFA", rating: 4.5, reviews: 32 },
+            { id: 5, name: "Pavé drainant", desc: "...", price: "7.000 FCFA/m²", img: "../app/IMG/pave4.jpeg", rating: 5, reviews: 41 },
+            { id: 6, name: "Pavé", desc: "...", price: "7.500 FCFA/m²", img: "../app/IMG/pave1.jpeg", oldPrice: "8.500 FCFA", rating: 4.5, reviews: 37 },
+            { id: 7, name: "Pavé", desc: "...", price: "7.500 FCFA/m²", img: "../app/IMG/pave7.jpeg", rating: 4, reviews: 23 },
+            { id: 8, name: "Brique creuse", desc: "...", price: "300-1.020 FCFA/unité", img: "../app/IMG/brique-creuse.jpg", oldPrice: "1.200 FCFA", rating: 4.5, reviews: 52 },
+            { id: 9, name: "Pavé", desc: "...", price: "7.500 FCFA/m²", img: "../app/IMG/pave2.jpeg", rating: 4, reviews: 16 },
+            { id: 10, name: "Pavé", desc: "...", price: "7.500 FCFA/m²", img: "../app/IMG/pave16.jpeg", oldPrice: "8.500 FCFA", rating: 4.5, reviews: 29 }
+        ]
+    },
+
+    materiaux: {
+        title: "Matériaux de construction",
+        description: "Tous les matériaux essentiels pour vos chantiers",
+        products: [
+            { id: 101, name: "Ciment 42.5", desc: "Ciment haute résistance", price: "68.000 FCFA/sac", img: "../app/IMG/ciment.jpg", oldPrice: "70.000 FCFA", rating: 5, reviews: 67 },
+            { id: 102, name: "Sable de rivière", desc: "Sable lavé pour béton", price: "-----", img: "../app/IMG/sable.jpg", rating: 4, reviews: 23 },
+            { id: 103, name: "Gravier", desc: "Gravier pour béton", price: "Variable", img: "../app/IMG/gravier.jpg", rating: 4, reviews: 31 },
+            { id: 104, name: "Gravier", desc: "Gravier pour béton", price: "Variable", img: "../app/IMG/grapb.jpg", rating: 4.5, reviews: 28 },
+            { id: 105, name: "Gravier", desc: "Gravier pour béton", price: "Variable", img: "../app/IMG/grapn.jpeg", rating: 4, reviews: 19 },
+            { id: 106, name: "Gravier", desc: "Gravier pour béton", price: "Variable", img: "../app/IMG/grapn.jpeg", rating: 4, reviews: 22 },
+            { id: 107, name: "Gravier", desc: "Gravier pour béton", price: "Variable", img: "../app/IMG/grapn.jpeg", rating: 4.5, reviews: 25 },
+            { id: 108, name: "Fers à béton", desc: "Armature pour béton armé", price: "Variable", img: "../app/IMG/fer.jpg", rating: 4.5, reviews: 41 },
+            { id: 109, name: "Bois de charpente", desc: "Bois traité pour coffrages", price: "Prix sur demande", img: "../app/IMG/baton.jpg", rating: 4, reviews: 16 },
+            { id: 110, name: "Tôle galvanisée", desc: "Pour clôtures", price: "Variable", img: "../app/IMG/toit.jpg", rating: 4, reviews: 13 },
+            { id: 111, name: "Kit sécurité complet", desc: "Tenue complète chantier", price: "Variable", img: "../app/IMG/ma.jpg", rating: 4.5, reviews: 21 },
+            { id: 112, name: "Casque de protection", desc: "Normes internationales", price: "Variable", img: "../app/IMG/casque.jpg", rating: 5, reviews: 34 },
+            { id: 113, name: "Chaussures de sécurité", desc: "Semelle anti-perforation", price: "Variable", img: "../app/IMG/chaussures.jpg", rating: 4.5, reviews: 27 },
+            { id: 114, name: "Gants professionnels", desc: "Protection mains", price: "----", img: "../app/IMG/gants.jpg", rating: 4, reviews: 42 },
+            { id: 115, name: "Gilet haute visibilité", desc: "Fluorescent", price: "----", img: "../app/IMG/gilet.jpg", rating: 4.5, reviews: 19 },
+            { id: 116, name: "Kit gilet complet", desc: "Kit complet sécurité", price: "----", img: "../app/IMG/kit.jpg", rating: 5, reviews: 23 }
+        ]
+    },
+
+    decoration: {
+        title: "Décoration & Aménagement",
+        description: "Nos transformations en vidéo + services sur mesure",
+        products: [
+            {
+                id: 201,
+                name: "Conception 3D",
+                desc: "Visualisez votre projet avant réalisation",
+                price: "----",
+                media: {
+                    type: "video",
+                    src: "../app/IMG/video2.mp4",
+                    thumbnail: "../app/IMG/plan-3d-batiment-09.png"
+                }
             },
-            materiaux: {
-                title: "Matériaux de construction",
-                description: "Tous les matériaux essentiels pour vos chantiers",
-                products: [
-                    { name: "Ciment 42.5", desc: "Ciment haute résistance", price: "68.000 FCFA/sac", img: "../app/IMG/ciment.jpg", oldPrice: "70.000 FCFA", rating: 5, reviews: 67 },
-                    { name: "Sable de rivière", desc: "Sable lavé pour béton", price: "-----", img: "../app/IMG/sable.jpg", rating: 4, reviews: 23 },
-                    { name: "Gravier", desc: "Gravier pour béton", price: " Variable ", img: "../app/IMG/gravier.jpg", rating: 4, reviews: 31 },
-                    { name: "Gravier", desc: "Gravier pour béton", price: " Variable ", img: "../app/IMG/grapb.jpg", rating: 4.5, reviews: 28 },
-                    { name: "Gravier", desc: "Gravier pour béton", price: " Variable ", img: "../app/IMG/grapn.jpeg", rating: 4, reviews: 19 },
-                    { name: "Gravier", desc: "Gravier pour béton", price: " Variable ", img: "../app/IMG/grapn.jpeg", rating: 4, reviews: 22 },
-                    { name: "Gravier", desc: "Gravier pour béton", price: " Variable ", img: "../app/IMG/grapn.jpeg", rating: 4.5, reviews: 25 },
-                    { name: "Fers à béton", desc: "Armature pour béton armé", price: " Variable ", img: "../app/IMG/fer.jpg", rating: 4.5, reviews: 41 },
-                    { name: "Bois de charpente", desc: "Bois traité pour coffrages", price: "Prix sur demande", img: "../app/IMG/baton.jpg", rating: 4, reviews: 16 },
-                    { name: "Tôle galvanisée", desc: "Pour clôtures", price: "Variable", img: "../app/IMG/toit.jpg", rating: 4, reviews: 13 },
-                    { name: "Kit sécurité complet", desc: "Tenue complète chantier", price: "Variable", img: "../app/IMG/ma.jpg", rating: 4.5, reviews: 21 },
-                    { name: "Casque de protection", desc: "Normes internationales", price: " Variable ", img: "../app/IMG/casque.jpg", rating: 5, reviews: 34 },
-                    { name: "Chaussures de sécurité", desc: "Semelle anti-perforation", price: " Variable ", img: "../app/IMG/chaussures.jpg", rating: 4.5, reviews: 27 },
-                    { name: "Gants professionnels", desc: "Protection mains", price: "----", img: "../app/IMG/gants.jpg", rating: 4, reviews: 42 },
-                    { name: "Gilet haute visibilité", desc: "Fluorescent", price: "----", img: "../app/IMG/gilet.jpg", rating: 4.5, reviews: 19 },
-                    { name: "Kit gilet complet", desc: "Kit complet sécurité", price: "----", img: "../app/IMG/kit.jpg", rating: 5, reviews: 23 }
-                ]
+            {
+                id: 202,
+                name: "Decoration Chambre",
+                desc: "Visualisez votre projet avant réalisation",
+                price: "----",
+                media: {
+                    type: "video",
+                    src: "../app/IMG/decochambre.mp4",
+                    thumbnail: "../app/IMG/chambre.jpg"
+                }
             },
-            decoration: {
-                title: "Décoration & Aménagement",
-                description: "Nos transformations en vidéo + services sur mesure",
-                products: [
-                    {
-                        name: "Conception 3D",
-                        desc: "Visualisez votre projet avant réalisation",
-                        price: "----",
-                        media: {
-                            type: "video",
-                            src: "../app/IMG/video2.mp4",
-                            thumbnail: "../app/IMG/plan-3d-batiment-09.png"
-                        }
-                    },
-                    {
-                        name: "Decoration Chambre",
-                        desc: "Visualisez votre projet avant réalisation",
-                        price: "----",
-                        media: {
-                            type: "video",
-                            src: "../app/IMG/decochambre.mp4",
-                            thumbnail: "../app/IMG/chambre.jpg"
-                        }
-                    },
-                    {
-                        name: "Salon Moderne",
-                        desc: "Transformation complète d'un salon",
-                        price: "----",
-                        media: {
-                            type: "video",
-                            src: "../app/IMG/decosalon.mp4",
-                            thumbnail: "../app/IMG/salon.jpeg"
-                        }
-                    },
-                    {
-                        name: "Cuisine Design",
-                        desc: "Aménagement de cuisine sur mesure",
-                        price: "----",
-                        media: {
-                            type: "video",
-                            src: "../app/IMG/decocuisine.mp4",
-                            thumbnail: "../app/IMG/cuisine.jpg"
-                        }
-                    },
-                    {
-                        name: "Aménagement Extérieur",
-                        desc: "Espace extérieur complet",
-                        price: "----",
-                        media: {
-                            type: "video",
-                            src: "../app/IMG/decoxterieur.mp4",
-                            thumbnail: "../app/IMG/decoex.jfif"
-                        }
-                    },
-                    {
-                        name: "Aménagement Intérieur",
-                        desc: "Espace interieur complet",
-                        price: "----",
-                        media: {
-                            type: "video",
-                            src: "../app/IMG/decointer.mp4",
-                            thumbnail: "../app/IMG/decointerieur.jpg"
-                        }
-                    }
-                ]
+            {
+                id: 203,
+                name: "Salon Moderne",
+                desc: "Transformation complète d'un salon",
+                price: "----",
+                media: {
+                    type: "video",
+                    src: "../app/IMG/decosalon.mp4",
+                    thumbnail: "../app/IMG/salon.jpeg"
+                }
             },
-            conseil: {
-                title: "Conseil immobilier",
-                description: "Expertise pour vos transactions immobilières",
-                products: [
-                    { name: "Évaluation de propriété", desc: "Estimation précise de votre bien", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa", rating: 4.5, reviews: 22 },
-                    { name: "Accompagnement à l'achat", desc: "Assistance complète pour achat", img: "https://images.unsplash.com/photo-1581094794329-c8112a89af12", rating: 5, reviews: 18 },
-                    { name: "Accompagnement à la vente", desc: "Gestion complète de la vente", img: "https://images.unsplash.com/photo-1541140532154-b024d705b90a", rating: 4.5, reviews: 15 },
-                    { name: "Étude de faisabilité", desc: "Analyse technique et financière", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd", rating: 5, reviews: 13 }
-                ]
+            {
+                id: 204,
+                name: "Cuisine Design",
+                desc: "Aménagement de cuisine sur mesure",
+                price: "----",
+                media: {
+                    type: "video",
+                    src: "../app/IMG/decocuisine.mp4",
+                    thumbnail: "../app/IMG/cuisine.jpg"
+                }
             },
-            plans: {
-                title: "Plans de Construction",
-                description: "Plans architecturaux prêts à l'emploi",
-                products: [
-                    { name: "Plan R+1", desc: "RDC + étage, 3 chambres", price: "----", img: "../app/IMG/R+1.jpg.jpeg", rating: 4.5, reviews: 31 },
-                    { name: "Plan R+2", desc: "RDC + 2 étages, garage", price: "----", img: "../app/IMG/R+2.jpg.jpeg", rating: 5, reviews: 27 },
-                    { name: "Plan RDC", desc: "Maison plain-pied", price: "----", img: "../app/IMG/RDC.jpg.jpeg", rating: 4, reviews: 43 },
-                    { name: "Plan 3D Rendu", desc: "Visualisation 3D réaliste", price: "----", img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811", rating: 4.5, reviews: 19 },
-                    { name: "Plan 3D Aménagé", desc: "3D avec décoration intérieure", price: "----", img: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c", rating: 5, reviews: 16 },
-                    { name: "Pack Complet R+2+3D", desc: "Plans + visualisation 3D", price: "----", img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2", rating: 4.5, reviews: 22 }
-                ]
+            {
+                id: 205,
+                name: "Aménagement Extérieur",
+                desc: "Espace extérieur complet",
+                price: "----",
+                media: {
+                    type: "video",
+                    src: "../app/IMG/decoxterieur.mp4",
+                    thumbnail: "../app/IMG/decoex.jfif"
+                }
             },
-            location: {
-                title: "Location matériel topographique",
-                description: "Équipements de précision pour vos travaux",
-                products: [
-                    { name: "Récepteur GNSS", desc: "Haute précision pour mesures", price: "----", img: "../app/IMG/gnss.jpg", rating: 5, reviews: 14 },
-                    { name: "Niveau", desc: "Pour alignements précis", price: "----", img: "../app/IMG/niveau.jpg", rating: 4, reviews: 21 },
-                    { name: "Station totale", desc: "Mesure angulaire de précision", price: "----", img: "../app/IMG/station.jpg", rating: 4.5, reviews: 9 },
-                    { name: "GPS de poche", desc: "Pour repérage sur terrain", price: "----", img: "../app/IMG/gps.jpg", rating: 4, reviews: 17 },
-                    { name: "Drone topographique", desc: "Levés aériens et modélisation", price: "----", img: "../app/IMG/drone.jpg", rating: 5, reviews: 8 },
-                    { name: "Décamètre mécanique", desc: "Roulette pour longues distances", price: "----", img: "../app/IMG/deac.jpg", rating: 4, reviews: 25 }
-                ]
+            {
+                id: 206,
+                name: "Aménagement Intérieur",
+                desc: "Espace interieur complet",
+                price: "----",
+                media: {
+                    type: "video",
+                    src: "../app/IMG/decointer.mp4",
+                    thumbnail: "../app/IMG/decointerieur.jpg"
+                }
             }
-        };
+        ]
+    },
+
+    conseil: {
+        title: "Conseil immobilier",
+        description: "Expertise pour vos transactions immobilières",
+        products: [
+            { id: 301, name: "Évaluation de propriété", desc: "Estimation précise de votre bien", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa", rating: 4.5, reviews: 22 },
+            { id: 302, name: "Accompagnement à l'achat", desc: "Assistance complète pour achat", img: "https://images.unsplash.com/photo-1581094794329-c8112a89af12", rating: 5, reviews: 18 },
+            { id: 303, name: "Accompagnement à la vente", desc: "Gestion complète de la vente", img: "https://images.unsplash.com/photo-1541140532154-b024d705b90a", rating: 4.5, reviews: 15 },
+            { id: 304, name: "Étude de faisabilité", desc: "Analyse technique et financière", img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd", rating: 5, reviews: 13 }
+        ]
+    },
+
+    plans: {
+        title: "Plans de Construction",
+        description: "Plans architecturaux prêts à l'emploi",
+        products: [
+            { id: 401, name: "Plan R+1", desc: "RDC + étage, 3 chambres", price: "----", img: "../app/IMG/R+1.jpg.jpeg", rating: 4.5, reviews: 31 },
+            { id: 402, name: "Plan R+2", desc: "RDC + 2 étages, garage", price: "----", img: "../app/IMG/R+2.jpg.jpeg", rating: 5, reviews: 27 },
+            { id: 403, name: "Plan RDC", desc: "Maison plain-pied", price: "----", img: "../app/IMG/RDC.jpg.jpeg", rating: 4, reviews: 43 },
+            { id: 404, name: "Plan 3D Rendu", desc: "Visualisation 3D réaliste", price: "----", img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811", rating: 4.5, reviews: 19 },
+            { id: 405, name: "Plan 3D Aménagé", desc: "3D avec décoration intérieure", price: "----", img: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c", rating: 5, reviews: 16 },
+            { id: 406, name: "Pack Complet R+2+3D", desc: "Plans + visualisation 3D", price: "----", img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2", rating: 4.5, reviews: 22 }
+        ]
+    },
+
+    location: {
+        title: "Location matériel topographique",
+        description: "Équipements de précision pour vos travaux",
+        products: [
+            { id: 501, name: "Récepteur GNSS", desc: "Haute précision pour mesures", price: "----", img: "../app/IMG/gnss.jpg", rating: 5, reviews: 14 },
+            { id: 502, name: "Niveau", desc: "Pour alignements précis", price: "----", img: "../app/IMG/niveau.jpg", rating: 4, reviews: 21 },
+            { id: 503, name: "Station totale", desc: "Mesure angulaire de précision", price: "----", img: "../app/IMG/station.jpg", rating: 4.5, reviews: 9 },
+            { id: 504, name: "GPS de poche", desc: "Pour repérage sur terrain", price: "----", img: "../app/IMG/gps.jpg", rating: 4, reviews: 17 },
+            { id: 505, name: "Drone topographique", desc: "Levés aériens et modélisation", price: "----", img: "../app/IMG/drone.jpg", rating: 5, reviews: 8 },
+            { id: 506, name: "Décamètre mécanique", desc: "Roulette pour longues distances", price: "----", img: "../app/IMG/deac.jpg", rating: 4, reviews: 25 }
+        ]
+    }
+};
 
 const promoCodes = [
     { code: "ECOFI10", reduction: 10, desc: "-10% sur tout le site" },
@@ -304,10 +301,6 @@ function appliquerCode(code, reduction) {
 // PANIER
 // =========================
 function toggleCart(event) {
-    //event.stopPropagation();
-    //const cartDropdown = document.getElementById('cartDropdown');
-    //cartDropdown.style.display = cartDropdown.style.display === 'block' ? 'none' : 'block';
-
     event.stopPropagation();
     const cart = document.getElementById("cartDropdown");
 
@@ -319,13 +312,14 @@ function toggleCart(event) {
 }
 
 function ajouterAuPanier(produit) {
-    const existant = panier.find(item => item.nom === produit.name);
+    const existant = panier.find(item => item.produitId === (produit.id ?? null) && item.nom === produit.name);
 
     if (existant) {
         existant.quantite++;
     } else {
         panier.push({
-            id: Date.now() + Math.random(),
+            cartId: Date.now().toString() + Math.random().toString(16).slice(2),
+            produitId: Number.isInteger(produit.id) ? produit.id : null,
             nom: produit.name,
             prix: extrairePrix(produit.price),
             ancienPrix: produit.oldPrice ? extrairePrix(produit.oldPrice) : null,
@@ -340,7 +334,18 @@ function ajouterAuPanier(produit) {
 
 function extrairePrix(price) {
     if (!price) return 0;
-    const chiffres = price.replace(/[^0-9]/g, '');
+
+    const cleaned = String(price).trim();
+
+    if (
+        cleaned === '----' ||
+        cleaned.toLowerCase() === 'variable' ||
+        cleaned.toLowerCase() === 'prix sur demande'
+    ) {
+        return 0;
+    }
+
+    const chiffres = cleaned.replace(/[^0-9]/g, '');
     return chiffres ? parseFloat(chiffres) : 0;
 }
 
@@ -382,11 +387,11 @@ function mettreAJourPanier() {
                 <div class="cart-item-price">${(item.prix * item.quantite).toFixed(0)} FCFA</div>
                 <div class="cart-item-actions">
                     <div class="cart-item-quantity">
-                        <button class="qty-btn" onclick="changerQuantite('${item.id}', -1)">-</button>
+                        <button class="qty-btn" onclick="changerQuantite('${item.cartId}', -1)">-</button>
                         <span>${item.quantite}</span>
-                        <button class="qty-btn" onclick="changerQuantite('${item.id}', 1)">+</button>
+                        <button class="qty-btn" onclick="changerQuantite('${item.cartId}', 1)">+</button>
                     </div>
-                    <span class="remove-item" onclick="retirerDuPanier('${item.id}')">
+                    <span class="remove-item" onclick="retirerDuPanier('${item.cartId}')">
                         <i class="fas fa-trash"></i>
                     </span>
                 </div>
@@ -395,21 +400,21 @@ function mettreAJourPanier() {
     `).join('');
 }
 
-function changerQuantite(id, changement) {
-    const item = panier.find(i => i.id == id);
+function changerQuantite(cartId, changement) {
+    const item = panier.find(i => i.cartId === cartId);
     if (!item) return;
 
     item.quantite += changement;
 
     if (item.quantite <= 0) {
-        retirerDuPanier(id);
+        retirerDuPanier(cartId);
     } else {
         mettreAJourPanier();
     }
 }
 
-function retirerDuPanier(id) {
-    panier = panier.filter(item => item.id != id);
+function retirerDuPanier(cartId) {
+    panier = panier.filter(item => item.cartId !== cartId);
     if (panier.length === 0) currentPromoCode = null;
     mettreAJourPanier();
     afficherNotification('Produit retiré du panier');
@@ -451,12 +456,16 @@ function openProductsModal(expertise) {
                         <h4>${product.name}</h4>
                         <p>${product.desc || ''}</p>
                         <div class="product-price-modern">${product.price || 'Prix sur demande'}</div>
-                        <button class="buy-btn-modern" onclick='ajouterAuPanier(${JSON.stringify({
-                            name: product.name,
-                            price: product.price || '0 FCFA',
-                            oldPrice: product.oldPrice || null,
-                            img: product.img || ''
-                        })})'>
+                        <button
+                            class="buy-btn-modern"
+                            onclick='ajouterAuPanier(${JSON.stringify({
+                                id: product.id ?? null,
+                                name: product.name,
+                                price: product.price || '0 FCFA',
+                                oldPrice: product.oldPrice || null,
+                                img: product.img || ''
+                            })})'
+                        >
                             <i class="fas fa-cart-plus"></i> Ajouter au panier
                         </button>
                     </div>
@@ -642,11 +651,9 @@ async function submitQuote(event) {
     event.preventDefault();
 
     if (!panier || panier.length === 0) {
-        afficherNotification('Votre panier est vide.');
+        afficherNotification('Votre panier est vide.', 'warning');
         return;
     }
-
-   
 
     const nom = document.getElementById('quoteName').value.trim();
     const email = document.getElementById('quoteEmail').value.trim();
@@ -654,7 +661,7 @@ async function submitQuote(event) {
     const message = document.getElementById('quoteMessage').value.trim();
 
     if (!nom || !email || !telephone) {
-        afficherNotification('Veuillez remplir les champs obligatoires.');
+        afficherNotification('Veuillez remplir les champs obligatoires.', 'warning');
         return;
     }
 
@@ -664,40 +671,57 @@ async function submitQuote(event) {
         telephone,
         message,
         items: panier.map(item => ({
-            id: item.id ?? null,
+            id: Number.isInteger(item.produitId) ? item.produitId : null,
             nom: item.nom,
             prix: Number(item.prix || 0),
             quantite: Number(item.quantite || 1)
         }))
     };
 
+    console.log('PAYLOAD ENVOYÉ =', payload);
+
+    showQuoteLoader('Envoi du devis par email en cours...');
+
     try {
         const response = await fetch('/SITEECOFI/app/api/submit_quote.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
 
         const text = await response.text();
-
         console.log('RAW RESPONSE:', text);
 
-        const result = JSON.parse(text); // parse manuel
+        if (!text.trim()) {
+            throw new Error('Réponse vide du serveur.');
+        }
 
+        const result = JSON.parse(text);
         console.log('JSON OK:', result);
 
         if (!response.ok || !result.success) {
             throw new Error(result.message || 'Erreur lors de l’envoi du devis.');
         }
 
-        afficherNotification('Votre demande de devis a bien été envoyée.');
+        hideQuoteLoader();
+
+        showQuoteStatusMessage(
+            'Votre devis a bien été envoyé par mail. Merci de vérifier votre boîte de réception.',
+            'success'
+        );
+
+        afficherNotification('Votre devis a bien été envoyé par mail.', 'success');
 
         panier.length = 0;
         mettreAJourPanier();
 
-        document.getElementById('quoteForm').reset();
+        const quoteForm = document.getElementById('quoteForm');
+        if (quoteForm) {
+            quoteForm.reset();
+        }
+
         closeQuoteModal();
 
         if (result.pdf_url) {
@@ -705,13 +729,57 @@ async function submitQuote(event) {
         }
 
     } catch (error) {
-        afficherNotification(error.message);
+        console.error(error);
+        hideQuoteLoader();
+
+        showQuoteStatusMessage(
+            error.message || 'Une erreur est survenue lors de l’envoi du devis.',
+            'error'
+        );
+
+        afficherNotification(
+            error.message || 'Une erreur est survenue lors de l’envoi du devis.',
+            'error'
+        );
     }
 }
 
-document.getElementById('quoteForm').addEventListener('submit', submitQuote);
+function showQuoteLoader(text = 'Envoi du devis en cours...') {
+    const loader = document.getElementById('quoteLoader');
+    const loaderText = document.getElementById('quoteLoaderText');
 
-document.getElementById('quoteModal').addEventListener('click', function (e) {
+    if (loaderText) {
+        loaderText.textContent = text;
+    }
+
+    if (loader) {
+        loader.style.display = 'flex';
+    }
+}
+
+function hideQuoteLoader() {
+    const loader = document.getElementById('quoteLoader');
+    if (loader) {
+        loader.style.display = 'none';
+    }
+}
+
+function showQuoteStatusMessage(message, type = 'success') {
+    const box = document.getElementById('quoteStatusMessage');
+    if (!box) return;
+
+    box.className = `quote-status-message ${type}`;
+    box.textContent = message;
+    box.style.display = 'block';
+
+    setTimeout(() => {
+        box.style.display = 'none';
+    }, 5000);
+}
+
+document.getElementById('quoteForm')?.addEventListener('submit', submitQuote);
+
+document.getElementById('quoteModal')?.addEventListener('click', function (e) {
     if (e.target === this) {
         closeQuoteModal();
     }

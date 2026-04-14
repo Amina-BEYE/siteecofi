@@ -2,77 +2,398 @@
 
 declare(strict_types=1);
 
-ob_start();
-
-header('Content-Type: application/json; charset=utf-8');
+header('Content-Type: application/json; charset=UTF-8');
 
 require_once __DIR__ . '/../Core/Database.php';
 
+// Charge PHPMailer si tu l'as installé manuellement.
+// Ajuste ces chemins si besoin.
+require_once __DIR__ . '/../lib/PHPMailer/src/Exception.php';
+require_once __DIR__ . '/../lib/PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/../lib/PHPMailer/src/SMTP.php';
+
 use App\Core\Database;
-use PDO;
-use Throwable;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as MailerException;
 
-function logDebug(string $message, $data = null): void
+/**
+ * Lit le JSON envoyé par fetch(...)
+ */
+function getJsonInput(): array
 {
-    $logFile = __DIR__ . '/debug.log';
+    $raw = file_get_contents('php://input');
+    $data = json_decode($raw, true);
 
-    $entry = '[' . date('Y-m-d H:i:s') . '] ' . $message;
+    if (!is_array($data)) {
+        throw new RuntimeException('JSON invalide ou vide.');
+    }
 
-    if ($data !== null) {
-        if (is_array($data) || is_object($data)) {
-            $entry .= ' | ' . print_r($data, true);
-        } else {
-            $entry .= ' | ' . $data;
+    return $data;
+}
+
+/**
+ * Génère un numéro de devis simple.
+ */
+function generateNumeroDevis(): string
+{
+    return 'DEV-' . date('Ymd-His');
+}
+
+/**
+ * Crée ou met à jour un client par email.
+ */
+function findOrCreateClient(PDO $pdo, string $nom, string $email, string $telephone): int
+{
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM clients
+        WHERE email = :email
+        LIMIT 1
+    ");
+    $stmt->execute([':email' => $email]);
+    $existingId = $stmt->fetchColumn();
+
+    if ($existingId) {
+        $update = $pdo->prepare("
+            UPDATE clients
+            SET nom = :nom,
+                telephone = :telephone
+            WHERE id = :id
+        ");
+        $update->execute([
+            ':nom' => $nom,
+            ':telephone' => $telephone,
+            ':id' => (int) $existingId,
+        ]);
+
+        return (int) $existingId;
+    }
+
+    $insert = $pdo->prepare("
+        INSERT INTO clients (nom, email, telephone, created_at)
+        VALUES (:nom, :email, :telephone, NOW())
+    ");
+    $insert->execute([
+        ':nom' => $nom,
+        ':email' => $email,
+        ':telephone' => $telephone,
+    ]);
+
+    return (int) $pdo->lastInsertId();
+}
+
+/**
+ * Crée l'entête du devis.
+ */
+function createDevis(PDO $pdo, int $clientId, string $numeroDevis, string $message, array $items): int
+{
+    $totalHt = 0.0;
+
+    foreach ($items as $item) {
+        $prix = (float) ($item['prix'] ?? 0);
+        $quantite = (float) ($item['quantite'] ?? 1);
+        $totalHt += $prix * $quantite;
+    }
+
+    $tva = 0.0;
+    $totalTtc = $totalHt + $tva;
+
+    $stmt = $pdo->prepare("
+        INSERT INTO devis (
+            client_id,
+            numero_devis,
+            total_ht,
+            total_ttc,
+            notes,
+            statut,
+            created_at
+        ) VALUES (
+            :client_id,
+            :numero_devis,
+            :total_ht,
+            :total_ttc,
+            :notes,
+            :statut,
+            NOW()
+        )
+    ");
+
+    $stmt->execute([
+        ':client_id' => $clientId,
+        ':numero_devis' => $numeroDevis,
+        ':total_ht' => $totalHt,
+        ':total_ttc' => $totalTtc,
+        ':notes' => $message,
+        ':statut' => 'en_attente',
+    ]);
+
+    return (int) $pdo->lastInsertId();
+}
+
+/**
+ * Valide l'id produit.
+ * Retourne null si la valeur n'est pas un entier positif acceptable.
+ */
+function sanitizeProduitId(mixed $value): ?int
+{
+    if ($value === null || $value === '' || $value === false) {
+        return null;
+    }
+
+    if (is_string($value)) {
+        $value = trim($value);
+        if ($value === '') {
+            return null;
         }
     }
 
-    file_put_contents($logFile, $entry . PHP_EOL, FILE_APPEND);
-}
-
-function jsonResponse(array $data, int $status = 200): void
-{
-    http_response_code($status);
-
-    if (ob_get_length()) {
-        ob_clean();
+    if (!is_numeric($value)) {
+        return null;
     }
 
-    echo json_encode($data, JSON_UNESCAPED_UNICODE);
-    exit;
+    // On convertit d'abord en string pour contrôler proprement.
+    $stringValue = (string) $value;
+
+    // Pas de décimaux, pas de notation scientifique, pas de valeurs bizarres.
+    if (!preg_match('/^\d+$/', $stringValue)) {
+        return null;
+    }
+
+    $intValue = (int) $stringValue;
+
+    if ($intValue <= 0) {
+        return null;
+    }
+
+    return $intValue;
 }
 
-function generateQuoteNumber(): string
+/**
+ * Crée les lignes du devis.
+ * Si produit_id n'est pas valide, on enregistre NULL.
+ */
+function insertDevisLignes(PDO $pdo, int $devisId, array $items): void
 {
-    return 'DEV-' . date('Ymd-His') . '-' . random_int(1000, 9999);
+    $stmt = $pdo->prepare("
+        INSERT INTO devis_lignes (
+            devis_id,
+            produit_id,
+            nom_produit,
+            quantite,
+            prix_unitaire,
+            total_ligne,
+            created_at
+        ) VALUES (
+            :devis_id,
+            :produit_id,
+            :nom_produit,
+            :quantite,
+            :prix_unitaire,
+            :total_ligne,
+            NOW()
+        )
+    ");
+
+    foreach ($items as $item) {
+        //$produitId = sanitizeProduitId($item['id'] ?? null);
+        $produitId = null;
+        $nomProduit = trim((string) ($item['nom'] ?? 'Article'));
+        $quantite = max(1, (int) ($item['quantite'] ?? 1));
+        $prixUnitaire = max(0, (float) ($item['prix'] ?? 0));
+        $totalLigne = $quantite * $prixUnitaire;
+
+        $stmt->execute([
+            ':devis_id' => $devisId,
+            ':produit_id' => $produitId,
+            ':nom_produit' => $nomProduit,
+            ':quantite' => $quantite,
+            ':prix_unitaire' => $prixUnitaire,
+            ':total_ligne' => $totalLigne,
+        ]);
+    }
+}
+
+/**
+ * Récupère le PDF généré.
+ */
+function fetchDevisPdfContent(int $devisId): string
+{
+    $baseUrl = rtrim($_ENV['APP_URL'] ?? 'http://localhost:8888', '/');
+    $url = $baseUrl . '/SITEECOFI/app/api/generate_quote_pdf.php?id=' . $devisId;
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_FAILONERROR    => false,
+    ]);
+
+    $content = curl_exec($ch);
+    $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr = curl_error($ch);
+    curl_close($ch);
+
+    if ($content === false || $httpCode !== 200) {
+        throw new RuntimeException(
+            "PDF inaccessible pour le devis #$devisId — HTTP $httpCode — $curlErr"
+        );
+    }
+
+    return $content;
+}
+
+/**
+ * Charge les infos devis/client pour l'email.
+ */
+function fetchDevisForMail(PDO $pdo, int $devisId): array
+{
+    $stmt = $pdo->prepare("
+        SELECT
+            d.id,
+            d.numero_devis,
+            d.total_ttc,
+            d.notes,
+            c.nom AS client_nom,
+            c.email AS client_email
+        FROM devis d
+        INNER JOIN clients c ON c.id = d.client_id
+        WHERE d.id = :id
+        LIMIT 1
+    ");
+    $stmt->execute([':id' => $devisId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        throw new RuntimeException("Devis introuvable en base : id=$devisId");
+    }
+
+    if (
+        empty($row['client_email']) ||
+        !filter_var($row['client_email'], FILTER_VALIDATE_EMAIL)
+    ) {
+        throw new RuntimeException(
+            "Email client invalide pour le devis #$devisId : {$row['client_email']}"
+        );
+    }
+
+    return $row;
+}
+
+/**
+ * Construit l'instance mailer.
+ */
+function buildMailer(): PHPMailer
+{
+    $mail = new PHPMailer(true);
+
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+
+    $mail->Username = 'fallrago@gmail.com'; // TON EMAIL
+    $mail->Password = 'pkht vzuz txtb hasb'; // 🔥 mot de passe application
+
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+    $mail->CharSet = 'UTF-8';
+
+    return $mail;
+}
+
+
+
+/**
+ * Corps HTML de l'email.
+ */
+function buildEmailHtml(string $clientNom, string $numeroDevis, float $totalTtc): string
+{
+    $nom    = htmlspecialchars($clientNom, ENT_QUOTES, 'UTF-8');
+    $numero = htmlspecialchars($numeroDevis, ENT_QUOTES, 'UTF-8');
+    $total  = number_format($totalTtc, 0, ',', ' ') . ' FCFA';
+
+    return <<<HTML
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 0; }
+    .wrapper { max-width: 580px; margin: 32px auto; background: #ffffff; border-radius: 8px; overflow: hidden; }
+    .header { background: #1a3a6b; padding: 28px 32px; }
+    .header h1 { color: #ffffff; font-size: 22px; margin: 0; }
+    .header p { color: rgba(255,255,255,0.65); font-size: 12px; margin: 4px 0 0; }
+    .body { padding: 32px; color: #374151; font-size: 14px; line-height: 1.7; }
+    .highlight { background: #f0f4ff; border-left: 4px solid #1a3a6b; padding: 14px 18px; border-radius: 4px; margin: 20px 0; }
+    .footer { background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 18px 32px; font-size: 11px; color: #9ca3af; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <h1>ECOFI</h1>
+      <p>Solutions financières &amp; industrielles</p>
+    </div>
+    <div class="body">
+      <p>Bonjour <strong>{$nom}</strong>,</p>
+      <p>Veuillez trouver ci-joint votre devis.</p>
+      <div class="highlight">
+        <strong>Devis N° {$numero}</strong><br>
+        Montant total TTC : <strong>{$total}</strong>
+      </div>
+      <p>Cordialement,<br><strong>L'équipe ECOFI</strong></p>
+    </div>
+    <div class="footer">
+      ECOFI SARL
+    </div>
+  </div>
+</body>
+</html>
+HTML;
+}
+
+/**
+ * Envoie le devis par email.
+ */
+function sendQuoteEmail(int $devisId): void
+{
+    $pdo = Database::getConnection();
+    $devis = fetchDevisForMail($pdo, $devisId);
+    $pdf = fetchDevisPdfContent($devisId);
+
+    $senderEmail = $_ENV['SMTP_USER'] ?? 'service.ecofi01@gmail.com';
+    $senderName  = $_ENV['MAIL_FROM_NAME'] ?? 'ECOFI';
+
+    $mail = buildMailer();
+    $mail->setFrom($senderEmail, $senderName);
+    $mail->addAddress($devis['client_email'], $devis['client_nom']);
+
+    $mail->isHTML(true);
+    $mail->Subject = 'Votre devis ' . $devis['numero_devis'] . ' — ECOFI';
+    $mail->Body = buildEmailHtml(
+        $devis['client_nom'],
+        $devis['numero_devis'],
+        (float) $devis['total_ttc']
+    );
+
+    $mail->AltBody = sprintf(
+        "Bonjour %s,\n\nVeuillez trouver ci-joint votre devis %s.\n\nCordialement,\nECOFI",
+        $devis['client_nom'],
+        $devis['numero_devis']
+    );
+
+    $mail->addStringAttachment(
+        $pdf,
+        'devis-' . $devis['numero_devis'] . '.pdf',
+        'base64',
+        'application/pdf'
+    );
+
+    $mail->send();
 }
 
 try {
-    $rawInput = file_get_contents('php://input');
-    logDebug('RAW INPUT', $rawInput);
-
-    $input = json_decode($rawInput, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        logDebug('JSON ERROR', json_last_error_msg());
-
-        jsonResponse([
-            'success' => false,
-            'message' => 'JSON invalide.',
-            'error' => json_last_error_msg(),
-            'raw_input' => $rawInput
-        ], 400);
-    }
-
-    logDebug('PARSED INPUT', $input);
-
-    if (!is_array($input)) {
-        logDebug('INVALID INPUT TYPE', gettype($input));
-
-        jsonResponse([
-            'success' => false,
-            'message' => 'Données invalides.'
-        ], 400);
-    }
+    $input = getJsonInput();
 
     $nom = trim((string) ($input['nom'] ?? ''));
     $email = trim((string) ($input['email'] ?? ''));
@@ -80,221 +401,62 @@ try {
     $message = trim((string) ($input['message'] ?? ''));
     $items = $input['items'] ?? [];
 
-    logDebug('CLIENT DATA', [
-        'nom' => $nom,
-        'email' => $email,
-        'telephone' => $telephone,
-        'message' => $message
-    ]);
-
-    logDebug('ITEMS', $items);
-
     if ($nom === '' || $email === '' || $telephone === '') {
-        logDebug('VALIDATION ERROR', 'Nom, email et téléphone obligatoires');
-
-        jsonResponse([
+        http_response_code(400);
+        echo json_encode([
             'success' => false,
-            'message' => 'Nom, email et téléphone sont obligatoires.'
-        ], 422);
+            'message' => 'Veuillez remplir les champs obligatoires.'
+        ]);
+        exit;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        logDebug('VALIDATION ERROR', 'Adresse email invalide : ' . $email);
-
-        jsonResponse([
+        http_response_code(400);
+        echo json_encode([
             'success' => false,
             'message' => 'Adresse email invalide.'
-        ], 422);
+        ]);
+        exit;
     }
 
     if (!is_array($items) || count($items) === 0) {
-        logDebug('VALIDATION ERROR', 'Panier vide ou items invalide');
-
-        jsonResponse([
+        http_response_code(400);
+        echo json_encode([
             'success' => false,
-            'message' => 'Le panier est vide.'
-        ], 422);
+            'message' => 'Votre panier est vide.'
+        ]);
+        exit;
     }
 
     $pdo = Database::getConnection();
     $pdo->beginTransaction();
 
-    logDebug('DB', 'Transaction démarrée');
-
-    // Rechercher le client par email
-    $stmtClient = $pdo->prepare("
-        SELECT id
-        FROM clients
-        WHERE email = :email
-        LIMIT 1
-    ");
-    $stmtClient->execute([':email' => $email]);
-    $client = $stmtClient->fetch(PDO::FETCH_ASSOC);
-
-    logDebug('CLIENT SEARCH RESULT', $client);
-
-    if ($client) {
-        $clientId = (int) $client['id'];
-
-        $updateClient = $pdo->prepare("
-            UPDATE clients
-            SET nom = :nom, telephone = :telephone
-            WHERE id = :id
-        ");
-        $updateClient->execute([
-            ':nom' => $nom,
-            ':telephone' => $telephone,
-            ':id' => $clientId
-        ]);
-
-        logDebug('CLIENT UPDATED', [
-            'client_id' => $clientId,
-            'nom' => $nom,
-            'telephone' => $telephone
-        ]);
-    } else {
-        $insertClient = $pdo->prepare("
-            INSERT INTO clients (nom, email, telephone)
-            VALUES (:nom, :email, :telephone)
-        ");
-        $insertClient->execute([
-            ':nom' => $nom,
-            ':email' => $email,
-            ':telephone' => $telephone
-        ]);
-
-        $clientId = (int) $pdo->lastInsertId();
-
-        logDebug('CLIENT INSERTED', [
-            'client_id' => $clientId,
-            'nom' => $nom,
-            'email' => $email,
-            'telephone' => $telephone
-        ]);
-    }
-
-    // Calcul total
-    $totalHt = 0.0;
-
-    foreach ($items as $index => $item) {
-        logDebug('ITEM LOOP #' . $index, $item);
-
-        $prix = (float) ($item['prix'] ?? 0);
-        $quantite = max(1, (int) ($item['quantite'] ?? 1));
-        $totalHt += $prix * $quantite;
-    }
-
-    $totalTtc = $totalHt;
-    $numeroDevis = generateQuoteNumber();
-
-    logDebug('DEVIS TOTALS', [
-        'total_ht' => $totalHt,
-        'total_ttc' => $totalTtc,
-        'numero_devis' => $numeroDevis
-    ]);
-
-    // Insertion devis
-    $insertDevis = $pdo->prepare("
-        INSERT INTO devis (numero_devis, client_id, total_ht, total_ttc, notes, statut)
-        VALUES (:numero_devis, :client_id, :total_ht, :total_ttc, :notes, :statut)
-    ");
-    $insertDevis->execute([
-        ':numero_devis' => $numeroDevis,
-        ':client_id' => $clientId,
-        ':total_ht' => $totalHt,
-        ':total_ttc' => $totalTtc,
-        ':notes' => $message !== '' ? $message : null,
-        ':statut' => 'en_attente'
-    ]);
-
-    $devisId = (int) $pdo->lastInsertId();
-
-    logDebug('DEVIS INSERTED', [
-        'devis_id' => $devisId,
-        'numero_devis' => $numeroDevis
-    ]);
-
-    // Insertion lignes devis
-    $insertLine = $pdo->prepare("
-        INSERT INTO devis_lignes (
-            devis_id,
-            produit_id,
-            nom_produit,
-            prix_unitaire,
-            quantite,
-            total_ligne
-        )
-        VALUES (
-            :devis_id,
-            :produit_id,
-            :nom_produit,
-            :prix_unitaire,
-            :quantite,
-            :total_ligne
-        )
-    ");
-
-    foreach ($items as $index => $item) {
-        $nomProduit = trim((string) ($item['nom'] ?? 'Produit sans nom'));
-        $prixUnitaire = (float) ($item['prix'] ?? 0);
-        $quantite = max(1, (int) ($item['quantite'] ?? 1));
-        $totalLigne = $prixUnitaire * $quantite;
-
-        $produitId = null;
-        if (isset($item['produit_id']) && is_numeric($item['produit_id'])) {
-            $produitId = (int) $item['produit_id'];
-        }
-
-        logDebug('INSERT LIGNE #' . $index, [
-            'devis_id' => $devisId,
-            'produit_id' => $produitId,
-            'nom_produit' => $nomProduit,
-            'prix_unitaire' => $prixUnitaire,
-            'quantite' => $quantite,
-            'total_ligne' => $totalLigne
-        ]);
-
-        $insertLine->bindValue(':devis_id', $devisId, PDO::PARAM_INT);
-
-        if ($produitId !== null) {
-            $insertLine->bindValue(':produit_id', $produitId, PDO::PARAM_INT);
-        } else {
-            $insertLine->bindValue(':produit_id', null, PDO::PARAM_NULL);
-        }
-
-        $insertLine->bindValue(':nom_produit', $nomProduit);
-        $insertLine->bindValue(':prix_unitaire', $prixUnitaire);
-        $insertLine->bindValue(':quantite', $quantite, PDO::PARAM_INT);
-        $insertLine->bindValue(':total_ligne', $totalLigne);
-        $insertLine->execute();
-    }
+    $clientId = findOrCreateClient($pdo, $nom, $email, $telephone);
+    $numeroDevis = generateNumeroDevis();
+    $devisId = createDevis($pdo, $clientId, $numeroDevis, $message, $items);
+    insertDevisLignes($pdo, $devisId, $items);
 
     $pdo->commit();
-    logDebug('DB', 'Transaction commit OK');
 
-    jsonResponse([
+    sendQuoteEmail($devisId);
+
+    echo json_encode([
         'success' => true,
-        'message' => 'Votre demande de devis a été envoyée avec succès ! Nous vous contacterons bientôt.',
+        'message' => 'Votre demande de devis a bien été envoyée.',
         'devis_id' => $devisId,
-        'numero_devis' => $numeroDevis
+        'numero_devis' => $numeroDevis,
+        'pdf_url' => '/SITEECOFI/app/api/generate_quote_pdf.php?id=' . $devisId
     ]);
-
+    exit;
 } catch (Throwable $e) {
     if (isset($pdo) && $pdo instanceof PDO && $pdo->inTransaction()) {
         $pdo->rollBack();
-        logDebug('DB', 'Transaction rollback');
     }
 
-    logDebug('ERROR', [
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
-    ]);
-
-    jsonResponse([
+    http_response_code(500);
+    echo json_encode([
         'success' => false,
-        'message' => 'Erreur serveur.',
-        'error' => $e->getMessage()
-    ], 500);
+        'message' => $e->getMessage()
+    ]);
+    exit;
 }

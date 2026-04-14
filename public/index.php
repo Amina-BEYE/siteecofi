@@ -20,6 +20,7 @@ $tel_mobile = "71 039 75 75";
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="../app/IMG/logo-ecofi.png" type="image/png">
 </head>
+
 <body>
     <header>
         <div class="top-navbar">
@@ -106,7 +107,7 @@ $tel_mobile = "71 039 75 75";
                                     <button class="cart-btn cart-btn-danger" onclick="viderPanier()">
                                         <i class="fas fa-trash"></i> Vider
                                     </button>
-<!--                                     <button class="cart-btn cart-btn-primary" onclick="procederAuPaiement()">
+                                    <!--                                     <button class="cart-btn cart-btn-primary" onclick="procederAuPaiement()">
                                         <i class="fas fa-credit-card"></i> Payer
                                     </button> -->
                                     <button class="cart-btn cart-btn-primary" onclick="openQuoteModal(event)">
@@ -287,7 +288,8 @@ $tel_mobile = "71 039 75 75";
                         <h3>Production de briques et paves</h3>
                         <p>Matériaux de construction pour vos projets</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact" data-target="briques">Détails</button>
+                            <button class="btn-service-compact btn-details-compact"
+                                data-target="briques">Détails</button>
                         </div>
                     </div>
                 </div>
@@ -303,7 +305,8 @@ $tel_mobile = "71 039 75 75";
                         <h3>Matériaux et Equipements</h3>
                         <p>Approvisionnement pour tous vos chantiers</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact" data-target="materiaux">Détails</button>
+                            <button class="btn-service-compact btn-details-compact"
+                                data-target="materiaux">Détails</button>
                         </div>
                     </div>
                 </div>
@@ -324,7 +327,8 @@ $tel_mobile = "71 039 75 75";
                         <h3>Décoration</h3>
                         <p>Intérieur & extérieur sur mesure</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact" data-target="decoration">Détails</button>
+                            <button class="btn-service-compact btn-details-compact"
+                                data-target="decoration">Détails</button>
                         </div>
                     </div>
                 </div>
@@ -343,7 +347,8 @@ $tel_mobile = "71 039 75 75";
                         <h3>Conseil immobilier</h3>
                         <p>Expertise et accompagnement personnalisé</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact" data-target="conseil">Détails</button>
+                            <button class="btn-service-compact btn-details-compact"
+                                data-target="conseil">Détails</button>
                         </div>
                     </div>
                 </div>
@@ -375,7 +380,8 @@ $tel_mobile = "71 039 75 75";
                         <h3>Location Recepteur</h3>
                         <p>Équipements topographiques de précision</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact" data-target="location">Détails</button>
+                            <button class="btn-service-compact btn-details-compact"
+                                data-target="location">Détails</button>
                         </div>
                     </div>
                 </div>
@@ -666,19 +672,26 @@ $tel_mobile = "71 039 75 75";
                         <li><a href="#apropos"><i class="fas fa-info-circle"></i> À propos</a></li>
                         <li><a href="#services"><i class="fas fa-cogs"></i> Nos services</a></li>
                         <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                        <li><a href="/SITEECOFI/app/admin/Views/login.php"><i class="fas fa-user"></i> Espace personnel</a></li>
+                        <li><a href="/SITEECOFI/app/admin/Views/login.php"><i class="fas fa-user"></i> Espace
+                                personnel</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column">
                     <h3>Nos Services</h3>
                     <ul class="footer-links">
-                        <li><a href="#services" onclick="openProductsModal('briques')"><i class="fas fa-cubes"></i> Production de briques</a></li>
-                        <li><a href="#services" onclick="openProductsModal('materiaux')"><i class="fas fa-truck-loading"></i> Matériaux</a></li>
-                        <li><a href="#services" onclick="openProductsModal('decoration')"><i class="fas fa-paint-roller"></i> Décoration</a></li>
-                        <li><a href="#services" onclick="openProductsModal('conseil')"><i class="fas fa-building"></i> Conseil immobilier</a></li>
-                        <li><a href="#services" onclick="openProductsModal('plans')"><i class="fas fa-drafting-compass"></i> Plans</a></li>
-                        <li><a href="#services" onclick="openProductsModal('location')"><i class="fas fa-satellite-dish"></i> Location</a></li>
+                        <li><a href="#services" onclick="openProductsModal('briques')"><i class="fas fa-cubes"></i>
+                                Production de briques</a></li>
+                        <li><a href="#services" onclick="openProductsModal('materiaux')"><i
+                                    class="fas fa-truck-loading"></i> Matériaux</a></li>
+                        <li><a href="#services" onclick="openProductsModal('decoration')"><i
+                                    class="fas fa-paint-roller"></i> Décoration</a></li>
+                        <li><a href="#services" onclick="openProductsModal('conseil')"><i class="fas fa-building"></i>
+                                Conseil immobilier</a></li>
+                        <li><a href="#services" onclick="openProductsModal('plans')"><i
+                                    class="fas fa-drafting-compass"></i> Plans</a></li>
+                        <li><a href="#services" onclick="openProductsModal('location')"><i
+                                    class="fas fa-satellite-dish"></i> Location</a></li>
                     </ul>
                 </div>
 
@@ -686,14 +699,16 @@ $tel_mobile = "71 039 75 75";
                     <h3>Contactez-nous</h3>
                     <ul class="footer-links">
                         <li>
-                            <a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal" target="_blank">
+                            <a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal"
+                                target="_blank">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <span>Zac Nguinth Thiès, Sénégal</span>
                             </a>
                         </li>
                         <li><a href="tel:+221339985072"><i class="fas fa-phone"></i> 33 998 50 72</a></li>
                         <li><a href="tel:+221710397575"><i class="fas fa-mobile-alt"></i> 71 039 75 75</a></li>
-                        <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=service.ecofi01@gmail.com" target="_blank">
+                        <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=service.ecofi01@gmail.com"
+                                target="_blank">
                                 <i class="fas fa-envelope"></i> service.ecofi01@gmail.com
                             </a></li>
                     </ul>
@@ -712,7 +727,8 @@ $tel_mobile = "71 039 75 75";
             </div>
 
             <div class="copyright">
-                <p>&copy; 2026 <strong>ECOFI</strong> - Etablissement de conseils sur le foncier et l'immobilier. Tous droits réservés.</p>
+                <p>&copy; 2026 <strong>ECOFI</strong> - Etablissement de conseils sur le foncier et l'immobilier. Tous
+                    droits réservés.</p>
                 <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.6;">
                     Conçu avec <i class="fas fa-heart" style="color: #FF8533;"></i> pour l'excellence immobilière
                 </p>
@@ -752,7 +768,7 @@ $tel_mobile = "71 039 75 75";
     </div>
 
     <script src="../public/app.js"></script>
-        <script>
+    <script>
         const PHP_CONFIG = {
             emailContact: "<?php echo addslashes($email_contact); ?>",
             telFixe: "<?php echo addslashes($tel_fixe); ?>",
@@ -763,5 +779,16 @@ $tel_mobile = "71 039 75 75";
     <script>
         // Ici tu gardes tout ton JavaScript actuel
     </script>
+    <!-- Loader d'envoi devis -->
+    <div id="quoteLoader" class="quote-loader-overlay" style="display: none;">
+        <div class="quote-loader-box">
+            <div class="quote-spinner"></div>
+            <p id="quoteLoaderText">Envoi du devis en cours...</p>
+        </div>
+    </div>
+
+    <!-- Message résultat -->
+    <div id="quoteStatusMessage" class="quote-status-message" style="display: none;"></div>
 </body>
+
 </html>
