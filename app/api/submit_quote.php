@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 header('Content-Type: application/json; charset=UTF-8');
 
+require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../Core/Database.php';
 
 // Charge PHPMailer si tu l'as installé manuellement.
@@ -218,8 +219,8 @@ function insertDevisLignes(PDO $pdo, int $devisId, array $items): void
  */
 function fetchDevisPdfContent(int $devisId): string
 {
-    $baseUrl = rtrim($_ENV['APP_URL'] ?? 'http://localhost:8888', '/');
-    $url = $baseUrl . '/SITEECOFI/app/api/generate_quote_pdf.php?id=' . $devisId;
+    $baseUrl = rtrim(APP_URL ?? 'http://localhost/SITEECOFI', '/');
+    $url = $baseUrl . '/app/api/generate_quote_pdf.php?id=' . $devisId;
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -453,10 +454,16 @@ try {
         $pdo->rollBack();
     }
 
+    // Extraire le message d'erreur en toute sécurité
+    $errorMessage = $e->getMessage();
+    // Remplacer les caractères spéciaux qui pourraient casser le JSON
+    $errorMessage = mb_convert_encoding($errorMessage, 'UTF-8', 'UTF-8');
+    $errorMessage = preg_replace('/[\x00-\x1F]/', '?', $errorMessage);
+
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
-    ]);
+        'message' => $errorMessage
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
