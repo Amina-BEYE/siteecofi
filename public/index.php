@@ -305,8 +305,7 @@ $tel_mobile = "71 039 75 75";
                         <h3>Matériaux et Equipements</h3>
                         <p>Approvisionnement pour tous vos chantiers</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact"
-                                data-target="materiaux">Détails</button>
+                            <button class="btn-service-compact btn-details-compact" data-target="briques">Détails</button>
                         </div>
                     </div>
                 </div>
