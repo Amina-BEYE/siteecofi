@@ -292,8 +292,8 @@ function buildMailer(): PHPMailer
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
 
-    $mail->Username = 'fallrago@gmail.com'; // TON EMAIL
-    $mail->Password = 'pkht vzuz txtb hasb'; // 🔥 mot de passe application
+    $mail->Username = 'service.ecofi01@gmail.com'; // TON EMAIL
+    $mail->Password = 'vaeh oqzb fnfr sfbj'; // 🔥 mot de passe application
 
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
