@@ -4,6 +4,7 @@ require_once __DIR__ . '/../admin/Models/OrderModel.php';
 require_once __DIR__ . '/../admin/Models/ProduitCategoryModel.php';
 require_once __DIR__ . '/../admin/Models/NotificationModel.php';
 require_once __DIR__ . '/../admin/Models/ProgrammeImmobilierModel.php';
+require_once __DIR__ . '/../admin/Models/AuthModel.php';
 
 class AdminController
 {
@@ -30,6 +31,9 @@ class AdminController
 
             case 'notifications':
                 return $this->notifications();
+
+            case 'inscriptions':
+                return $this->inscriptions();
 
             case 'programmes-immobiliers':
                 return $this->programmesImmobiliers();
@@ -328,9 +332,70 @@ class AdminController
 
         return [
             'currentPage' => 'notifications',
-            'pageTitle'   => 'Notifications & Inscriptions',
+            'pageTitle'   => 'Notifications Système',
             'view'        => 'notifications.php',
-            'inscriptions' => $model->getAllInscriptions(),
+            'message'     => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
+    private function inscriptions(): array
+    {
+        $notificationModel = new NotificationModel();
+        $orderModel = new OrderModel();
+        $authModel = new AuthModel();
+
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? '';
+
+            if ($action === 'update_inscription_status') {
+                $id = (int) ($_POST['id'] ?? 0);
+                $status = trim($_POST['status'] ?? '');
+
+                if ($id <= 0 || $status === '') {
+                    $message = 'Action invalide.';
+                    $messageType = 'error';
+                } else {
+                    $ok = $notificationModel->updateInscriptionStatus($id, $status);
+
+                    if ($ok) {
+                        $message = 'Statut de l\'inscription mis à jour.';
+                    } else {
+                        $message = 'Erreur lors de la mise à jour.';
+                        $messageType = 'error';
+                    }
+                }
+            }
+
+            if ($action === 'delete_inscription') {
+                $id = (int) ($_POST['id'] ?? 0);
+
+                if ($id <= 0) {
+                    $message = 'ID invalide.';
+                    $messageType = 'error';
+                } else {
+                    $ok = $notificationModel->deleteInscription($id);
+
+                    if ($ok) {
+                        $message = 'Inscription supprimée.';
+                    } else {
+                        $message = 'Erreur lors de la suppression.';
+                        $messageType = 'error';
+                    }
+                }
+            }
+        }
+
+        return [
+            'currentPage' => 'inscriptions',
+            'pageTitle'   => 'Inscriptions & Demandes',
+            'view'        => 'inscriptions.php',
+            'inscriptions' => $notificationModel->getAllInscriptions(),
+            'quotes' => $orderModel->getAllQuotes(),
+            'users' => $authModel->getAllUsers(),
             'message'     => $message,
             'messageType' => $messageType,
         ];

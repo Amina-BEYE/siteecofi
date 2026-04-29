@@ -33,9 +33,10 @@ function getAppBaseUrl(): string
     }
 
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8888';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $path = '/siteecofi';
 
-    return $scheme . '://' . $host . '/siteecofi';
+    return $scheme . '://' . $host . $path;
 }
 
 function generateNumeroDevis(string $type): string
@@ -200,6 +201,7 @@ function fetchDevisPdfContent(int $devisId): string
 
     $content = curl_exec($ch);
     $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     $curlErr = curl_error($ch);
 
     curl_close($ch);
@@ -209,11 +211,19 @@ function fetchDevisPdfContent(int $devisId): string
     }
 
     if ($httpCode !== 200) {
-        throw new RuntimeException("PDF inaccessible — HTTP {$httpCode} — URL : {$url}");
+        $errorMsg = $content;
+        if (strpos($contentType, 'application/json') !== false) {
+            $json = json_decode($content, true);
+            if (is_array($json) && isset($json['message'])) {
+                $errorMsg = $json['message'];
+            }
+        }
+        throw new RuntimeException("PDF inaccessible — HTTP {$httpCode} — {$errorMsg}");
     }
 
-    if (substr($content, 0, 4) !== '%PDF') {
-        throw new RuntimeException("Le fichier retourné n’est pas un PDF valide.");
+    // Vérifier la signature PDF (ignorer BOM UTF-8 éventuelle)
+    if (substr($content, 0, 4) !== '%PDF' && strpos($content, '%PDF') === false) {
+        throw new RuntimeException("Le fichier retourné n'est pas un PDF valide (premiers bytes: " . bin2hex(substr($content, 0, 16)) . ")");
     }
 
     return $content;
@@ -263,15 +273,8 @@ function buildMailer(): PHPMailer
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-<<<<<<< HEAD
-
-    $mail->Username = 'service.ecofi01@gmail.com'; // TON EMAIL
-    $mail->Password = 'vaeh oqzb fnfr sfbj'; // 🔥 mot de passe application
-
-=======
     $mail->Username = $smtpUser;
     $mail->Password = $smtpPass;
->>>>>>> 59ab8a05f02de9ab0f7c452461dcbdb109dcbb43
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';

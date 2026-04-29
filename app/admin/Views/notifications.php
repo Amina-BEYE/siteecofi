@@ -1,7 +1,6 @@
 <?php
 $message = $message ?? null;
 $messageType = $messageType ?? 'success';
-$inscriptions = $inscriptions ?? [];
 ?>
 
 <?php if (!empty($message)): ?>
@@ -21,236 +20,168 @@ $inscriptions = $inscriptions ?? [];
     </div>
 <?php endif; ?>
 
-<!-- Statistiques -->
+<!-- Statistiques des Notifications -->
 <section class="stats-grid">
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-bell"></i></div>
         <div class="stat-info">
-            <h3>Inscriptions totales</h3>
-            <p><?= count($inscriptions) ?></p>
+            <h3>Notifications système</h3>
+            <p>0</p>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-hourglass-start"></i></div>
+        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
         <div class="stat-info">
-            <h3>En attente</h3>
-            <p><?= count(array_filter($inscriptions, fn($i) => $i['statut_traitement'] === 'nouveau')) ?></p>
+            <h3>Alertes</h3>
+            <p>0</p>
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-icon"><i class="fas fa-info-circle"></i></div>
         <div class="stat-info">
-            <h3>Traitées</h3>
-            <p><?= count(array_filter($inscriptions, fn($i) => $i['statut_traitement'] === 'termine')) ?></p>
+            <h3>Informations</h3>
+            <p>0</p>
         </div>
     </div>
 </section>
 
-<!-- Liste des Notifications/Inscriptions -->
+<!-- Liste des Notifications Système -->
 <section class="row">
     <div class="card">
         <h2 style="margin-bottom: 20px;">
-            <i class="fas fa-inbox"></i> Inscriptions & Demandes
+            <i class="fas fa-bell"></i> Notifications Système
         </h2>
 
-        <?php if (empty($inscriptions)): ?>
-            <div style="text-align: center; padding: 40px; color: #999;">
-                <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
-                <p>Aucune inscription pour le moment.</p>
-            </div>
-        <?php else: ?>
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
-                            <th style="padding: 12px; text-align: left;">Nom</th>
-                            <th style="padding: 12px; text-align: left;">Email</th>
-                            <th style="padding: 12px; text-align: left;">Téléphone</th>
-                            <th style="padding: 12px; text-align: center;">Type</th>
-                            <th style="padding: 12px; text-align: center;">Statut</th>
-                            <th style="padding: 12px; text-align: center;">Date</th>
-                            <th style="padding: 12px; text-align: center;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($inscriptions as $inscription): ?>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 12px;">
-                                    <strong><?= htmlspecialchars($inscription['nom']) ?></strong>
-                                </td>
-                                <td style="padding: 12px;">
-                                    <a href="mailto:<?= htmlspecialchars($inscription['email']) ?>" style="color: #d97706;">
-                                        <?= htmlspecialchars($inscription['email']) ?>
-                                    </a>
-                                </td>
-                                <td style="padding: 12px;">
-                                    <a href="tel:<?= str_replace(' ', '', $inscription['telephone']) ?>" style="color: #d97706;">
-                                        <?= htmlspecialchars($inscription['telephone']) ?>
-                                    </a>
-                                </td>
-                                <td style="padding: 12px; text-align: center;">
-                                    <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
-                                        background-color: <?php
-                                            echo $inscription['type'] === 'programme' ? '#fef3c7' : '#dbeafe';
-                                        ?>;
-                                        color: <?php
-                                            echo $inscription['type'] === 'programme' ? '#b45309' : '#1e40af';
-                                        ?>;">
-                                        <?= $inscription['type'] === 'programme' ? '📋 Inscription' : '📞 Contact' ?>
-                                    </span>
-                                </td>
-                                <td style="padding: 12px; text-align: center;">
-                                    <span style="padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;
-                                        background-color: <?php
-                                            echo $inscription['statut_traitement'] === 'nouveau' ? '#fecaca' : 
-                                                 ($inscription['statut_traitement'] === 'en_cours' ? '#fbbf24' :
-                                                  ($inscription['statut_traitement'] === 'contacte' ? '#d1fae5' : '#a7f3d0'));
-                                        ?>;
-                                        color: <?php
-                                            echo $inscription['statut_traitement'] === 'nouveau' ? '#991b1b' : 
-                                                 ($inscription['statut_traitement'] === 'en_cours' ? '#92400e' :
-                                                  ($inscription['statut_traitement'] === 'contacte' ? '#065f46' : '#065f46'));
-                                        ?>;">
-                                        <?= ucfirst(str_replace('_', ' ', $inscription['statut_traitement'])) ?>
-                                    </span>
-                                </td>
-                                <td style="padding: 12px; text-align: center; font-size: 14px; color: #666;">
-                                    <?= date('d/m/Y', strtotime($inscription['date_inscription'])) ?>
-                                </td>
-                                <td style="padding: 12px; text-align: center;">
-                                    <div style="display: flex; gap: 10px; justify-content: center;">
-                                        <button 
-                                            type="button" 
-                                            class="btn-detail"
-                                            onclick="openInscriptionModal(<?= htmlspecialchars(json_encode($inscription), ENT_QUOTES) ?>)"
-                                            style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                                            <i class="fas fa-eye"></i> Détails
-                                        </button>
-                                        <form method="POST" action="adminPage.php?page=notifications" style="display: inline;">
-                                            <input type="hidden" name="action" value="update_status">
-                                            <input type="hidden" name="id" value="<?= $inscription['id'] ?>">
-                                            <input type="hidden" name="status" value="contacte">
-                                            <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                                                <i class="fas fa-check"></i> Contacté
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+        <div style="text-align: center; padding: 40px; color: #999;">
+            <i class="fas fa-bell" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
+            <p>Aucune notification système pour le moment.</p>
+            <p style="font-size: 14px; margin-top: 10px; color: #666;">
+                Les inscriptions et demandes de contact sont maintenant gérées dans la section <strong>"Inscriptions"</strong>.
+            </p>
+        </div>
     </div>
 </section>
 
-<!-- Modal pour les détails -->
-<div id="inscriptionModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; padding: 30px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="margin: 0;">Détails de l'inscription</h3>
-            <button onclick="closeInscriptionModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
-        </div>
-        <div id="modalContent"></div>
-    </div>
-</div>
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+
+.stat-info h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.stat-info p {
+    margin: 5px 0 0 0;
+    font-size: 28px;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.row {
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.dialog-box {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.dialog-box.error {
+    border-left: 4px solid #ef4444;
+}
+
+.dialog-box.success {
+    border-left: 4px solid #10b981;
+}
+
+.dialog-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.dialog-box.error .dialog-icon {
+    color: #ef4444;
+}
+
+.dialog-box.success .dialog-icon {
+    color: #10b981;
+}
+
+.dialog-actions {
+    margin-top: 20px;
+}
+
+.btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background: #2563eb;
+}
+</style>
 
 <script>
-function openInscriptionModal(data) {
-    const modal = document.getElementById('inscriptionModal');
-    const content = document.getElementById('modalContent');
-    
-    let html = `
-        <div style="display: grid; gap: 15px;">
-            <div>
-                <label style="font-weight: 600; color: #666;">Nom:</label>
-                <p>${htmlEscape(data.nom)}</p>
-            </div>
-            <div>
-                <label style="font-weight: 600; color: #666;">Email:</label>
-                <p><a href="mailto:${htmlEscape(data.email)}" style="color: #d97706;">${htmlEscape(data.email)}</a></p>
-            </div>
-            <div>
-                <label style="font-weight: 600; color: #666;">Téléphone:</label>
-                <p><a href="tel:${htmlEscape(data.telephone)}" style="color: #d97706;">${htmlEscape(data.telephone)}</a></p>
-            </div>
-            <div>
-                <label style="font-weight: 600; color: #666;">Statut:</label>
-                <p>${htmlEscape(data.statut)}</p>
-            </div>
-            <div>
-                <label style="font-weight: 600; color: #666;">Type:</label>
-                <p>${data.type === 'programme' ? '📋 Inscription au programme' : '📞 Demande de contact'}</p>
-            </div>
-            <div>
-                <label style="font-weight: 600; color: #666;">Programme:</label>
-                <p>${htmlEscape(data.programme)}</p>
-            </div>
-    `;
-    
-    if (data.type_bien) {
-        html += `
-            <div>
-                <label style="font-weight: 600; color: #666;">Type de bien:</label>
-                <p>${htmlEscape(data.type_bien)}</p>
-            </div>
-        `;
-    }
-    
-    if (data.budget) {
-        html += `
-            <div>
-                <label style="font-weight: 600; color: #666;">Budget:</label>
-                <p>${htmlEscape(data.budget)}</p>
-            </div>
-        `;
-    }
-    
-    if (data.message) {
-        html += `
-            <div>
-                <label style="font-weight: 600; color: #666;">Message:</label>
-                <p style="background: #f9fafb; padding: 10px; border-radius: 4px;">${htmlEscape(data.message)}</p>
-            </div>
-        `;
-    }
-    
-    html += `
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-    `;
-    
-    if (data.contact_email) html += `<div style="text-align: center;"><i class="fas fa-envelope" style="color: #d97706;"></i> Email</div>`;
-    if (data.contact_tel) html += `<div style="text-align: center;"><i class="fas fa-phone" style="color: #d97706;"></i> Téléphone</div>`;
-    if (data.contact_whatsapp) html += `<div style="text-align: center;"><i class="fab fa-whatsapp" style="color: #d97706;"></i> WhatsApp</div>`;
-    
-    html += `
-            </div>
-        </div>
-    `;
-    
-    content.innerHTML = html;
-    modal.style.display = 'flex';
+function closeDialog() {
+    document.getElementById('dialogOverlay').style.display = 'none';
 }
-
-function closeInscriptionModal() {
-    document.getElementById('inscriptionModal').style.display = 'none';
-}
-
-function htmlEscape(text) {
-    if (!text) return '';
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// Fermer le modal en cliquant en dehors
-document.getElementById('inscriptionModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeInscriptionModal();
-    }
-});
 </script>

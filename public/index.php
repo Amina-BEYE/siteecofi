@@ -2,7 +2,7 @@
 session_start();
 
 // Variables PHP réutilisables
-$site_title = "Panier - Etablissement de conseils sur le foncier et l'immobilier";
+$site_title = "Ecofi - Etablissement de conseils sur le foncier et l'immobilier";
 $email_contact = "service.ecofi01@gmail.com";
 $tel_fixe = "33 998 50 72";
 $tel_mobile = "71 039 75 75";

@@ -46,5 +46,10 @@ $currentPage = $currentPage ?? 'dashboard';
             <i class="fas fa-bell"></i>
             <span>Notifications</span>
         </a>
+
+        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=inscriptions" class="menu-item <?= $currentPage === 'inscriptions' ? 'active' : '' ?>">
+            <i class="fas fa-user-plus"></i>
+            <span>Inscriptions</span>
+        </a>
     </nav>
 </aside>
