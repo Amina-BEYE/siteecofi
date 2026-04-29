@@ -139,6 +139,41 @@ const promoCodes = [
 ];
 
 // =========================
+// LOCAL STORAGE
+// =========================
+
+const CART_STORAGE_KEY = 'siteecofi_panier';
+const PROMO_STORAGE_KEY = 'siteecofi_promo';
+
+function sauvegarderPanier() {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(panier));
+    localStorage.setItem(PROMO_STORAGE_KEY, JSON.stringify(currentPromoCode));
+}
+
+function chargerPanier() {
+    try {
+        const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+        const savedPromo = localStorage.getItem(PROMO_STORAGE_KEY);
+
+        panier = savedCart ? JSON.parse(savedCart) : [];
+        currentPromoCode = savedPromo ? JSON.parse(savedPromo) : null;
+
+        if (!Array.isArray(panier)) {
+            panier = [];
+        }
+    } catch (e) {
+        panier = [];
+        currentPromoCode = null;
+    }
+}
+
+function supprimerPanierLocalStorage() {
+    localStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem(PROMO_STORAGE_KEY);
+}
+
+
+// =========================
 // VARIABLES GLOBALES
 // =========================
 let panier = [];
@@ -153,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function initialiserApplication() {
+    chargerPanier();
     afficherCodesPromo();
     mettreAJourPanier();
     initZoomFeature();
@@ -337,6 +373,8 @@ function ajouterLocationAuPanier(produit, period, quantity, startDate, endDate) 
 }
 
 function mettreAJourPanier() {
+    // Sauvegarde en Local
+    sauvegarderPanier();
     const cartItems = document.getElementById('cartItems');
     const cartCount = document.getElementById('cartCount');
     const cartTotal = document.getElementById('cartTotal');
@@ -434,6 +472,7 @@ function retirerDuPanier(cartId) {
 function viderPanier() {
     panier = [];
     currentPromoCode = null;
+    supprimerPanierLocalStorage();
     mettreAJourPanier();
     afficherNotification('Panier vidé');
 }
@@ -972,7 +1011,12 @@ async function submitLocationQuoteWithDetails(event) {
         showQuoteStatusMessage('Votre devis de location a bien été envoyé !', 'success');
         afficherNotification('Votre devis de location a bien été envoyé par email.', 'success');
 
-        panier = [];
+        panier = panier.filter(item => !item.is_location);
+
+        if (panier.length === 0) {
+            currentPromoCode = null;
+        }
+
         mettreAJourPanier();
 
         const modal = document.querySelector('.quote-modal-overlay');
@@ -1070,78 +1114,235 @@ function selectQuoteType(type) {
 
 function openPurchaseQuoteModal() {
     const purchaseItems = panier.filter(item => !item.is_location);
+
     if (purchaseItems.length === 0) {
         afficherNotification('Aucun produit d\'achat dans le panier', 'warning');
         return;
     }
 
-    const total = purchaseItems.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
-    const totalWithPromo = currentPromoCode ? total * (1 - currentPromoCode.reduction / 100) : total;
-
     const existingModal = document.querySelector('.quote-modal-overlay');
     if (existingModal) existingModal.remove();
+
+    const getTotal = () => {
+        const total = purchaseItems.reduce((sum, item) => {
+            return sum + ((Number(item.prix) || 0) * (Number(item.quantite) || 1));
+        }, 0);
+
+        return currentPromoCode
+            ? total * (1 - currentPromoCode.reduction / 100)
+            : total;
+    };
+
+    const getItemsHtml = () => {
+        return purchaseItems.map((item, index) => {
+            const prix = Number(item.prix) || 0;
+            const quantite = Number(item.quantite) || 1;
+            const totalLigne = prix * quantite;
+
+            return `
+               <style>
+               .quote-quantity-control {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 10px 0;
+                }
+
+                .quote-quantity-control span {
+                    font-size: 13px;
+                    color: #555;
+                    margin-right: 5px;
+                }
+
+                /* Boutons + et - */
+                .quote-qty-btn {
+                    width: 32px;
+                    height: 32px;
+                    border: none;
+                    border-radius: 50%;
+                    background: #0B2A5A;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
+                }
+
+                .quote-qty-btn:hover {
+                    background: #E8A020;
+                    transform: scale(1.1);
+                }
+
+                .quote-qty-btn:active {
+                    transform: scale(0.95);
+                }
+
+                /* Input quantité */
+                .quote-qty-input {
+                    width: 60px;
+                    height: 32px;
+                    text-align: center;
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    font-size: 14px;
+                }
+
+                /* Ligne produit */
+                .quote-item-row {
+                    border: 1px solid #eee;
+                    border-radius: 10px;
+                    padding: 15px;
+                    margin-bottom: 12px;
+                    background: #fafafa;
+                    transition: 0.2s;
+                }
+
+                .quote-item-row:hover {
+                    background: #f1f5ff;
+                }
+                 </style>
+                <div class="quote-item-row" data-index="${index}">
+                    <div><strong>${item.nom}</strong></div>
+
+                    <div class="quote-quantity-control">
+                        <span>Quantité :</span>
+
+                        <button type="button" class="quote-qty-btn" data-action="minus" data-index="${index}">
+                            −
+                        </button>
+
+                        <input
+                            type="number"
+                            min="1"
+                            value="${quantite}"
+                            class="quote-qty-input"
+                            data-index="${index}"
+                        >
+
+                        <button type="button" class="quote-qty-btn" data-action="plus" data-index="${index}">
+                            +
+                        </button>
+                    </div>
+
+                    <div>Prix unitaire : ${prix.toLocaleString('fr-FR')} FCFA</div>
+                    <div><strong>Total : ${totalLigne.toLocaleString('fr-FR')} FCFA</strong></div>
+                </div>
+            `;
+        }).join('');
+    };
 
     const modal = document.createElement('div');
     modal.className = 'quote-modal-overlay';
     modal.style.display = 'flex';
+
     modal.innerHTML = `
         <div class="quote-modal purchase-quote-modal">
             <div class="quote-modal-header">
-                <h3><i class="fas fa-file-invoice" style="color: var(--accent-color);"></i> Demande de Devis - Achat</h3>
+                <h3><i class="fas fa-file-invoice"></i> Demande de Devis - Achat</h3>
                 <button class="quote-modal-close" onclick="this.closest('.quote-modal-overlay').remove()">&times;</button>
             </div>
+
             <div class="quote-modal-body">
                 <div class="quote-items">
                     <h4>Produits sélectionnés :</h4>
-                    ${purchaseItems.map(item => `
-                        <div class="quote-item-row">
-                            <div><strong>${item.nom}</strong></div>
-                            <div>Quantité : ${item.quantite}</div>
-                            <div>Prix unitaire : ${(item.prix || 0).toLocaleString('fr-FR')} FCFA</div>
-                            <div>Total : ${(item.prix * item.quantite).toLocaleString('fr-FR')} FCFA</div>
-                        </div>
-                    `).join('')}
+
+                    <div id="purchaseQuoteItems">
+                        ${getItemsHtml()}
+                    </div>
+
                     ${currentPromoCode ? `<div class="promo-applied">Code promo appliqué : ${currentPromoCode.code} (${currentPromoCode.reduction}% de réduction)</div>` : ''}
                 </div>
-                <div class="quote-total">
-                    Total TTC : ${totalWithPromo.toLocaleString('fr-FR')} FCFA
+
+                <div class="quote-total" id="purchaseQuoteTotal">
+                    Total TTC : ${getTotal().toLocaleString('fr-FR')} FCFA
                 </div>
                 
                 <form id="purchaseQuoteForm" onsubmit="submitPurchaseQuote(event)">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="quoteName">Nom complet <span style="color:red;">*</span></label>
-                            <input type="text" id="quoteName" required placeholder="Votre nom">
+                            <label>Nom complet *</label>
+                            <input type="text" id="quoteName" required>
                         </div>
+
                         <div class="form-group">
-                            <label for="quoteEmail">Email <span style="color:red;">*</span></label>
-                            <input type="email" id="quoteEmail" required placeholder="votre@email.com">
+                            <label>Email *</label>
+                            <input type="email" id="quoteEmail" required>
                         </div>
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="quotePhone">Téléphone <span style="color:red;">*</span></label>
-                            <input type="tel" id="quotePhone" required placeholder="77 123 45 67">
+                            <label>Téléphone *</label>
+                            <input type="tel" id="quotePhone" required>
                         </div>
+
                         <div class="form-group">
-                            <label for="quoteAddress">Adresse de livraison</label>
-                            <input type="text" id="quoteAddress" placeholder="Votre adresse complète">
+                            <label>Adresse</label>
+                            <input type="text" id="quoteAddress">
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label for="quoteMessage">Message (optionnel)</label>
-                        <textarea id="quoteMessage" placeholder="Informations complémentaires..."></textarea>
+                        <label>Message</label>
+                        <textarea id="quoteMessage"></textarea>
                     </div>
+
                     <button type="submit" class="btn-primary">
-                        <i class="fas fa-paper-plane"></i> Envoyer la demande de devis
+                        <i class="fas fa-paper-plane"></i> Envoyer le devis
                     </button>
                 </form>
             </div>
         </div>
     `;
-    document.body.appendChild(modal);
-}
 
+    document.body.appendChild(modal);
+
+    function updateQuoteDisplay() {
+        document.getElementById('purchaseQuoteItems').innerHTML = getItemsHtml();
+        document.getElementById('purchaseQuoteTotal').textContent =
+            `Total TTC : ${getTotal().toLocaleString('fr-FR')} FCFA`;
+
+        mettreAJourPanier();
+    }
+
+    function updateQuantity(index, quantity) {
+        if (!purchaseItems[index]) return;
+
+        quantity = parseInt(quantity, 10);
+        if (!quantity || quantity < 1) quantity = 1;
+
+        purchaseItems[index].quantite = quantity;
+
+        const panierIndex = panier.indexOf(purchaseItems[index]);
+        if (panierIndex !== -1) {
+            panier[panierIndex].quantite = quantity;
+        }
+
+        updateQuoteDisplay();
+    }
+
+    modal.addEventListener('click', function (event) {
+        const button = event.target.closest('.quote-qty-btn');
+        if (!button) return;
+
+        const index = Number(button.dataset.index);
+        const action = button.dataset.action;
+        const currentQuantity = Number(purchaseItems[index]?.quantite) || 1;
+
+        if (action === 'plus') updateQuantity(index, currentQuantity + 1);
+        if (action === 'minus') updateQuantity(index, currentQuantity - 1);
+    });
+
+    modal.addEventListener('change', function (event) {
+        const input = event.target.closest('.quote-qty-input');
+        if (!input) return;
+
+        updateQuantity(Number(input.dataset.index), input.value);
+    });
+}
 
 
 // =========================
@@ -1152,6 +1353,14 @@ async function submitPurchaseQuote(event) {
     if (event) event.preventDefault();
 
     const purchaseItems = panier.filter(item => !item.is_location);
+
+    panier = panier.filter(item => item.is_location === true);
+
+    if (panier.length === 0) {
+        currentPromoCode = null;
+    }
+
+    mettreAJourPanier();
 
     const nom = document.getElementById('quoteName')?.value.trim();
     const email = document.getElementById('quoteEmail')?.value.trim();

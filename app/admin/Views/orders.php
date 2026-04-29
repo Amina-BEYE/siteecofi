@@ -1,4 +1,5 @@
 <?php
+
 function formatPrice($value): string
 {
     return number_format((float) $value, 0, ',', ' ') . ' FCFA';
@@ -7,13 +8,17 @@ function formatPrice($value): string
 function normalizeStatus(string $value): string
 {
     $value = strtolower(trim($value));
-    $value = str_replace(['é', 'è', 'ê', 'ë', 'à', 'á', 'â', 'ä', 'ù', 'û', 'ü', 'ô', 'ö', 'î', 'ï', 'ç', ' ', '-'], ['e', 'e', 'e', 'e', 'a', 'a', 'a', 'a', 'u', 'u', 'u', 'o', 'o', 'i', 'i', 'c', '_', '_'], $value);
+    $value = str_replace(
+        ['é', 'è', 'ê', 'ë', 'à', 'á', 'â', 'ä', 'ù', 'û', 'ü', 'ô', 'ö', 'î', 'ï', 'ç', ' ', '-'],
+        ['e', 'e', 'e', 'e', 'a', 'a', 'a', 'a', 'u', 'u', 'u', 'o', 'o', 'i', 'i', 'c', '_', '_'],
+        $value
+    );
 
     $map = [
         'enattente' => 'en_attente',
+        'en_attente' => 'en_attente',
         'en_cours' => 'en_cours',
         'encours' => 'en_cours',
-        'accepte' => 'accepte',
         'accepte' => 'accepte',
         'acceptes' => 'accepte',
         'refuse' => 'refuse',
@@ -52,10 +57,10 @@ $availableOrderStatuses = [
     'en_cours' => 'En cours',
     'accepte' => 'Acceptées',
     'refuse' => 'Refusées',
-        'expire' => 'Expirés',
-        'livre' => 'Livrées',
-        'paie' => 'Payées',
-        'inconnu' => 'Autres',
+    'expire' => 'Expirés',
+    'livre' => 'Livrées',
+    'paie' => 'Payées',
+    'inconnu' => 'Autres',
 ];
 
 $availableQuoteStatuses = [
@@ -112,24 +117,22 @@ $availableQuoteStatuses = [
     font-size: 12px;
 }
 
+.filter-button.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+}
+
 .admin-table,
 .admin-table th,
 .admin-table td {
     font-size: 13px;
 }
 
-.admin-table th {
-    padding: 10px 12px;
-}
-
+.admin-table th,
 .admin-table td {
     padding: 10px 12px;
-}
-
-.filter-button.active {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #fff;
+    vertical-align: top;
 }
 
 .status-badge {
@@ -166,9 +169,7 @@ $availableQuoteStatuses = [
     color: #b91c1c;
 }
 
-.status-badge--expire,
-.status-badge--expiree,
-.status-badge--expirees {
+.status-badge--expire {
     background: #fde68a;
     color: #78350f;
 }
@@ -178,9 +179,7 @@ $availableQuoteStatuses = [
     color: #065f46;
 }
 
-.status-badge--paie,
-.status-badge--paye,
-.status-badge--payee {
+.status-badge--paie {
     background: #e0f2fe;
     color: #075985;
 }
@@ -192,6 +191,45 @@ $availableQuoteStatuses = [
 
 .table-section {
     margin-top: 20px;
+}
+
+.quantity-editor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.quantity-editor:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.quantity-editor span {
+    max-width: 170px;
+    font-size: 12px;
+    color: #475467;
+}
+
+.quantity-input {
+    width: 72px;
+    padding: 6px 8px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.quantity-input.is-saving {
+    opacity: .6;
+}
+
+.quantity-input.is-error {
+    border-color: #dc2626;
+    background: #fee2e2;
 }
 
 @media (max-width: 900px) {
@@ -220,6 +258,7 @@ $availableQuoteStatuses = [
             <h3>Total commandes</h3>
             <p><?= count($orders) ?></p>
         </div>
+
         <?php foreach ($availableOrderStatuses as $statusKey => $statusLabel): ?>
             <?php if ($statusKey === 'toutes') continue; ?>
             <div class="status-card">
@@ -231,7 +270,12 @@ $availableQuoteStatuses = [
 
     <div class="filter-bar">
         <?php foreach ($availableOrderStatuses as $statusKey => $statusLabel): ?>
-            <button type="button" class="filter-button<?= $statusKey === 'toutes' ? ' active' : '' ?>" data-target="orders" data-status="<?= htmlspecialchars($statusKey) ?>">
+            <button
+                type="button"
+                class="filter-button<?= $statusKey === 'toutes' ? ' active' : '' ?>"
+                data-target="orders"
+                data-status="<?= htmlspecialchars($statusKey) ?>"
+            >
                 <?= htmlspecialchars($statusLabel) ?>
             </button>
         <?php endforeach; ?>
@@ -248,6 +292,7 @@ $availableQuoteStatuses = [
                             <th>N° commande</th>
                             <th>Client</th>
                             <th>Contact</th>
+                            <th>Quantités</th>
                             <th>Total TTC</th>
                             <th>Paiement</th>
                             <th>Statut paiement</th>
@@ -258,22 +303,49 @@ $availableQuoteStatuses = [
                     <tbody>
                         <?php foreach ($orders as $order): ?>
                             <?php $orderStatus = normalizeStatus($order['statut_commande'] ?? 'inconnu'); ?>
+
                             <tr data-status="<?= htmlspecialchars($orderStatus) ?>">
-                                <td><?= htmlspecialchars($order['numero_commande']) ?></td>
-                                <td><?= htmlspecialchars($order['client_nom']) ?></td>
+                                <td><?= htmlspecialchars($order['numero_commande'] ?? '') ?></td>
+
+                                <td><?= htmlspecialchars($order['client_nom'] ?? '') ?></td>
+
                                 <td>
-                                    <?= htmlspecialchars($order['client_email']) ?><br>
-                                    <small><?= htmlspecialchars($order['client_telephone']) ?></small>
+                                    <?= htmlspecialchars($order['client_email'] ?? '') ?><br>
+                                    <small><?= htmlspecialchars($order['client_telephone'] ?? '') ?></small>
                                 </td>
-                                <td><?= htmlspecialchars(formatPrice($order['total_ttc'])) ?></td>
-                                <td><?= htmlspecialchars($order['mode_paiement']) ?></td>
-                                <td><?= htmlspecialchars($order['statut_paiement']) ?></td>
+
+                                <td>
+                                    <?php if (!empty($order['lignes']) && is_array($order['lignes'])): ?>
+                                        <?php foreach ($order['lignes'] as $line): ?>
+                                            <div class="quantity-editor">
+                                                <span><?= htmlspecialchars($line['nom_produit'] ?? 'Article') ?></span>
+
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value="<?= (int) ($line['quantite'] ?? 1) ?>"
+                                                    data-type="order"
+                                                    data-line-id="<?= (int) ($line['id'] ?? 0) ?>"
+                                                    class="quantity-input"
+                                                >
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <span>-</span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <td><?= htmlspecialchars(formatPrice($order['total_ttc'] ?? 0)) ?></td>
+                                <td><?= htmlspecialchars($order['mode_paiement'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($order['statut_paiement'] ?? '') ?></td>
+
                                 <td>
                                     <span class="status-badge status-badge--<?= htmlspecialchars($orderStatus) ?>">
-                                        <?= htmlspecialchars($order['statut_commande']) ?: 'Inconnu' ?>
+                                        <?= htmlspecialchars($order['statut_commande'] ?? 'Inconnu') ?>
                                     </span>
                                 </td>
-                                <td><?= htmlspecialchars($order['created_at']) ?></td>
+
+                                <td><?= htmlspecialchars($order['created_at'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -296,6 +368,7 @@ $availableQuoteStatuses = [
             <h3>Total devis</h3>
             <p><?= count($quotes) ?></p>
         </div>
+
         <?php foreach ($availableQuoteStatuses as $statusKey => $statusLabel): ?>
             <?php if ($statusKey === 'toutes') continue; ?>
             <div class="status-card">
@@ -307,7 +380,12 @@ $availableQuoteStatuses = [
 
     <div class="filter-bar">
         <?php foreach ($availableQuoteStatuses as $statusKey => $statusLabel): ?>
-            <button type="button" class="filter-button<?= $statusKey === 'toutes' ? ' active' : '' ?>" data-target="quotes" data-status="<?= htmlspecialchars($statusKey) ?>">
+            <button
+                type="button"
+                class="filter-button<?= $statusKey === 'toutes' ? ' active' : '' ?>"
+                data-target="quotes"
+                data-status="<?= htmlspecialchars($statusKey) ?>"
+            >
                 <?= htmlspecialchars($statusLabel) ?>
             </button>
         <?php endforeach; ?>
@@ -324,6 +402,7 @@ $availableQuoteStatuses = [
                             <th>N° devis</th>
                             <th>Client</th>
                             <th>Contact</th>
+                            <th>Quantités</th>
                             <th>Total HT</th>
                             <th>Total TTC</th>
                             <th>Statut</th>
@@ -334,22 +413,49 @@ $availableQuoteStatuses = [
                     <tbody>
                         <?php foreach ($quotes as $quote): ?>
                             <?php $quoteStatus = normalizeStatus($quote['statut'] ?? 'inconnu'); ?>
+
                             <tr data-status="<?= htmlspecialchars($quoteStatus) ?>">
-                                <td><?= htmlspecialchars($quote['numero_devis']) ?></td>
-                                <td><?= htmlspecialchars($quote['client_nom']) ?></td>
+                                <td><?= htmlspecialchars($quote['numero_devis'] ?? '') ?></td>
+
+                                <td><?= htmlspecialchars($quote['client_nom'] ?? '') ?></td>
+
                                 <td>
-                                    <?= htmlspecialchars($quote['client_email']) ?><br>
-                                    <small><?= htmlspecialchars($quote['client_telephone']) ?></small>
+                                    <?= htmlspecialchars($quote['client_email'] ?? '') ?><br>
+                                    <small><?= htmlspecialchars($quote['client_telephone'] ?? '') ?></small>
                                 </td>
-                                <td><?= htmlspecialchars(formatPrice($quote['total_ht'])) ?></td>
-                                <td><?= htmlspecialchars(formatPrice($quote['total_ttc'])) ?></td>
+
+                                <td>
+                                    <?php if (!empty($quote['lignes']) && is_array($quote['lignes'])): ?>
+                                        <?php foreach ($quote['lignes'] as $line): ?>
+                                            <div class="quantity-editor">
+                                                <span><?= htmlspecialchars($line['nom_produit'] ?? 'Article') ?></span>
+
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value="<?= (int) ($line['quantite'] ?? 1) ?>"
+                                                    data-type="quote"
+                                                    data-line-id="<?= (int) ($line['id'] ?? 0) ?>"
+                                                    class="quantity-input"
+                                                >
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <span>-</span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <td><?= htmlspecialchars(formatPrice($quote['total_ht'] ?? 0)) ?></td>
+                                <td><?= htmlspecialchars(formatPrice($quote['total_ttc'] ?? 0)) ?></td>
+
                                 <td>
                                     <span class="status-badge status-badge--<?= htmlspecialchars($quoteStatus) ?>">
-                                        <?= htmlspecialchars($quote['statut'] ?: 'Inconnu') ?>
+                                        <?= htmlspecialchars($quote['statut'] ?? 'Inconnu') ?>
                                     </span>
                                 </td>
+
                                 <td><?= htmlspecialchars($quote['notes'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($quote['created_at']) ?></td>
+                                <td><?= htmlspecialchars($quote['created_at'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -360,24 +466,78 @@ $availableQuoteStatuses = [
 </div>
 
 <script>
-    document.querySelectorAll('.filter-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const target = this.dataset.target;
-            const status = this.dataset.status;
-            document.querySelectorAll('.filter-button[data-target="' + target + '"]').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+document.querySelectorAll('.filter-button').forEach(button => {
+    button.addEventListener('click', function () {
+        const target = this.dataset.target;
+        const status = this.dataset.status;
 
-            const table = document.getElementById(target + 'Table');
-            if (!table) return;
+        document
+            .querySelectorAll('.filter-button[data-target="' + target + '"]')
+            .forEach(btn => btn.classList.remove('active'));
 
-            table.querySelectorAll('tbody tr').forEach(row => {
-                const rowStatus = row.dataset.status || 'inconnu';
-                if (status === 'toutes' || rowStatus === status) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        this.classList.add('active');
+
+        const table = document.getElementById(target + 'Table');
+        if (!table) return;
+
+        table.querySelectorAll('tbody tr').forEach(row => {
+            const rowStatus = row.dataset.status || 'inconnu';
+            row.style.display = status === 'toutes' || rowStatus === status ? '' : 'none';
         });
     });
+});
+
+document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('change', async function () {
+        const oldValue = this.defaultValue;
+        const quantity = parseInt(this.value, 10);
+        const lineId = parseInt(this.dataset.lineId, 10);
+        const type = this.dataset.type;
+
+        if (!quantity || quantity <= 0) {
+            alert('La quantité doit être supérieure à 0.');
+            this.value = oldValue;
+            return;
+        }
+
+        if (!lineId || lineId <= 0) {
+            alert('ID ligne invalide.');
+            this.value = oldValue;
+            return;
+        }
+
+        this.classList.add('is-saving');
+        this.classList.remove('is-error');
+
+        try {
+            const response = await fetch('/SITEECOFI/app/api/update_line_quantity.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    type: type,
+                    line_id: lineId,
+                    quantity: quantity
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Erreur lors de la mise à jour.');
+            }
+
+            location.reload();
+
+        } catch (error) {
+            console.error(error);
+            this.classList.add('is-error');
+            this.value = oldValue;
+            alert(error.message);
+        } finally {
+            this.classList.remove('is-saving');
+        }
+    });
+});
 </script>
