@@ -33,10 +33,9 @@ function getAppBaseUrl(): string
     }
 
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $path = '/siteecofi';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost:8888';
 
-    return $scheme . '://' . $host . $path;
+    return $scheme . '://' . $host . '/siteecofi';
 }
 
 function generateNumeroDevis(string $type): string
@@ -201,7 +200,6 @@ function fetchDevisPdfContent(int $devisId): string
 
     $content = curl_exec($ch);
     $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     $curlErr = curl_error($ch);
 
     curl_close($ch);
@@ -211,19 +209,11 @@ function fetchDevisPdfContent(int $devisId): string
     }
 
     if ($httpCode !== 200) {
-        $errorMsg = $content;
-        if (strpos($contentType, 'application/json') !== false) {
-            $json = json_decode($content, true);
-            if (is_array($json) && isset($json['message'])) {
-                $errorMsg = $json['message'];
-            }
-        }
-        throw new RuntimeException("PDF inaccessible — HTTP {$httpCode} — {$errorMsg}");
+        throw new RuntimeException("PDF inaccessible — HTTP {$httpCode} — URL : {$url}");
     }
 
-    // Vérifier la signature PDF (ignorer BOM UTF-8 éventuelle)
-    if (substr($content, 0, 4) !== '%PDF' && strpos($content, '%PDF') === false) {
-        throw new RuntimeException("Le fichier retourné n'est pas un PDF valide (premiers bytes: " . bin2hex(substr($content, 0, 16)) . ")");
+    if (substr($content, 0, 4) !== '%PDF') {
+        throw new RuntimeException("Le fichier retourné n’est pas un PDF valide.");
     }
 
     return $content;

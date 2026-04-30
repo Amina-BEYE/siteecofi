@@ -12,44 +12,39 @@ $currentPage = $currentPage ?? 'dashboard';
     </div>
 
     <nav class="sidebar-menu">
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=dashboard" class="menu-item <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=dashboard" class="menu-item <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
             <i class="fas fa-chart-line"></i>
             <span>Tableau de bord</span>
         </a>
 
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=auth" class="menu-item <?= $currentPage === 'auth' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=auth" class="menu-item <?= $currentPage === 'auth' ? 'active' : '' ?>">
             <i class="fas fa-user-shield"></i>
             <span>Authentification & rôles</span>
         </a>
 
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=clients" class="menu-item <?= $currentPage === 'clients' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=clients" class="menu-item <?= $currentPage === 'clients' ? 'active' : '' ?>">
             <i class="fas fa-users"></i>
             <span>Clients & contacts</span>
         </a>
 
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=products" class="menu-item <?= $currentPage === 'products' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=products" class="menu-item <?= $currentPage === 'products' ? 'active' : '' ?>">
             <i class="fas fa-box"></i>
             <span>Produits & stock</span>
         </a>
 
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=orders" class="menu-item <?= $currentPage === 'orders' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=orders" class="menu-item <?= $currentPage === 'orders' ? 'active' : '' ?>">
             <i class="fas fa-file-invoice"></i>
             <span>Commandes & factures</span>
         </a>
 
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=employees" class="menu-item <?= $currentPage === 'employees' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=employees" class="menu-item <?= $currentPage === 'employees' ? 'active' : '' ?>">
             <i class="fas fa-user-tie"></i>
             <span>Personnel</span>
         </a>
 
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=notifications" class="menu-item <?= $currentPage === 'notifications' ? 'active' : '' ?>">
+        <a href="/app/admin/Views/adminPage.php?page=notifications" class="menu-item <?= $currentPage === 'notifications' ? 'active' : '' ?>">
             <i class="fas fa-bell"></i>
             <span>Notifications</span>
-        </a>
-
-        <a href="/SITEECOFI/app/admin/Views/adminPage.php?page=inscriptions" class="menu-item <?= $currentPage === 'inscriptions' ? 'active' : '' ?>">
-            <i class="fas fa-user-plus"></i>
-            <span>Inscriptions</span>
         </a>
     </nav>
 </aside>

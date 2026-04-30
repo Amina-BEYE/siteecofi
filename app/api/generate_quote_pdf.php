@@ -2,74 +2,67 @@
 
 declare(strict_types=1);
 
-// Désactiver l'affichage des erreurs pour éviter les warnings HTML
-ini_set('display_errors', '0');
-error_reporting(E_ALL);
-
-// Démarrer le buffer de sortie pour capturer tout output accidentel
-ob_start();
-
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Core/Database.php';
 
 use App\Core\Database;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Exception;
 
-try {
-    if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-        throw new Exception('ID devis invalide');
-    }
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    http_response_code(400);
+    exit('ID devis invalide');
+}
 
-    $devisId = (int) $_GET['id'];
-    $pdo = Database::getConnection();
+$devisId = (int) $_GET['id'];
+$pdo = Database::getConnection();
 
-    // ── Logo ECOFI en base64 (seule méthode fiable avec Dompdf) ──
-    $logoPath = realpath(__DIR__ . '/../../app/IMG/logo-ecofi.png');
-    $logoBase64 = '';
-    if ($logoPath && file_exists($logoPath)) {
-        $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
-    }
+// ── Logo ECOFI en base64 (seule méthode fiable avec Dompdf) ──
+$logoPath = realpath(__DIR__ . '/../../app/IMG/logo-ecofi.png');
+$logoBase64 = '';
+if ($logoPath && file_exists($logoPath)) {
+    $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+}
 
-    // ── Récupération du devis ──
-    $stmt = $pdo->prepare("
-        SELECT 
-            d.id,
-            d.numero_devis,
-            d.total_ht,
-            d.total_ttc,
-            d.notes,
-            d.statut,
-            d.created_at,
-            c.nom,
-            c.email,
-            c.telephone
-        FROM devis d
-        INNER JOIN clients c ON c.id = d.client_id
-        WHERE d.id = :id
-        LIMIT 1
-    ");
-    $stmt->execute([':id' => $devisId]);
-    $devis = $stmt->fetch(PDO::FETCH_ASSOC);
+// ── Récupération du devis ──
+$stmt = $pdo->prepare("
+    SELECT 
+        d.id,
+        d.numero_devis,
+        d.total_ht,
+        d.total_ttc,
+        d.notes,
+        d.statut,
+        d.created_at,
+        c.nom,
+        c.email,
+        c.telephone
+    FROM devis d
+    INNER JOIN clients c ON c.id = d.client_id
+    WHERE d.id = :id
+    LIMIT 1
+");
+$stmt->execute([':id' => $devisId]);
+$devis = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$devis) {
-        throw new Exception('Devis introuvable');
-    }
+if (!$devis) {
+    http_response_code(404);
+    exit('Devis introuvable');
+}
 
-    // ── Récupération des lignes ──
-    $stmtLines = $pdo->prepare("
-        SELECT 
-            nom_produit,
-            prix_unitaire,
-            quantite,
-            total_ligne
-        FROM devis_lignes
-        WHERE devis_id = :devis_id
-        ORDER BY id ASC
-    ");
-    $stmtLines->execute([':devis_id' => $devisId]);
-    $lignes = $stmtLines->fetchAll(PDO::FETCH_ASSOC);
+// ── Récupération des lignes ──
+$stmtLines = $pdo->prepare("
+    SELECT 
+        nom_produit,
+        prix_unitaire,
+        quantite,
+        total_ligne
+    FROM devis_lignes
+    WHERE devis_id = :devis_id
+    ORDER BY id ASC
+");
+$stmtLines->execute([':devis_id' => $devisId]);
+$lignes = $stmtLines->fetchAll(PDO::FETCH_ASSOC);
 
 // ── Formatage des données ──
 $numeroDevis = htmlspecialchars((string) $devis['numero_devis'], ENT_QUOTES, 'UTF-8');
@@ -467,48 +460,17 @@ $html = <<<HTML
 HTML;
 
 // ── Génération Dompdf ──
-    $options = new Options();
-    $options->set('isRemoteEnabled', true);
-    $options->set('defaultFont', 'DejaVu Sans');
+$options = new Options();
+$options->set('isRemoteEnabled', true);
+$options->set('defaultFont', 'DejaVu Sans');
 
-    $dompdf = new Dompdf($options);
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
-    $dompdf->render();
+$dompdf = new Dompdf($options);
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'portrait');
+$dompdf->render();
 
-    $pdfContent = $dompdf->output();
+$dompdf->stream('devis-' . $devis['numero_devis'] . '.pdf', [
+    'Attachment' => false
+]);
 
-    if (empty($pdfContent) || strlen($pdfContent) < 100) {
-        throw new Exception('Contenu PDF généré est vide ou invalide');
-    }
-
-    if (substr($pdfContent, 0, 4) !== '%PDF') {
-        throw new Exception('Dompdf a retourné du contenu invalide (pas de signature PDF)');
-    }
-
-    // Nettoyer le buffer de sortie avant d'envoyer les headers
-    ob_end_clean();
-
-    header('Content-Type: application/pdf; charset=UTF-8');
-    header('Content-Length: ' . strlen($pdfContent));
-    header('Cache-Control: no-cache, no-store, must-revalidate');
-    header('Pragma: no-cache');
-    header('Expires: 0');
-
-    echo $pdfContent;
-    exit;
-
-} catch (Exception $e) {
-    // Nettoyer le buffer de sortie en cas d'erreur
-    if (ob_get_level() > 0) {
-        ob_end_clean();
-    }
-
-    http_response_code(500);
-    header('Content-Type: application/json; charset=UTF-8');
-    echo json_encode([
-        'error' => 'Erreur génération PDF',
-        'message' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
+exit;

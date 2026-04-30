@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../Core/Database.php';
 use App\Core\Database;
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: /SITEECOFI/app/admin/Views/adminPage.php?page=dashboard');
+    header('Location: /app/admin/Views/adminPage.php?page=dashboard');
     exit;
 }
 
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = 'admin@ecofi.sn';
             $_SESSION['user_role'] = 'admin';
 
-            header('Location: /SITEECOFI/app/admin/Views/adminPage.php?page=dashboard');
+            header('Location: /app/admin/Views/adminPage.php?page=dashboard');
             exit;
         }
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user_email'] = $user['email'];
                     $_SESSION['user_role'] = $user['role'];
 
-                    header('Location: /SITEECOFI/app/admin/Views/adminPage.php?page=dashboard');
+                    header('Location: /app/admin/Views/adminPage.php?page=dashboard');
                     exit;
                 }
             } catch (PDOException $e) {

@@ -29,7 +29,7 @@ $viewPath = __DIR__ . '/' . $view;
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="/SITEECOFI/app/admin/asserts/css/stylePageAdmin.css">
+    <link rel="stylesheet" href="/app/admin/asserts/css/stylePageAdmin.css">
 
     <script>
 
