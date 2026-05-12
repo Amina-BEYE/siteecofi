@@ -41,7 +41,7 @@ function getAppBaseUrl(): string
 
 function generateNumeroDevis(string $type): string
 {
-    $prefix = $type === 'location' ? 'LOC' : 'DEV';
+    $prefix = $type === 'location' ? 'LOC' : ($type === 'contact' ? 'CONT' : 'DEV');
     return $prefix . '-' . date('Ymd-His');
 }
 
@@ -105,6 +105,8 @@ function createDevis(PDO $pdo, int $clientId, string $numeroDevis, string $messa
 
     if ($type === 'location') {
         $notes = "[DEVIS LOCATION]\n" . $message;
+    } elseif ($type === 'contact') {
+        $notes = "[CONTACT]\nService: " . $message . "\nDemande traitée par Ecofi.";
     }
 
     $stmt = $pdo->prepare("
@@ -123,7 +125,7 @@ function createDevis(PDO $pdo, int $clientId, string $numeroDevis, string $messa
         ':total_ht' => $totalHt,
         ':total_ttc' => $totalTtc,
         ':notes' => $notes,
-        ':statut' => 'en_attente',
+        ':statut' => 'contact' === $type ? 'traite' : 'en_attente',
     ]);
 
     return (int) $pdo->lastInsertId();
@@ -131,6 +133,8 @@ function createDevis(PDO $pdo, int $clientId, string $numeroDevis, string $messa
 
 function insertDevisLignes(PDO $pdo, int $devisId, array $items, string $type): void
 {
+    if (empty($items) || $type === 'contact') return;
+
     $stmt = $pdo->prepare("
         INSERT INTO devis_lignes (
             devis_id, produit_id, nom_produit, quantite,
@@ -187,7 +191,7 @@ function fetchDevisPdfContent(int $devisId): string
     $ch = curl_init($url);
 
     if ($ch === false) {
-        throw new RuntimeException('Impossible d’initialiser cURL.');
+        throw new RuntimeException('Impossible d' . chr(8217) . 'initialiser cURL.');
     }
 
     curl_setopt_array($ch, [
@@ -252,7 +256,7 @@ function fetchDevisForMail(PDO $pdo, int $devisId): array
         throw new RuntimeException("Devis introuvable.");
     }
 
-    if (empty($row['client_email']) || !filter_var($row['client_email'], FILTER_VALIDATE_EMAIL)) {
+    if (empty($row['client_email']) || !filter_var($row['client_email'], FILTER_VAR_EMAIL)) {
         throw new RuntimeException("Email client invalide.");
     }
 
@@ -280,6 +284,93 @@ function buildMailer(): PHPMailer
     $mail->CharSet = 'UTF-8';
 
     return $mail;
+}
+
+function sendEcofiNotification(PDO $pdo, int $devisId, string $type, string $clientMessage = '', array $items = [], array $clientData = []): void
+{
+    $ecofiEmail = $_ENV['ECOFI_EMAIL'] ?? 'service.ecofi01@gmail.com';
+    $devis = fetchDevisForMail($pdo, $devisId);
+    
+    $mail = buildMailer();
+    $mail->setFrom($ecofiEmail, 'ECOFI - Système');
+    $mail->addAddress($ecofiEmail);
+    
+    $subject = "🚨 NOUVEAU " . strtoupper($type) . " - " . $devis['numero_devis'];
+    
+    $body = "
+    <div style='font-family: Arial, sans-serif; max-width: 600px;'>
+        <h2 style='color: #1a3a6b;'>Nouvelle demande reçue</h2>
+        <div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+            <h3>📋 " . ($type === 'contact' ? 'Contact' : 'Devis') . ": <strong>" . htmlspecialchars($devis['numero_devis']) . "</strong></h3>
+            <p><strong>👤 Client:</strong> " . htmlspecialchars($devis['client_nom']) . " <br> 📧 " . htmlspecialchars($devis['client_email']) . "</p>
+            <p><strong>📞 Téléphone:</strong> " . htmlspecialchars($clientData['telephone'] ?? 'N/A') . "</p>";
+    
+    if ($type !== 'contact') {
+        $body .= "<p><strong>💰 Total:</strong> " . number_format($devis['total_ttc'], 0, ',', ' ') . " FCFA</p>";
+    }
+    
+    $body .= "<p><strong>📂 Type:</strong> " . ucfirst($type) . "</p>
+        </div>";
+
+    // Réponse email de confirmation au client (uniquement pour le formulaire Contact)
+    if ($type === 'contact') {
+        $clientSubject = "✅ Confirmation - ECOFI a bien reçu votre demande";
+
+        $clientBody = "
+        <!DOCTYPE html>
+        <html lang='fr'>
+        <body style='font-family: Arial, sans-serif; background:#f4f6f9; padding:24px;'>
+          <div style='max-width:560px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; border:1px solid #eee;'>
+            <div style='background:#ff8533; color:#fff; padding:18px 22px;'>
+              <h2 style='margin:0; font-size:18px;'>✅ Demande reçue</h2>
+              <p style='margin:6px 0 0; opacity:.9;'>ECOFI vous remercie pour votre message</p>
+            </div>
+            <div style='padding:22px; color:#374151;'>
+              <p>Bonjour <strong>" . htmlspecialchars($devis['client_nom']) . "</strong>,</p>
+              <p>Nous accusons réception de votre demande :</p>
+              <div style='background:#fff3cd; border:1px solid #ffeeba; padding:14px; border-radius:8px; margin:14px 0;'>
+                <p style='margin:0;'><strong>Service :</strong> " . nl2br(htmlspecialchars(trim($clientMessage))) . "</p>
+              </div>
+              <p>Notre équipe vous répondra dans les 24h.</p>
+              <p style='margin-top:14px;'><strong>📞 71 039 75 75</strong> ou <strong>33 998 50 72</strong></p>
+            </div>
+            <div style='padding:14px 22px; font-size:12px; color:#888; text-align:center;'>ECOFI - Zac Nguinth, Thiès, Sénégal</div>
+          </div>
+        </body>
+        </html>
+        ";
+
+        $clientHeaders = "MIME-Version: 1.0\r\n";
+        $clientHeaders .= "Content-type: text/html; charset=UTF-8\r\n";
+        $clientHeaders .= "From: \"ECOFI Service Client\" <" . htmlspecialchars($ecofiEmail, ENT_QUOTES, 'UTF-8') . ">\r\n";
+
+        $body .= "<h3>💬 Message:</h3><div style='background: #e3f2fd; padding: 15px; border-left: 4px solid #1a3a6b;'>" . nl2br(htmlspecialchars($clientMessage)) . "</div>";
+    }
+    
+    if (!empty($items)) {
+        $body .= "<h3>🛒 Articles:</h3><table style='width:100%; border-collapse: collapse; margin-top: 10px;'>";
+        $body .= "<tr style='background: #1a3a6b; color: white;'><th>Produit</th><th>Qté</th><th>Prix U.</th><th>Total</th></tr>";
+        foreach ($items as $item) {
+            $body .= "<tr style='border-bottom: 1px solid #eee;'>";
+            $body .= "<td>" . htmlspecialchars($item['nom_produit'] ?? $item['nom'] ?? 'N/A') . "</td>";
+            $body .= "<td>" . ($item['quantite'] ?? 1) . "</td>";
+            $body .= "<td>" . number_format($item['prix_unitaire'] ?? $item['prix'] ?? 0, 0, ',', ' ') . " FCFA</td>";
+            $body .= "<td style='font-weight: bold;'>" . number_format($item['total_ligne'] ?? $item['total'] ?? 0, 0, ',', ' ') . " FCFA</td>";
+            $body .= "</tr>";
+        }
+        $body .= "</table>";
+    }
+    
+    $pdfLink = getAppBaseUrl() . "/app/api/generate_quote_pdf.php?id=" . $devisId;
+    $body .= "<p style='text-align: center; margin: 20px 0;'><a href='" . $pdfLink . "' style='background: #ff8533; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>📄 Voir PDF / Devis</a></p>";
+    
+    $body .= "</div>";
+    
+    $mail->isHTML(true);
+    $mail->Subject = $subject;
+    $mail->Body = $body;
+    
+    $mail->send();
 }
 
 function buildEmailHtml(string $clientNom, string $numeroDevis, float $totalTtc): string
@@ -349,7 +440,7 @@ try {
     $input = getJsonInput();
 
     $type = trim((string) ($input['type'] ?? 'achat'));
-    if (!in_array($type, ['achat', 'location'], true)) {
+    if (!in_array($type, ['achat', 'location', 'contact'], true)) {
         $type = 'achat';
     }
 
@@ -358,6 +449,11 @@ try {
     $telephone = trim((string) ($input['telephone'] ?? ''));
     $message = trim((string) ($input['message'] ?? ''));
     $items = $input['items'] ?? [];
+    
+    if ($type === 'contact') {
+        $items = [];
+        $message = trim((string) ($input['service'] ?? '')) . "\n\n" . $message;
+    }
 
     if ($nom === '' || $email === '' || $telephone === '') {
         http_response_code(400);
@@ -377,7 +473,7 @@ try {
         exit;
     }
 
-    if (!is_array($items) || count($items) === 0) {
+    if ($type !== 'contact' && (!is_array($items) || count($items) === 0)) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
@@ -396,30 +492,26 @@ try {
 
     $pdo->commit();
 
-    sendQuoteEmail($devisId);
+    sendEcofiNotification($pdo, $devisId, $type, $message, $items, ['telephone' => $telephone]);
 
-    echo json_encode([
-        'success' => true,
-        'message' => 'Votre demande de devis a bien été envoyée.',
-        'devis_id' => $devisId,
-        'numero_devis' => $numeroDevis,
-        'type' => $type,
-        'pdf_url' => getAppBaseUrl() . '/app/api/generate_quote_pdf.php?id=' . $devisId
-    ], JSON_UNESCAPED_UNICODE);
+    if ($type !== 'contact') {
+        sendQuoteEmail($devisId);
 
-    exit;
-
-} catch (Throwable $e) {
-    if (isset($pdo) && $pdo instanceof PDO && $pdo->inTransaction()) {
-        $pdo->rollBack();
+        echo json_encode([
+            'success' => true,
+            'message' => 'Votre demande de devis a bien été envoyée.',
+            'devis_id' => $devisId,
+            'numero_devis' => $numeroDevis,
+            'type' => $type,
+            'pdf_url' => getAppBaseUrl() . '/app/api/generate_quote_pdf.php?id=' . $devisId
+        ], JSON_UNESCAPED_UNICODE);
+    } else {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Votre message est bien envoyé ! Merci pour votre demande, nous vous répondons sous 24h.',
+            'devis_id' => $devisId,
+            'numero_devis' => $numeroDevis
+        ], JSON_UNESCAPED_UNICODE);
     }
 
-    http_response_code(500);
-
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ], JSON_UNESCAPED_UNICODE);
-
     exit;
-}

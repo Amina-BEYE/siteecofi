@@ -25,38 +25,38 @@ const serviceData = {
         products: [
             { id: 101, name: "Ciment 42.5", desc: "Ciment haute résistance", price: 68000, price_text: "68.000 FCFA/sac", img: "../app/IMG/ciment.jpg", oldPrice: 70000, oldPrice_text: "70.000 FCFA", rating: 5, reviews: 67, is_location: false, unit: "sac" },
             { id: 102, name: "Sable de rivière", desc: "Sable lavé", price: 0, price_text: "Prix sur demande", img: "../app/IMG/sable.jpg", rating: 4, reviews: 23, is_location: false, unit: "m³" },
-            { id: 103, name: "Gravier concassé", desc: "Gravier pour béton", price: 0, price_text: "Variable", img: "../app/IMG/gravier.jpg", rating: 4, reviews: 31, is_location: false, unit: "m³" },
-            { id: 104, name: "Gravier décoratif", desc: "Gravier pour aménagement", price: 0, price_text: "Variable", img: "../app/IMG/grapb.jpg", rating: 4.5, reviews: 28, is_location: false, unit: "m³" },
-            { id: 105, name: "Fers à béton", desc: "Armature", price: 0, price_text: "Variable", img: "../app/IMG/fer.jpg", rating: 4.5, reviews: 41, is_location: false, unit: "kg" },
-            { id: 106, name: "Bois de charpente", desc: "Bois traité", price: 0, price_text: "Prix sur demande", img: "../app/IMG/baton.jpg", rating: 4, reviews: 16, is_location: false, unit: "m³" },
-            { id: 107, name: "Tôle galvanisée", desc: "Pour toitures", price: 0, price_text: "Variable", img: "../app/IMG/toit.jpg", rating: 4, reviews: 13, is_location: false, unit: "m²" },
-            { id: 108, name: "Kit sécurité", desc: "Tenue complète", price: 0, price_text: "Variable", img: "../app/IMG/ma.jpg", rating: 4.5, reviews: 21, is_location: false, unit: "kit" },
-            { id: 109, name: "Casque protection", desc: "Normes internationales", price: 0, price_text: "Variable", img: "../app/IMG/casque.jpg", rating: 5, reviews: 34, is_location: false, unit: "pièce" },
-            { id: 110, name: "Chaussures sécurité", desc: "Anti-perforation", price: 0, price_text: "Variable", img: "../app/IMG/chaussures.jpg", rating: 4.5, reviews: 27, is_location: false, unit: "paire" },
-            { id: 111, name: "Gants pro", desc: "Protection mains", price: 0, price_text: "Prix sur demande", img: "../app/IMG/gants.jpg", rating: 4, reviews: 42, is_location: false, unit: "paire" },
-            { id: 112, name: "Gilet haute visibilité", desc: "Fluorescent", price: 0, price_text: "Prix sur demande", img: "../app/IMG/gilet.jpg", rating: 4.5, reviews: 19, is_location: false, unit: "pièce" }
+            { id: 103, name: "Gravier concassé", desc: "Gravier pour béton", price: 0, price_text: "Prix sur demande", img: "../app/IMG/gravier.jpg", rating: 4, reviews: 31, is_location: false, unit: "m³" },
+            { id: 104, name: "Gravier décoratif", desc: "Gravier pour aménagement", price: 0, price_text: "Prix sur demande", img: "../app/IMG/grapb.jpg", rating: 4.5, reviews: 28, is_location: false, unit: "m³" },
+            { id: 105, name: "Fers à béton", desc: "Armature", price: 0, price_text: "Prix sur demande", img: "../app/IMG/fer.jpg", rating: 4.5, reviews: 41, is_location: false,is_disponible: false, unit: "kg" },
+            { id: 106, name: "Bois de charpente", desc: "Bois traité", price: 0, price_text: "Prix sur demande", img: "../app/IMG/baton.jpg", rating: 4, reviews: 16, is_location: false, is_disponible: false, unit: "m³" },
+            { id: 107, name: "Tôle galvanisée", desc: "Pour toitures", price: 0, price_text: "Variable", img: "../app/IMG/toit.jpg", rating: 4, reviews: 13, is_location: false, is_disponible: false, unit: "m²" },
+            { id: 108, name: "Kit sécurité", desc: "Tenue complète", price: 0, price_text: "Variable", img: "../app/IMG/ma.jpg", rating: 4.5, reviews: 21, is_location: false, is_disponible: false, unit: "kit" },
+            { id: 109, name: "Casque protection", desc: "Normes internationales", price: 0, price_text: "Variable", img: "../app/IMG/casque.jpg", rating: 5, reviews: 34, is_location: false, is_disponible: false, unit: "pièce" },
+            { id: 110, name: "Chaussures sécurité", desc: "Anti-perforation", price: 0, price_text: "Variable", img: "../app/IMG/chaussures.jpg", rating: 4.5, reviews: 27, is_location: false, is_disponible: false, unit: "paire" },
+            { id: 111, name: "Gants pro", desc: "Protection mains", price: 0, price_text: "Prix sur demande", img: "../app/IMG/gants.jpg", rating: 4, reviews: 42, is_location: false, is_disponible: false, unit: "paire" },
+            { id: 112, name: "Gilet haute visibilité", desc: "Fluorescent", price: 0, price_text: "Prix sur demande", img: "../app/IMG/gilet.jpg", rating: 4.5, reviews: 19, is_location: false, is_disponible: false, unit: "pièce" }
         ]
     },
     decoration: {
         title: "Décoration & Aménagement",
         description: "Nos transformations en vidéo + services sur mesure",
         products: [
-            { id: 201, name: "Conception 3D", desc: "Visualisation 3D réaliste", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 202, name: "Decoration Chambre", desc: "Aménagement complet", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 203, name: "Salon Moderne", desc: "Design contemporain", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 204, name: "Cuisine Design", desc: "Sur mesure", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 205, name: "Aménagement Extérieur", desc: "Jardin, terrasse", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 206, name: "Aménagement Intérieur", desc: "Rénovation totale", price: 0, price_text: "Sur devis", is_location: false }
+            { id: 201, name: "Conception 3D", desc: "Visualisation 3D réaliste", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 202, name: "Decoration Chambre", desc: "Aménagement complet", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 203, name: "Salon Moderne", desc: "Design contemporain", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 204, name: "Cuisine Design", desc: "Sur mesure", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 205, name: "Aménagement Extérieur", desc: "Jardin, terrasse", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 206, name: "Aménagement Intérieur", desc: "Rénovation totale", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false }
         ]
     },
     conseil: {
         title: "Conseil immobilier",
         description: "Expertise pour vos transactions immobilières",
         products: [
-            { id: 301, name: "Évaluation de propriété", desc: "Estimation précise", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 302, name: "Accompagnement à l'achat", desc: "Assistance complète", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 303, name: "Accompagnement à la vente", desc: "Gestion complète", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 304, name: "Étude de faisabilité", desc: "Analyse technique", price: 0, price_text: "Sur devis", is_location: false }
+            { id: 301, name: "Évaluation de propriété", desc: "Estimation précise", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 302, name: "Accompagnement à l'achat", desc: "Assistance complète", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 303, name: "Accompagnement à la vente", desc: "Gestion complète", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 304, name: "Étude de faisabilité", desc: "Analyse technique", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false }
         ]
     },
     plans: {
@@ -66,9 +66,9 @@ const serviceData = {
             { id: 401, name: "Plan R+1", desc: "RDC + étage", price: 0, price_text: "Sur devis", img: "../app/IMG/R+1.jpg.jpeg", is_location: false },
             { id: 402, name: "Plan R+2", desc: "RDC + 2 étages", price: 0, price_text: "Sur devis", img: "../app/IMG/R+2.jpg.jpeg", is_location: false },
             { id: 403, name: "Plan RDC", desc: "Maison plain-pied", price: 0, price_text: "Sur devis", img: "../app/IMG/RDC.jpg.jpeg", is_location: false },
-            { id: 404, name: "Plan 3D Rendu", desc: "Visualisation 3D", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 405, name: "Plan 3D Aménagé", desc: "Avec décoration", price: 0, price_text: "Sur devis", is_location: false },
-            { id: 406, name: "Pack Complet", desc: "Plans + 3D", price: 0, price_text: "Sur devis", is_location: false }
+            { id: 404, name: "Plan 3D Rendu", desc: "Visualisation 3D", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 405, name: "Plan 3D Aménagé", desc: "Avec décoration", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
+            { id: 406, name: "Pack Complet", desc: "Plans + 3D", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false }
         ]
     },
     location: {
@@ -76,58 +76,79 @@ const serviceData = {
         description: "Équipements de précision - Location à l'heure, journée, semaine ou mois",
         products: [
             {
-                id: 501, name: "Récepteur GNSS", desc: "Haute précision",
+                id: 501, name: "Récepteur GNSS(GPS)", desc: "Haute précision",
                 location_options: {
                     hourly: { price: 5000, enabled: true, price_text: "5.000 FCFA/heure" },
-                    daily: { price: 25000, enabled: true, price_text: "25.000 FCFA/jour" },
-                    weekly: { price: 125000, enabled: true, price_text: "125.000 FCFA/semaine" },
-                    monthly: { price: 400000, enabled: true, price_text: "400.000 FCFA/mois" }
-                }, img: "../app/IMG/gnss.jpg", rating: 5, reviews: 14, is_location: true, caution: 500000, caution_text: "500.000 FCFA de caution"
+                    daily: { price: 25000, enabled: true, price_text: "50.000 FCFA/jour" },
+                    weekly: { price: 125000, enabled: true, price_text: "350.000 FCFA/semaine" },
+                    monthly: { price: 400000, enabled: true, price_text: "10.500.000 FCFA/mois" }
+                }, img: "../app/IMG/gnss.jpg", rating: 5, reviews: 14, is_location: true, caution: 50000, caution_text: "50.000 FCFA de caution"
             },
             {
-                id: 502, name: "Niveau électronique", desc: "Pour nivellements",
+                id: 502, name: "Pick up", desc: "Pour vehiculer",
+                location_options: {
+                    hourly: { price: 3000, enabled: true, price_text: "5.000 FCFA/heure" },
+                    daily: { price: 15000, enabled: true, price_text: "50.000 FCFA/jour" },
+                    weekly: { price: 75000, enabled: true, price_text: "350.000 FCFA/semaine" },
+                    monthly: { price: 250000, enabled: true, price_text: "10.500.000 FCFA/mois" }
+                }, img: "../app/IMG/pickup.png", rating: 4, reviews: 21, is_location: true, caution: 250000, caution_text: "250.000 FCFA de caution"
+            },
+            {
+                id: 503, name: "GPS + Operateur", desc: "Repérage terrain",
+                location_options: {
+                    hourly: { price: 2000, enabled: true, price_text: "7.000 FCFA/heure" },
+                    daily: { price: 10000, enabled: true, price_text: "75.000 FCFA/jour" },
+                    weekly: { price: 50000, enabled: true, price_text: "525.000 FCFA/semaine" },
+                    monthly: { price: 150000, enabled: true, price_text: "15.750.000 FCFA/mois" }
+                }, img: "../app/IMG/operagps.png", rating: 4, reviews: 17, is_location: true, caution: 150000, caution_text: "150.000 FCFA de caution"
+            },
+            {
+                id: 504, name: "GPS +Operateur + Pic up", desc: "Pour vos Projets de grande envergure",
+                location_options: {
+                    hourly: { price: 3000, enabled: true, price_text: "15.000 FCFA/heure" },
+                    daily: { price: 15000, enabled: true, price_text: "125.000 FCFA/jour" },
+                    weekly: { price: 75000, enabled: true, price_text: "875.000 FCFA/semaine" },
+                    monthly: { price: 250000, enabled: true, price_text: "26.250.000 FCFA/mois" }
+                }, img: "../app/IMG/operagpspick.png", rating: 4, reviews: 21, is_location: true, caution: 500000, caution_text: "500.000 FCFA de caution"
+            },
+
+
+            {
+                id: 505, name: "Niveau électronique", desc: "Pour nivellements",
                 location_options: {
                     hourly: { price: 3000, enabled: true, price_text: "3.000 FCFA/heure" },
                     daily: { price: 15000, enabled: true, price_text: "15.000 FCFA/jour" },
                     weekly: { price: 75000, enabled: true, price_text: "75.000 FCFA/semaine" },
                     monthly: { price: 250000, enabled: true, price_text: "250.000 FCFA/mois" }
-                }, img: "../app/IMG/niveau.jpg", rating: 4, reviews: 21, is_location: true, caution: 250000, caution_text: "250.000 FCFA de caution"
+                }, img: "../app/IMG/niveau.jpg", rating: 4, reviews: 21, is_location: true, is_disponible: false, caution: 50000, caution_text: "50.000 FCFA de caution"
             },
             {
-                id: 503, name: "Station totale", desc: "Mesure de précision",
+                id: 506, name: "Station totale", desc: "Mesure de précision",
                 location_options: {
                     hourly: { price: 8000, enabled: true, price_text: "8.000 FCFA/heure" },
                     daily: { price: 40000, enabled: true, price_text: "40.000 FCFA/jour" },
                     weekly: { price: 200000, enabled: true, price_text: "200.000 FCFA/semaine" },
                     monthly: { price: 650000, enabled: true, price_text: "650.000 FCFA/mois" }
-                }, img: "../app/IMG/station.jpg", rating: 4.5, reviews: 9, is_location: true, caution: 1000000, caution_text: "1.000.000 FCFA de caution"
+                }, img: "../app/IMG/station.jpg", rating: 4.5, reviews: 9, is_location: true, is_disponible: false, caution: 50000, caution_text: "50.000 FCFA de caution"
             },
+
             {
-                id: 504, name: "GPS de poche", desc: "Repérage terrain",
-                location_options: {
-                    hourly: { price: 2000, enabled: true, price_text: "2.000 FCFA/heure" },
-                    daily: { price: 10000, enabled: true, price_text: "10.000 FCFA/jour" },
-                    weekly: { price: 50000, enabled: true, price_text: "50.000 FCFA/semaine" },
-                    monthly: { price: 150000, enabled: true, price_text: "150.000 FCFA/mois" }
-                }, img: "../app/IMG/gps.jpg", rating: 4, reviews: 17, is_location: true, caution: 150000, caution_text: "150.000 FCFA de caution"
-            },
-            {
-                id: 505, name: "Drone topographique", desc: "Levés aériens",
+                id: 507, name: "Drone topographique", desc: "Levés aériens",
                 location_options: {
                     hourly: { price: 15000, enabled: true, price_text: "15.000 FCFA/heure" },
                     daily: { price: 75000, enabled: true, price_text: "75.000 FCFA/jour" },
                     weekly: { price: 350000, enabled: true, price_text: "350.000 FCFA/semaine" },
                     monthly: { price: 1200000, enabled: true, price_text: "1.200.000 FCFA/mois" }
-                }, img: "../app/IMG/drone.jpg", rating: 5, reviews: 8, is_location: true, caution: 2000000, caution_text: "2.000.000 FCFA de caution"
+                }, img: "../app/IMG/drone.jpg", rating: 5, reviews: 8, is_location: true, is_disponible: false, caution: 100000, caution_text: "100.000 FCFA de caution"
             },
             {
-                id: 506, name: "Décamètre mécanique", desc: "Roulette 50m",
+                id: 508, name: "Décamètre mécanique", desc: "Roulette 50m",
                 location_options: {
                     hourly: { price: 1000, enabled: true, price_text: "1.000 FCFA/heure" },
                     daily: { price: 5000, enabled: true, price_text: "5.000 FCFA/jour" },
                     weekly: { price: 25000, enabled: true, price_text: "25.000 FCFA/semaine" },
                     monthly: { price: 75000, enabled: true, price_text: "75.000 FCFA/mois" }
-                }, img: "../app/IMG/deac.jpg", rating: 4, reviews: 25, is_location: true, caution: 50000, caution_text: "50.000 FCFA de caution"
+                }, img: "../app/IMG/deac.jpg", rating: 4, reviews: 25, is_location: true, is_disponible: false, caution: 5000, caution_text: "5.000 FCFA de caution"
             }
         ]
     }
@@ -187,6 +208,68 @@ document.addEventListener('DOMContentLoaded', function () {
     initialiserApplication();
 });
 
+// ===== FIX MENU MOBILE =====
+function initMobileMenu() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.querySelector('nav');
+
+    if (!menuToggle || !navMenu) {
+        console.log('Menu elements not found');
+        return;
+    }
+
+    console.log('Menu initialized');
+
+    // Ouvrir/fermer le menu
+    menuToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        navMenu.classList.toggle('active');
+
+        // Changer l'icône
+        const icon = menuToggle.querySelector('i');
+        if (icon) {
+            if (navMenu.classList.contains('active')) {
+                icon.className = 'fas fa-times';
+            } else {
+                icon.className = 'fas fa-bars';
+            }
+        }
+    });
+
+    // Fermer le menu en cliquant à l'extérieur
+    document.addEventListener('click', function (e) {
+        if (navMenu.classList.contains('active')) {
+            const isClickInsideNav = navMenu.contains(e.target);
+            const isClickOnToggle = menuToggle.contains(e.target);
+
+            if (!isClickInsideNav && !isClickOnToggle) {
+                navMenu.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) icon.className = 'fas fa-bars';
+            }
+        }
+    });
+
+    // Fermer le menu en cliquant sur un lien
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function () {
+            navMenu.classList.remove('active');
+            const icon = menuToggle.querySelector('i');
+            if (icon) icon.className = 'fas fa-bars';
+        });
+    });
+
+    // Fermer avec la touche Echap
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            const icon = menuToggle.querySelector('i');
+            if (icon) icon.className = 'fas fa-bars';
+        }
+    });
+}
+
 function initialiserApplication() {
     chargerPanier();
     afficherCodesPromo();
@@ -216,9 +299,7 @@ function initBoutonsDetails() {
 // =========================
 // MODAL PRODUITS
 // =========================
-// =========================
-// MODAL PRODUITS - VERSION SIMPLIFIÉE
-// =========================
+
 // =========================
 // MODAL PRODUITS - VERSION CORRECTE
 // =========================
@@ -242,41 +323,65 @@ function openProductsModal(expertise) {
             ${service.products.map(product => {
         if (product.is_location) {
             // PRODUITS DE LOCATION - Bouton simple qui ajoute au panier sans options
+            const disponible = product.is_disponible !== false;
             return `
-                        <div class="product-card-modern location-card">
-                            <div class="product-img-modern">
-                                <img src="${product.img || 'https://via.placeholder.com/400x200'}" alt="${product.name}">
-                                <span class="location-badge-product"><i class="fas fa-calendar-alt"></i> Location</span>
-                            </div>
-                            <div class="product-info-modern">
-                                <h4>${product.name}</h4>
-                                <p>${product.desc || ''}</p>
-                                <div class="product-price-modern">Location - Prix sur demande</div>
-                                ${product.caution ? `<div class="caution-info"><i class="fas fa-shield-alt"></i> ${product.caution_text}</div>` : ''}
-                                <button class="buy-btn-modern location-btn" onclick='ajouterLocationSimpleAuPanier(${JSON.stringify(product).replace(/"/g, '&quot;')})'>
-                                    <i class="fas fa-cart-plus"></i> Ajouter au panier
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                       <div class="product-card-modern location-card">
+            <div class="product-img-modern">
+                <img src="${product.img || 'https://via.placeholder.com/400x200'}" alt="${product.name}">
+                ${!disponible
+                    ? `<span class="location-badge-product" style="background:#6c757d;">
+                           <i class="fas fa-clock"></i> Bientôt disponible
+                       </span>`
+                    : `<span class="location-badge-product">
+                           <i class="fas fa-calendar-alt"></i> Location
+                       </span>`
+                }
+            </div>
+            <div class="product-info-modern">
+                <h4>${product.name}</h4>
+                <p>${product.desc || ''}</p>
+                <div class="product-price-modern">Location - Prix sur demande</div>
+                ${product.caution ? `<div class="caution-info"><i class="fas fa-shield-alt"></i> ${product.caution_text}</div>` : ''}
+                <button class="buy-btn-modern location-btn" 
+                        onclick="ajouterLocationSimpleAuPanier(${product.id})"
+                        ${!disponible ? 'disabled style="background:#aaa; cursor:not-allowed; opacity:0.6;"' : ''}>
+                    <i class="fas fa-${disponible ? 'cart-plus' : 'clock'}"></i>
+                    ${disponible ? 'Ajouter au panier' : 'Bientôt disponible'}
+                </button>
+            </div>
+        </div>
+    `;
         } else {
             // PRODUITS D'ACHAT
+            const disponible = product.is_disponible !== false; // true si absent ou true
+
             return `
-                        <div class="product-card-modern">
-                            <div class="product-img-modern">
-                                <img src="${product.img || 'https://via.placeholder.com/400x200'}" alt="${product.name}">
-                                <span class="purchase-badge-product"><i class="fas fa-shopping-cart"></i> Achat</span>
-                            </div>
-                            <div class="product-info-modern">
-                                <h4>${product.name}</h4>
-                                <p>${product.desc || ''}</p>
-                                <div class="product-price-modern">${product.price_text || 'Prix sur demande'}</div>
-                                <button class="buy-btn-modern" onclick='ajouterAchatDepuisModal(this)'>
-                                    <i class="fas fa-cart-plus"></i> Ajouter au panier
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                         <div class="product-card-modern ${!disponible ? 'card-indisponible' : ''}" 
+             data-product-id="${product.id}">
+            <div class="product-img-modern">
+                <img src="${product.img || 'https://via.placeholder.com/400x200'}" alt="${product.name}">
+                ${!disponible
+                    ? `<span class="purchase-badge-product" style="background:#6c757d;">
+                           <i class="fas fa-clock"></i> Bientôt disponible
+                       </span>`
+                    : `<span class="purchase-badge-product">
+                           <i class="fas fa-shopping-cart"></i> Achat
+                       </span>`
+                }
+            </div>
+            <div class="product-info-modern">
+                <h4>${product.name}</h4>
+                <p>${product.desc || ''}</p>
+                <div class="product-price-modern">${product.price_text || 'Prix sur demande'}</div>
+                <button class="buy-btn-modern" 
+                        onclick="ajouterAchatDepuisModal(this)"
+                        ${!disponible ? 'disabled style="background:#aaa; cursor:not-allowed; opacity:0.6;"' : ''}>
+                    <i class="fas fa-${disponible ? 'cart-plus' : 'clock'}"></i> 
+                    ${disponible ? 'Ajouter au panier' : 'Bientôt disponible'}
+                </button>
+            </div>
+        </div>
+    `;
         }
     }).join('')}
         </div>
@@ -287,12 +392,15 @@ function openProductsModal(expertise) {
 }
 
 // Ajout simple d'un produit de location au panier (sans options)
-// Ajout simple d'un produit de location au panier (sans options)
-function ajouterLocationSimpleAuPanier(produit) {
-    console.log('Ajout location simple au panier:', produit.name);
+function ajouterLocationSimpleAuPanier(produitId) {
+    let produit = null;
+    for (let cat in serviceData) {
+        produit = serviceData[cat].products.find(p => p.id === produitId);
+        if (produit) break;
+    }
+    if (!produit) return;
 
     const existant = panier.find(item => item.produitId === produit.id && item.is_location === true);
-
     if (existant) {
         existant.quantity++;
     } else {
@@ -314,10 +422,10 @@ function ajouterLocationSimpleAuPanier(produit) {
             image: produit.img || '🏗️'
         });
     }
-
     mettreAJourPanier();
     afficherNotification(`${produit.name} ajouté au panier (location)`);
 }
+
 
 function getPeriodText(period) {
     const periods = { hourly: "heure", daily: "jour", weekly: "semaine", monthly: "mois" };
@@ -328,6 +436,11 @@ function getPeriodText(period) {
 // FONCTIONS PANIER
 // =========================
 function ajouterAchatAuPanier(produit) {
+    if (produit.is_disponible === false) {
+        afficherNotification(`${produit.name} n'est pas encore disponible`, 'error');
+        return;
+    }
+
     const existant = panier.find(item => item.produitId === produit.id && !item.is_location);
     if (existant) {
         existant.quantite++;
@@ -346,6 +459,7 @@ function ajouterAchatAuPanier(produit) {
     mettreAJourPanier();
     afficherNotification(`${produit.name} ajouté au panier !`);
 }
+
 
 function ajouterLocationAuPanier(produit, period, quantity, startDate, endDate) {
     const locationOption = produit.location_options[period];
@@ -373,8 +487,7 @@ function ajouterLocationAuPanier(produit, period, quantity, startDate, endDate) 
 }
 
 function mettreAJourPanier() {
-    // Sauvegarde en Local
-    sauvegarderPanier();
+    
     const cartItems = document.getElementById('cartItems');
     const cartCount = document.getElementById('cartCount');
     const cartTotal = document.getElementById('cartTotal');
@@ -408,6 +521,7 @@ function mettreAJourPanier() {
     if (!cartItems) return;
     if (panier.length === 0) {
         cartItems.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">Votre panier est vide</p>';
+        sauvegarderPanier(); // ← sauvegarde ici
         return;
     }
 
@@ -451,6 +565,7 @@ function mettreAJourPanier() {
         }
     });
     cartItems.innerHTML = html;
+    sauvegarderPanier(); // ← sauvegarde à la fin
 }
 
 function changerQuantite(cartId, changement) {
@@ -470,11 +585,24 @@ function retirerDuPanier(cartId) {
 }
 
 function viderPanier() {
+    // Vider la variable
     panier = [];
     currentPromoCode = null;
-    supprimerPanierLocalStorage();
+    
+    // Vider le localStorage immédiatement
+    localStorage.removeItem('siteecofi_panier');
+    localStorage.removeItem('siteecofi_promo');
+    
+    // Vérification de sécurité
+    localStorage.setItem('siteecofi_panier', JSON.stringify([]));
+    localStorage.setItem('siteecofi_promo', JSON.stringify(null));
+    
+    // Mettre à jour l'affichage
     mettreAJourPanier();
-    afficherNotification('Panier vidé');
+    afficherNotification('Panier vidé', 'success');
+    
+    // Debug
+    console.log('Panier vidé. localStorage:', localStorage.getItem('siteecofi_panier'));
 }
 
 function toggleCart(event) {
@@ -492,10 +620,11 @@ function toggleCart(event) {
 // =========================
 window.ajouterAchatDepuisModal = function (button) {
     const productCard = button.closest('.product-card-modern');
-    const productName = productCard.querySelector('h4').textContent;
+    // Utiliser data-id au lieu de chercher par nom
+    const productId = parseInt(productCard.dataset.productId);
     let product = null;
     for (let cat in serviceData) {
-        product = serviceData[cat].products.find(p => p.name === productName);
+        product = serviceData[cat].products.find(p => p.id === productId);
         if (product) break;
     }
     if (product) ajouterAchatAuPanier(product);
@@ -1542,6 +1671,25 @@ function initHeaderScroll() {
         if (header) header.style.boxShadow = window.scrollY > 100 ? '0 5px 20px rgba(0,0,0,0.15)' : '0 2px 10px rgba(0,0,0,0.1)';
     });
 }
+
+function initMenuToggle() {
+    const toggleBtn = document.getElementById('menuToggle');
+    const nav = document.getElementById('mainNav');
+    if (!toggleBtn || !nav) return;
+
+    toggleBtn.addEventListener('click', () => {
+        nav.classList.toggle('active');
+    });
+
+    // Ferme au clic en dehors sur mobile
+    document.addEventListener('click', (e) => {
+        if (!nav.classList.contains('active')) return;
+        if (e.target.closest('#menuToggle')) return;
+        if (e.target.closest('#mainNav')) return;
+        nav.classList.remove('active');
+    });
+}
+
 function initModals() {
     document.getElementById('productsModalClose')?.addEventListener('click', () => {
         document.getElementById('productsModal')?.classList.remove('active');
@@ -1561,3 +1709,4 @@ function initModals() {
 function formatPrice(value) {
     return new Intl.NumberFormat('fr-FR').format(value || 0) + ' FCFA';
 }
+

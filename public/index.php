@@ -62,8 +62,13 @@ $tel_mobile = "71 039 75 75";
                 </div>
 
                 <div class="nav-search-container">
+                    <button class="menu-toggle" id="menuToggle" >
+                        <i class="fas fa-bars"></i>
+                    </button>
+
                     <nav id="mainNav">
                         <ul>
+
                             <li><a href="#accueil">Accueil</a></li>
                             <li><a href="#apropos">À propos</a></li>
                             <li><a href="#services">Services</a></li>
@@ -305,7 +310,7 @@ $tel_mobile = "71 039 75 75";
                         <h3>Matériaux et Equipements</h3>
                         <p>Approvisionnement pour tous vos chantiers</p>
                         <div class="service-buttons-compact">
-                            <button class="btn-service-compact btn-details-compact" data-target="briques">Détails</button>
+                            <button class="btn-service-compact btn-details-compact" data-target="materiaux">Détails</button>
                         </div>
                     </div>
                 </div>
@@ -497,153 +502,155 @@ $tel_mobile = "71 039 75 75";
     </div>
 
     <section id="contact" class="contact-elegant">
-        <div class="container">
-            <div class="contact-header">
-                <h2>Nous contacter</h2>
-                <p class="contact-subtitle">Prêts à concrétiser votre projet ? Parlons-en !</p>
-            </div>
+    <div class="container">
+        <div class="contact-header">
+            <h2>Nous contacter</h2>
+            <p class="contact-subtitle">Prêts à concrétiser votre projet ? Parlons-en !</p>
+        </div>
 
-            <div class="contact-grid">
-                <div class="contact-info-elegant">
-                    <div class="contact-card-elegant">
-                        <div class="card-header">
-                            <div class="header-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <h3>Où nous trouver</h3>
+        <div class="contact-grid">
+            <div class="contact-info-elegant">
+                <div class="contact-card-elegant">
+                    <div class="card-header">
+                        <div class="header-icon">
+                            <i class="fas fa-map-marker-alt"></i>
                         </div>
+                        <h3>Où nous trouver</h3>
+                    </div>
 
-                        <div class="address-elegant">
-                            <div class="address-line">
-                                <i class="fas fa-building"></i>
-                                <span>À côté de la Pharmacie Keur Baye Thier</span>
-                            </div>
-                            <div class="address-line">
-                                <i class="fas fa-location-dot"></i>
-                                <span>Zac de Nginth, Thiès</span>
-                            </div>
+                    <div class="address-elegant">
+                        <div class="address-line">
+                            <i class="fas fa-building"></i>
+                            <span>À côté de la Pharmacie Keur Baye Thier</span>
                         </div>
+                        <div class="address-line">
+                            <i class="fas fa-location-dot"></i>
+                            <span>Zac de Nginth, Thiès</span>
+                        </div>
+                    </div>
 
-                        <div class="contact-methods">
-                            <div class="contact-method">
-                                <div class="method-icon phone">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                                <div class="method-info">
-                                    <h4>Téléphone</h4>
-                                    <div class="method-links">
-                                        <a href="tel:+221339985072" class="phone-link">33 998 50 72</a>
-                                        <a href="tel:+221710397575" class="phone-link">71 039 75 75</a>
-                                    </div>
-                                </div>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <div class="method-icon phone">
+                                <i class="fas fa-phone"></i>
                             </div>
-
-                            <div class="contact-method">
-                                <div class="method-icon email">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <div class="method-info">
-                                    <h4>Email</h4>
-                                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=service.ecofi01@gmail.com&su=Contact%20ECOFI&body=Bonjour%20ECOFI,%0D%0A%0D%0AJe%20vous%20contacte%20au%20sujet%20de..."
-                                        target="_blank" class="email-link">
-                                        service.ecofi01@gmail.com
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="contact-method">
-                                <div class="method-icon whatsapp">
-                                    <i class="fab fa-whatsapp"></i>
-                                </div>
-                                <div class="method-info">
-                                    <h4>WhatsApp</h4>
-                                    <a href="https://wa.me/221710397575" target="_blank" class="whatsapp-link">
-                                        Écrivez-nous directement
-                                    </a>
+                            <div class="method-info">
+                                <h4>Téléphone</h4>
+                                <div class="method-links">
+                                    <a href="tel:+221339985072" class="phone-link">33 998 50 72</a>
+                                    <a href="tel:+221710397575" class="phone-link">71 039 75 75</a>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="map-preview">
-                            <div class="map-placeholder">
-                                <i class="fas fa-map"></i>
-                                <p>Localisation Thiès, Sénégal</p>
-                                <a href="https://maps.google.com/?q=14.824917,-16.932083" target="_blank"
-                                    class="view-map-btn">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    Voir sur la carte
+                        <div class="contact-method">
+                            <div class="method-icon email">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="method-info">
+                                <h4>Email</h4>
+                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=service.ecofi01@gmail.com&su=Contact%20ECOFI&body=Bonjour%20ECOFI,%0D%0A%0D%0AJe%20vous%20contacte%20au%20sujet%20de..."
+                                    target="_blank" class="email-link">
+                                    service.ecofi01@gmail.com
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="contact-method">
+                            <div class="method-icon whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="method-info">
+                                <h4>WhatsApp</h4>
+                                <a href="https://wa.me/221710397575" target="_blank" class="whatsapp-link">
+                                    Écrivez-nous directement
                                 </a>
                             </div>
                         </div>
                     </div>
+
+                    <div class="map-preview">
+                        <div class="map-placeholder">
+                            <i class="fas fa-map"></i>
+                            <p>Localisation Thiès, Sénégal</p>
+                            <a href="https://maps.google.com/?q=14.824917,-16.932083" target="_blank"
+                                class="view-map-btn">
+                                <i class="fas fa-external-link-alt"></i>
+                                Voir sur la carte
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-elegant">
+                <div class="form-intro">
+                    <h3>Demande de devis</h3>
+                    <p>Recevez un devis personnalisé gratuit en 24h</p>
                 </div>
 
-                <div class="contact-form-elegant">
-                    <div class="form-intro">
-                        <h3>Demande de devis</h3>
-                        <p>Recevez un devis personnalisé gratuit en 24h</p>
+                <form id="contactForm">
+                    <div class="form-group-elegant">
+                        <input type="text" name="nom" placeholder="Votre nom complet" required>
                     </div>
 
-                    <form id="elegantContactForm">
+                    <div class="form-row-elegant">
                         <div class="form-group-elegant">
-                            <input type="text" placeholder="Votre nom complet" required>
+                            <input type="email" name="email" placeholder="Adresse email" required>
                         </div>
-
-                        <div class="form-row-elegant">
-                            <div class="form-group-elegant">
-                                <input type="email" placeholder="Adresse email" required>
-                            </div>
-                            <div class="form-group-elegant">
-                                <input type="tel" placeholder="Numéro de téléphone" required>
-                            </div>
-                        </div>
-
                         <div class="form-group-elegant">
-                            <select required>
-                                <option value="">Type de service</option>
-                                <option>Production de briques</option>
-                                <option>Matériaux de construction</option>
-                                <option>Décoration intérieure/extérieure</option>
-                                <option>Conseil immobilier</option>
-                                <option>Conception de plans</option>
-                                <option>Location GPS</option>
-                                <option>Construction BTP</option>
-                            </select>
+                            <input type="tel" name="telephone" placeholder="Numéro de téléphone" required>
                         </div>
+                    </div>
 
-                        <div class="form-group-elegant">
-                            <textarea placeholder="Décrivez votre projet..." rows="4" required></textarea>
+                    <div class="form-group-elegant">
+                        <select name="service" required>
+                            <option value="">Type de service</option>
+                            <option>Production de briques</option>
+                            <option>Matériaux de construction</option>
+                            <option>Décoration intérieure/extérieure</option>
+                            <option>Conseil immobilier</option>
+                            <option>Conception de plans</option>
+                            <option>Location GPS</option>
+                            <option>Construction BTP</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-elegant">
+                        <textarea name="message" placeholder="Décrivez votre projet..." rows="4" required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn-elegant">
+                        <i class="fas fa-paper-plane"></i>
+                        Envoyer ma demande
+                    </button>
+                </form>
+
+                <div id="formMessages"></div>
+
+                <div class="contact-hours">
+                    <h4><i class="fas fa-clock"></i> Horaires d'ouverture</h4>
+                    <div class="hours-grid">
+                        <div class="hour-item">
+                            <span class="days">Lun - Ven</span>
+                            <span class="time">9h - 17h</span>
                         </div>
-
-                        <button type="submit" class="submit-btn-elegant">
-                            <i class="fas fa-paper-plane"></i>
-                            Envoyer ma demande
-                        </button>
-
-                        <div id="formMessages"></div>
-                    </form>
-
-                    <div class="contact-hours">
-                        <h4><i class="fas fa-clock"></i> Horaires d'ouverture</h4>
-                        <div class="hours-grid">
-                            <div class="hour-item">
-                                <span class="days">Lun - Ven</span>
-                                <span class="time">9h - 17h</span>
-                            </div>
-                            <div class="hour-item">
-                                <span class="days">Samedi</span>
-                                <span class="time">9h - 13h</span>
-                            </div>
-                            <div class="hour-item">
-                                <span class="days">Dimanche</span>
-                                <span class="time closed">Sur RDV</span>
-                            </div>
+                        <div class="hour-item">
+                            <span class="days">Samedi</span>
+                            <span class="time">9h - 13h</span>
+                        </div>
+                        <div class="hour-item">
+                            <span class="days">Dimanche</span>
+                            <span class="time closed">Sur RDV</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+    
 
     <footer>
         <div class="container">
@@ -766,7 +773,6 @@ $tel_mobile = "71 039 75 75";
         </div>
     </div>
 
-    <script src="../public/app.js"></script>
     <script>
         const PHP_CONFIG = {
             emailContact: "<?php echo addslashes($email_contact); ?>",
@@ -788,6 +794,10 @@ $tel_mobile = "71 039 75 75";
 
     <!-- Message résultat -->
     <div id="quoteStatusMessage" class="quote-status-message" style="display: none;"></div>
+    <!-- <script src="../public/app.js"></script> -->
+    <script src="../public/app.js"></script>
+
+
 </body>
 
 </html>

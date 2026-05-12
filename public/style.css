@@ -3511,14 +3511,74 @@ footer::before {
         padding-top: 180px;
     }
 
+    /* Empêche le zoom “layout” et améliore le confort mobile */
+    img,
+    video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Empêche les débordements horizontaux causés par le header/nav */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Un seul nav attendu : celui-ci doit passer en liste sur mobile */
+    #mainNav {
+        width: 100%;
+    }
+
+    #mainNav ul {
+        padding-left: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    #mainNav li {
+        margin-left: 0;
+    }
+
+    /* Rechercher : largeur full sur mobile */
+    #searchBox {
+        width: 100% !important;
+    }
+
+
+    /* Menu déroulant / header : largeur complète */
+    header {
+        width: 100%;
+    }
+
+
+    /* Mobile-first: largeur et empilement */
+    .container {
+        width: 92%;
+        padding: 0 10px;
+    }
+
+    .nav-search-container {
+        gap: 0.8rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .logo-definition {
+        border-left: 0;
+        padding-left: 0;
+    }
+
+
     .top-navbar .container {
         flex-direction: column;
         gap: 0.5rem;
     }
 
-    .menu-toggle {
-        display: block;
+
+
+    nav {
+        margin-top: 0.5rem;
     }
+
 
     nav {
         position: fixed;
@@ -3953,6 +4013,7 @@ footer::before {
         opacity: 0;
         transform: translateY(50px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -3963,11 +4024,11 @@ footer::before {
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .quote-type-buttons {
         grid-template-columns: 1fr;
     }
-    
+
     .location-dates {
         grid-template-columns: 1fr;
     }
@@ -3978,7 +4039,7 @@ footer::before {
     position: absolute;
     bottom: 10px;
     left: 10px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     padding: 4px 8px;
     border-radius: 20px;
     font-size: 12px;
@@ -4007,11 +4068,12 @@ footer::before {
     color: var(--accent-color);
 }
 
-.purchase-badge-product, .location-badge-product {
+.purchase-badge-product,
+.location-badge-product {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 4px 10px;
     border-radius: 20px;
@@ -4080,5 +4142,123 @@ footer::before {
 
 .location-btn:hover {
     background: #e6731f !important;
+}
+
+/* ===== FIX MENU MOBILE ===== */
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    z-index: 5001;
+}
+
+/* SUR MOBILE - Afficher le bouton et cacher la nav */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+    }
+
+    /* Organisation de la navbar */
+    .main-navbar .container {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+    }
+
+    .nav-search-container {
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+        order: 3;
+    }
+
+    /* Navigation masquée par défaut */
+    nav {
+        position: fixed !important;
+        top: 110px !important;
+        left: -100% !important;
+        width: 80% !important;
+        max-width: 300px !important;
+        height: calc(100vh - 110px) !important;
+        background: white !important;
+        transition: left 0.3s ease !important;
+        z-index: 5000 !important;
+        padding: 30px 25px !important;
+        overflow-y: auto !important;
+        box-shadow: var(--shadow-hover) !important;
+    }
+
+    /* Navigation visible */
+    nav.active {
+        left: 0 !important;
+    }
+
+    /* Menu en colonne */
+    nav ul {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 22px !important;
+        list-style: none !important;
+        padding: 0 !important;
+    }
+
+    nav li {
+        margin: 0 !important;
+    }
+
+    nav a {
+        display: block !important;
+        font-size: 1.1rem !important;
+        color: var(--primary-color) !important;
+        padding: 10px 0 !important;
+    }
+
+    /* Top navbar - garder horizontal */
+    .top-navbar .container {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+    }
+
+    .contact-info {
+        flex-direction: row !important;
+        gap: 0.8rem !important;
+        flex-wrap: wrap !important;
+    }
+
+    .contact-info a {
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
+    }
+
+    /* Panier compact sur mobile */
+    .cart-total-header {
+        display: none !important;
+    }
+
+    .cart-icon {
+        padding: 5px 10px !important;
+    }
+}
+
+/* Pour très petits écrans */
+@media (max-width: 480px) {
+    nav {
+        top: 130px !important;
+        height: calc(100vh - 130px) !important;
+    }
+
+    .contact-info a {
+        font-size: 0.65rem !important;
+    }
 }
 
