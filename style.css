@@ -455,6 +455,11 @@ nav a:focus {
     background-color: var(--accent-color);
 }
 
+nav a:hover,
+nav a.active {
+    color: var(--accent-color);
+}
+
 nav a:after {
     content: '';
     position: absolute;
@@ -468,6 +473,7 @@ nav a:after {
     transform: translateX(-50%);
 }
 
+nav a.active:after,
 nav a:hover:after {
     width: 28px;
 }
@@ -493,6 +499,10 @@ button.is-loading {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+/* #=======
+    width: 100%;
+    background-color: var(--accent-color);
+ ef4688a (?nouvelle file actualite):public/style.css */
 }
 
 /* ===== BARRE DE RECHERCHE ===== */
@@ -1739,7 +1749,7 @@ select:focus {
 
 /* Style de la facture */
 .facture-container {
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     max-width: 700px;
     margin: 0 auto;
     background: white;

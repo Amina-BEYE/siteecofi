@@ -1759,7 +1759,156 @@ function openProductFromSearch(categoryKey, productName) {
 // =========================
 // AUTRES INITIALISATIONS
 // =========================
-function initZoomFeature() { }
+function initZoomFeature() {
+    try {
+        const items = Array.from(document.querySelectorAll('.galerie-item'));
+        if (!items.length) return;
+
+        const overlay = document.getElementById('zoomModalOverlay');
+        const closeBtn = document.getElementById('zoomModalClose');
+        const imgContainer = document.getElementById('zoomImageContainer');
+        const videoContainer = document.getElementById('zoomVideoContainer');
+        const zoomImage = document.getElementById('zoomImage');
+        const zoomVideo = document.getElementById('zoomVideo');
+        const zoomTitle = document.getElementById('zoomTitle');
+        const zoomDescription = document.getElementById('zoomDescription');
+        const zoomPrev = document.getElementById('zoomPrev');
+        const zoomNext = document.getElementById('zoomNext');
+        const zoomCounter = document.getElementById('zoomCounter');
+
+        let gallery = items.map(el => ({
+            type: el.dataset.type || 'image',
+            src: el.dataset.src || (el.querySelector('img') && el.querySelector('img').src) || '',
+            title: el.dataset.title || '',
+            desc: el.dataset.desc || ''
+        }));
+
+        let currentIndex = 0;
+
+        function updateCounter() {
+            if (zoomCounter) zoomCounter.textContent = `${currentIndex + 1} / ${gallery.length}`;
+        }
+
+        function openAt(index) {
+            if (!overlay) return;
+            currentIndex = (index + gallery.length) % gallery.length;
+            const item = gallery[currentIndex];
+
+            // reset
+            if (imgContainer) imgContainer.style.display = 'none';
+            if (videoContainer) {
+                videoContainer.style.display = 'none';
+                // remove any iframe added
+                const iframe = videoContainer.querySelector('iframe');
+                if (iframe) iframe.remove();
+                if (zoomVideo) {
+                    zoomVideo.pause && zoomVideo.pause();
+                    zoomVideo.removeAttribute('src');
+                    const srcEl = zoomVideo.querySelector('source');
+                    if (srcEl) srcEl.src = '';
+                    zoomVideo.load && zoomVideo.load();
+                }
+            }
+
+            if (item.type === 'image') {
+                if (imgContainer && zoomImage) {
+                    zoomImage.src = item.src;
+                    imgContainer.style.display = '';
+                }
+            } else if (item.type === 'video') {
+                // YouTube embed
+                if (item.src && item.src.includes('youtube.com')) {
+                    if (videoContainer) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = item.src;
+                        iframe.width = '100%';
+                        iframe.height = '100%';
+                        iframe.allow = 'autoplay; encrypted-media; fullscreen';
+                        iframe.frameBorder = '0';
+                        videoContainer.appendChild(iframe);
+                        videoContainer.style.display = '';
+                    }
+                } else {
+                    if (zoomVideo && videoContainer) {
+                        const srcEl = zoomVideo.querySelector('source');
+                        if (srcEl) srcEl.src = item.src;
+                        else {
+                            // fallback: set src on video
+                            zoomVideo.src = item.src;
+                        }
+                        zoomVideo.load && zoomVideo.load();
+                        zoomVideo.play && zoomVideo.play().catch(() => {});
+                        videoContainer.style.display = '';
+                    }
+                }
+            }
+
+            if (zoomTitle) zoomTitle.textContent = item.title || '';
+            if (zoomDescription) zoomDescription.textContent = item.desc || '';
+            updateCounter();
+            overlay.style.display = 'flex';
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeZoom() {
+            const overlayEl = document.getElementById('zoomModalOverlay');
+            if (!overlayEl) return;
+            overlayEl.classList.remove('active');
+            overlayEl.style.display = 'none';
+            document.body.style.overflow = '';
+            if (zoomImage) zoomImage.src = '';
+            if (zoomVideo) {
+                zoomVideo.pause && zoomVideo.pause();
+                zoomVideo.removeAttribute('src');
+                const source = zoomVideo.querySelector('source');
+                if (source) source.src = '';
+                zoomVideo.load && zoomVideo.load();
+            }
+            // remove any iframe in video container
+            if (videoContainer) {
+                const iframe = videoContainer.querySelector('iframe');
+                if (iframe) iframe.remove();
+                videoContainer.style.display = 'none';
+            }
+            if (imgContainer) imgContainer.style.display = 'none';
+        }
+
+        // bind click on gallery items
+        items.forEach((el, idx) => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                openAt(idx);
+            });
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') openAt(idx);
+            });
+        });
+
+        // controls
+        if (closeBtn) closeBtn.addEventListener('click', closeZoom);
+        if (overlay) overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeZoom();
+        });
+        if (zoomPrev) zoomPrev.addEventListener('click', () => openAt(currentIndex - 1));
+        if (zoomNext) zoomNext.addEventListener('click', () => openAt(currentIndex + 1));
+
+        // keyboard
+        document.addEventListener('keydown', (e) => {
+            const overlayEl = document.getElementById('zoomModalOverlay');
+            if (!overlayEl || !overlayEl.classList.contains('active')) return;
+            if (e.key === 'Escape') closeZoom();
+            if (e.key === 'ArrowLeft') openAt(currentIndex - 1);
+            if (e.key === 'ArrowRight') openAt(currentIndex + 1);
+        });
+
+        // update gallery variable if new items are added dynamically later
+        window.openGalleryItemAt = openAt;
+        window.closeGalleryZoom = closeZoom;
+    } catch (err) {
+        console.error('initZoomFeature error', err);
+    }
+}
 function initFermeturePanierExterieur() {
     document.addEventListener('click', function (e) {
         if (!e.target.closest('.cart-wrapper')) {

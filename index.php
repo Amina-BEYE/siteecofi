@@ -90,7 +90,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                             <li><a href="#accueil">Accueil</a></li>
                             <li><a href="#apropos">À propos</a></li>
                             <li><a href="#services">Services</a></li>
-                            <li><a href="#programme-immo">Programme Immo</a></li>
+                            <li><a href="public/actualites.php">Actualités</a></li>
                             <li><a href="#contact">Contact</a></li>
                         </ul>
                     </nav>
