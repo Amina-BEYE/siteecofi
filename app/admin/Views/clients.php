@@ -36,10 +36,10 @@ $messageType = $messageType ?? 'success';
 </section>
 
 <section class="row">
-    <div class="card">
+    <div class="card admin-form-card">
         <h2 style="margin-bottom: 20px;">Ajouter un client</h2>
 
-        <form method="POST" action="adminPage.php?page=clients">
+        <form method="POST" action="adminPage.php?page=clients" class="admin-form" data-loading-text="Ajout du client...">
             <input type="hidden" name="action" value="add_client">
 
             <div class="form-group">

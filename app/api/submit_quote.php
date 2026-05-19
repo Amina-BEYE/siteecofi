@@ -6,12 +6,14 @@ header('Content-Type: application/json; charset=UTF-8');
 
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/../Core/Settings.php';
 
 require_once __DIR__ . '/../lib/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/../lib/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/../lib/PHPMailer/src/SMTP.php';
 
 use App\Core\Database;
+use App\Core\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
 function getJsonInput(): array
@@ -28,15 +30,20 @@ function getJsonInput(): array
 
 function getAppBaseUrl(): string
 {
-    if (defined('APP_URL') && APP_URL !== '') {
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $isLocal = str_contains($host, 'localhost') || str_contains($host, '127.0.0.1') || str_contains($host, '::1');
+
+    if (!$isLocal && defined('APP_URL') && APP_URL !== '') {
         return rtrim(APP_URL, '/');
     }
 
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $path = '/siteecofi';
+    $host = $host !== '' ? $host : 'localhost:8888';
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/siteecofi/app/api/submit_quote.php';
+    $appPos = strpos($scriptName, '/app/api/');
+    $basePath = $appPos !== false ? substr($scriptName, 0, $appPos) : '';
 
-    return $scheme . '://' . $host . $path;
+    return rtrim($scheme . '://' . $host . $basePath, '/');
 }
 
 function generateNumeroDevis(string $type): string
@@ -205,7 +212,6 @@ function fetchDevisPdfContent(int $devisId): string
 
     $content = curl_exec($ch);
     $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
     $curlErr = curl_error($ch);
 
     curl_close($ch);
@@ -215,19 +221,11 @@ function fetchDevisPdfContent(int $devisId): string
     }
 
     if ($httpCode !== 200) {
-        $errorMsg = $content;
-        if (strpos($contentType, 'application/json') !== false) {
-            $json = json_decode($content, true);
-            if (is_array($json) && isset($json['message'])) {
-                $errorMsg = $json['message'];
-            }
-        }
-        throw new RuntimeException("PDF inaccessible — HTTP {$httpCode} — {$errorMsg}");
+        throw new RuntimeException("PDF inaccessible — HTTP {$httpCode} — URL : {$url}");
     }
 
-    // Vérifier la signature PDF (ignorer BOM UTF-8 éventuelle)
-    if (substr($content, 0, 4) !== '%PDF' && strpos($content, '%PDF') === false) {
-        throw new RuntimeException("Le fichier retourné n'est pas un PDF valide (premiers bytes: " . bin2hex(substr($content, 0, 16)) . ")");
+    if (substr($content, 0, 4) !== '%PDF') {
+        throw new RuntimeException("Le fichier retourné n’est pas un PDF valide.");
     }
 
     return $content;
@@ -256,7 +254,7 @@ function fetchDevisForMail(PDO $pdo, int $devisId): array
         throw new RuntimeException("Devis introuvable.");
     }
 
-    if (empty($row['client_email']) || !filter_var($row['client_email'], FILTER_VAR_EMAIL)) {
+    if (empty($row['client_email']) || !filter_var($row['client_email'], FILTER_VALIDATE_EMAIL)) {
         throw new RuntimeException("Email client invalide.");
     }
 
@@ -267,7 +265,7 @@ function buildMailer(): PHPMailer
 {
     $mail = new PHPMailer(true);
 
-    $smtpUser = $_ENV['SMTP_USER'] ?? 'service.ecofi01@gmail.com';
+    $smtpUser = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
     $smtpPass = $_ENV['SMTP_PASS'] ?? 'rocu nndd vkyu usaz';
 
     if ($smtpPass === '') {
@@ -275,12 +273,12 @@ function buildMailer(): PHPMailer
     }
 
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
+    $mail->Host = Settings::get('smtp_host', 'smtp.gmail.com');
     $mail->SMTPAuth = true;
     $mail->Username = $smtpUser;
     $mail->Password = $smtpPass;
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+    $mail->Port = (int) Settings::get('smtp_port', '587');
     $mail->CharSet = 'UTF-8';
 
     return $mail;
@@ -288,12 +286,14 @@ function buildMailer(): PHPMailer
 
 function sendEcofiNotification(PDO $pdo, int $devisId, string $type, string $clientMessage = '', array $items = [], array $clientData = []): void
 {
-    $ecofiEmail = $_ENV['ECOFI_EMAIL'] ?? 'service.ecofi01@gmail.com';
+    $ecofiEmail = $_ENV['ECOFI_EMAIL'] ?? Settings::get('quote_email', Settings::get('contact_email'));
+    $smtpUser = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
     $devis = fetchDevisForMail($pdo, $devisId);
     
     $mail = buildMailer();
-    $mail->setFrom($ecofiEmail, 'ECOFI - Système');
+    $mail->setFrom($smtpUser, Settings::get('smtp_from_name', 'ECOFI - Site web'));
     $mail->addAddress($ecofiEmail);
+    $mail->addReplyTo($devis['client_email'], $devis['client_nom']);
     
     $subject = "🚨 NOUVEAU " . strtoupper($type) . " - " . $devis['numero_devis'];
     
@@ -332,17 +332,13 @@ function sendEcofiNotification(PDO $pdo, int $devisId, string $type, string $cli
                 <p style='margin:0;'><strong>Service :</strong> " . nl2br(htmlspecialchars(trim($clientMessage))) . "</p>
               </div>
               <p>Notre équipe vous répondra dans les 24h.</p>
-              <p style='margin-top:14px;'><strong>📞 71 039 75 75</strong> ou <strong>33 998 50 72</strong></p>
+              <p style='margin-top:14px;'><strong>📞 " . htmlspecialchars(Settings::get('phone_mobile')) . "</strong> ou <strong>" . htmlspecialchars(Settings::get('phone_fixed')) . "</strong></p>
             </div>
             <div style='padding:14px 22px; font-size:12px; color:#888; text-align:center;'>ECOFI - Zac Nguinth, Thiès, Sénégal</div>
           </div>
         </body>
         </html>
         ";
-
-        $clientHeaders = "MIME-Version: 1.0\r\n";
-        $clientHeaders .= "Content-type: text/html; charset=UTF-8\r\n";
-        $clientHeaders .= "From: \"ECOFI Service Client\" <" . htmlspecialchars($ecofiEmail, ENT_QUOTES, 'UTF-8') . ">\r\n";
 
         $body .= "<h3>💬 Message:</h3><div style='background: #e3f2fd; padding: 15px; border-left: 4px solid #1a3a6b;'>" . nl2br(htmlspecialchars($clientMessage)) . "</div>";
     }
@@ -371,6 +367,22 @@ function sendEcofiNotification(PDO $pdo, int $devisId, string $type, string $cli
     $mail->Body = $body;
     
     $mail->send();
+
+    if ($type === 'contact' && isset($clientSubject, $clientBody)) {
+        try {
+            $clientMail = buildMailer();
+            $clientMail->setFrom($smtpUser, 'ECOFI Service Client');
+            $clientMail->addAddress($devis['client_email'], $devis['client_nom']);
+            $clientMail->addReplyTo($ecofiEmail, 'ECOFI');
+            $clientMail->isHTML(true);
+            $clientMail->Subject = $clientSubject;
+            $clientMail->Body = $clientBody;
+            $clientMail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $clientBody));
+            $clientMail->send();
+        } catch (Throwable $e) {
+            error_log('[submit_quote_client_mail] ' . $e->getMessage());
+        }
+    }
 }
 
 function buildEmailHtml(string $clientNom, string $numeroDevis, float $totalTtc): string
@@ -407,10 +419,16 @@ function sendQuoteEmail(int $devisId): void
 {
     $pdo = Database::getConnection();
     $devis = fetchDevisForMail($pdo, $devisId);
-    $pdf = fetchDevisPdfContent($devisId);
+    $pdf = null;
 
-    $senderEmail = $_ENV['SMTP_USER'] ?? 'service.ecofi01@gmail.com';
-    $senderName = $_ENV['MAIL_FROM_NAME'] ?? 'ECOFI';
+    try {
+        $pdf = fetchDevisPdfContent($devisId);
+    } catch (Throwable $e) {
+        error_log('[submit_quote_pdf_mail] ' . $e->getMessage());
+    }
+
+    $senderEmail = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
+    $senderName = $_ENV['MAIL_FROM_NAME'] ?? Settings::get('smtp_from_name', 'ECOFI');
 
     $mail = buildMailer();
     $mail->setFrom($senderEmail, $senderName);
@@ -426,12 +444,14 @@ function sendQuoteEmail(int $devisId): void
 
     $mail->AltBody = "Bonjour {$devis['client_nom']},\n\nVeuillez trouver ci-joint votre devis {$devis['numero_devis']}.\n\nCordialement,\nECOFI";
 
-    $mail->addStringAttachment(
-        $pdf,
-        'devis-' . $devis['numero_devis'] . '.pdf',
-        'base64',
-        'application/pdf'
-    );
+    if ($pdf !== null) {
+        $mail->addStringAttachment(
+            $pdf,
+            'devis-' . $devis['numero_devis'] . '.pdf',
+            'base64',
+            'application/pdf'
+        );
+    }
 
     $mail->send();
 }
@@ -492,26 +512,58 @@ try {
 
     $pdo->commit();
 
-    sendEcofiNotification($pdo, $devisId, $type, $message, $items, ['telephone' => $telephone]);
+    $mailErrors = [];
+
+    try {
+        sendEcofiNotification($pdo, $devisId, $type, $message, $items, ['telephone' => $telephone]);
+    } catch (Throwable $e) {
+        error_log('[submit_quote_admin_mail] ' . $e->getMessage());
+        $mailErrors[] = 'notification_admin';
+    }
 
     if ($type !== 'contact') {
-        sendQuoteEmail($devisId);
+        try {
+            sendQuoteEmail($devisId);
+        } catch (Throwable $e) {
+            error_log('[submit_quote_client_mail] ' . $e->getMessage());
+            $mailErrors[] = 'notification_client';
+        }
 
         echo json_encode([
             'success' => true,
-            'message' => 'Votre demande de devis a bien été envoyée.',
+            'message' => empty($mailErrors)
+                ? 'Votre demande de devis a bien été envoyée.'
+                : 'Votre demande de devis est enregistrée. L’envoi email sera vérifié par notre équipe.',
             'devis_id' => $devisId,
             'numero_devis' => $numeroDevis,
             'type' => $type,
-            'pdf_url' => getAppBaseUrl() . '/app/api/generate_quote_pdf.php?id=' . $devisId
+            'pdf_url' => getAppBaseUrl() . '/app/api/generate_quote_pdf.php?id=' . $devisId,
+            'mail_sent' => empty($mailErrors)
         ], JSON_UNESCAPED_UNICODE);
     } else {
         echo json_encode([
             'success' => true,
-            'message' => 'Votre message est bien envoyé ! Merci pour votre demande, nous vous répondons sous 24h.',
+            'message' => empty($mailErrors)
+                ? 'Votre message est bien envoyé ! Merci pour votre demande, nous vous répondons sous 24h.'
+                : 'Votre demande est enregistrée. L’envoi email sera vérifié par notre équipe.',
             'devis_id' => $devisId,
-            'numero_devis' => $numeroDevis
+            'numero_devis' => $numeroDevis,
+            'mail_sent' => empty($mailErrors)
         ], JSON_UNESCAPED_UNICODE);
     }
 
     exit;
+} catch (Throwable $e) {
+    if (isset($pdo) && $pdo instanceof PDO && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    error_log('[submit_quote] ' . $e->getMessage());
+
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Impossible d’enregistrer votre demande de devis. Merci de réessayer plus tard.'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}

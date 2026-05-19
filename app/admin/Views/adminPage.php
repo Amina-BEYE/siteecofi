@@ -1,5 +1,12 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: login.php');
+    exit;
+}
 
 require_once __DIR__ . '/../../Core/Router.php';
 
@@ -29,7 +36,7 @@ $viewPath = __DIR__ . '/' . $view;
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="/SITEECOFI/app/admin/asserts/css/stylePageAdmin.css">
+    <link rel="stylesheet" href="stylePageAdmin.css">
 
     <script>
 
@@ -104,8 +111,34 @@ $viewPath = __DIR__ . '/' . $view;
 
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="page-loading-overlay" id="pageLoadingOverlay" aria-live="polite" aria-hidden="true">
+        <div class="page-loader">
+            <span class="loader-spinner"></span>
+            <span id="pageLoadingText">Traitement en cours...</span>
+        </div>
+    </div>
 
     <script>
+        const pageLoadingOverlay = document.getElementById('pageLoadingOverlay');
+        const pageLoadingText = document.getElementById('pageLoadingText');
+
+        function showPageLoader(message = 'Traitement en cours...') {
+            if (!pageLoadingOverlay) return;
+            if (pageLoadingText) {
+                pageLoadingText.textContent = message;
+            }
+            pageLoadingOverlay.classList.add('is-visible');
+            pageLoadingOverlay.setAttribute('aria-hidden', 'false');
+        }
+
+        function hidePageLoader() {
+            if (!pageLoadingOverlay) return;
+            pageLoadingOverlay.classList.remove('is-visible');
+            pageLoadingOverlay.setAttribute('aria-hidden', 'true');
+        }
+
+        window.addEventListener('pageshow', hidePageLoader);
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -126,6 +159,8 @@ $viewPath = __DIR__ . '/' . $view;
 
         document.querySelectorAll('.menu-item').forEach(link => {
             link.addEventListener('click', () => {
+                showPageLoader('Chargement de la page...');
+
                 if (window.innerWidth <= 768) {
                     setTimeout(() => {
                         toggleSidebar();
@@ -146,6 +181,38 @@ $viewPath = __DIR__ . '/' . $view;
                 }
                 document.body.style.overflow = '';
             }
+        });
+
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function () {
+                if (form.dataset.noLoader === 'true') return;
+
+                const submitter = document.activeElement && document.activeElement.matches('button[type="submit"], input[type="submit"]')
+                    ? document.activeElement
+                    : form.querySelector('button[type="submit"], input[type="submit"]');
+
+                form.classList.add('is-submitting');
+
+                if (submitter) {
+                    submitter.classList.add('is-loading');
+                    submitter.disabled = true;
+                }
+
+                showPageLoader(form.dataset.loadingText || 'Enregistrement en cours...');
+            });
+        });
+
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', function () {
+                const href = link.getAttribute('href') || '';
+                const isExternal = link.target === '_blank' || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:');
+
+                if (isExternal) return;
+
+                if (href.includes('adminPage.php') || href.includes('logout.php')) {
+                    showPageLoader('Chargement...');
+                }
+            });
         });
     </script>
 </body>

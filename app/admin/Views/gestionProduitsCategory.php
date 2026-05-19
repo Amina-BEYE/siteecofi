@@ -1,11 +1,12 @@
 <?php
 
-require_once __DIR__ . '/../app/Core/Database.php';
-require_once __DIR__ . '/../app/Core/Controller.php';
-require_once __DIR__ . '/../app/Repositories/CategoryRepository.php';
-require_once __DIR__ . '/../app/Repositories/ProductRepository.php';
-require_once __DIR__ . '/../app/Services/AdminService.php';
-require_once __DIR__ . '/../app/Controllers/AdminController.php';
+require_once __DIR__ . '/../../../config/config.php';
+require_once __DIR__ . '/../../Core/Database.php';
+require_once __DIR__ . '/../../Core/Controller.php';
+require_once __DIR__ . '/../../Repositories/CategoryRepository.php';
+require_once __DIR__ . '/../../Repositories/ProductRepository.php';
+require_once __DIR__ . '/../../Services/AdminService.php';
+require_once __DIR__ . '/../../Controllers/AdminController.php';
 
 use App\Controllers\AdminController;
 
@@ -391,7 +392,7 @@ $editProduct = $data['editProduct'];
                                 <td><?= (int)$prod['id'] ?></td>
                                 <td>
                                     <?php if (!empty($prod['image'])): ?>
-                                        <img class="thumb" src="../<?= htmlspecialchars($prod['image']) ?>" alt="">
+                                        <img class="thumb" src="../../<?= htmlspecialchars($prod['image']) ?>" alt="">
                                     <?php endif; ?>
                                 </td>
                                 <td>

@@ -1,16 +1,16 @@
 <?php
 // admin/demandes.php
 
-require __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../../admin/admin-functions.php';
 
 // Vérifier la connexion
-//if (!isAdminLoggedIn()) {
-  //  header('Location: login.php?error=auth');
-    //exit();
-//}
+// if (!is_admin_logged_in()) {
+//     header('Location: login.php?error=auth');
+//     exit();
+// }
 
 try {
-    $pdo = connectDB();
+        $pdo = get_db_connection();
     
     // Récupérer toutes les demandes
     $stmt = $pdo->query("SELECT * FROM demandes_contact ORDER BY created_at DESC");

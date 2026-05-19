@@ -1,9 +1,27 @@
 <?php
 // api.php - À appeler depuis votre site
-require_once 'config.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../Core/Database.php';
+
+use App\Core\Database;
+
 header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+try {
+    $pdo = Database::getConnection();
+} catch (\Throwable $e) {
+    error_log('[app_admin_api] DB connection error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => 'Erreur de connexion à la base de données.']);
+    exit;
+}
+
+function generateNumero(string $prefix): string
+{
+    return $prefix . '-' . date('Ymd-His') . '-' . random_int(100, 999);
+}
 
 switch($action) {
     

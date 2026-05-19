@@ -31,10 +31,10 @@ $messageType = $messageType ?? 'success';
 </section>
 
 <section class="row">
-    <div class="card">
+    <div class="card admin-form-card">
         <h2>Ajouter une catégorie</h2>
 
-        <form method="POST" action="adminPage.php?page=products">
+        <form method="POST" action="adminPage.php?page=products" class="admin-form" data-loading-text="Ajout de la catégorie...">
             <input type="hidden" name="action" value="add_category">
 
             <div class="form-group">
@@ -54,10 +54,10 @@ $messageType = $messageType ?? 'success';
         </form>
     </div>
 
-    <div class="card">
+    <div class="card admin-form-card">
         <h2>Ajouter un produit</h2>
 
-        <form method="POST" action="adminPage.php?page=products">
+        <form method="POST" action="adminPage.php?page=products" class="admin-form" data-loading-text="Ajout du produit...">
             <input type="hidden" name="action" value="add_product">
 
             <div class="form-group">

@@ -30,10 +30,16 @@ function normalizeStatus(string $value): string
         'livre' => 'livre',
         'livree' => 'livre',
         'livres' => 'livre',
+        'annule' => 'annule',
+        'annulee' => 'annule',
         'paie' => 'paie',
         'paye' => 'paie',
         'payee' => 'paie',
         'payed' => 'paie',
+        'non_paye' => 'non_paye',
+        'nonpaye' => 'non_paye',
+        'partiel' => 'partiel',
+        'traite' => 'traite',
     ];
 
     return $map[$value] ?? ($value !== '' ? $value : 'inconnu');
@@ -60,6 +66,7 @@ $availableOrderStatuses = [
     'expire' => 'Expirés',
     'livre' => 'Livrées',
     'paie' => 'Payées',
+    'annule' => 'Annulées',
     'inconnu' => 'Autres',
 ];
 
@@ -78,7 +85,7 @@ $availableQuoteStatuses = [
     display: inline-flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 190px;
+    width: 180px;
     min-height: 110px;
     padding: 18px;
     border-radius: 16px;
@@ -91,6 +98,7 @@ $availableQuoteStatuses = [
     margin: 0 0 8px;
     font-size: 13px;
     color: #344054;
+    line-height: 1.35;
 }
 
 .status-card p {
@@ -115,6 +123,8 @@ $availableQuoteStatuses = [
     border-radius: 999px;
     cursor: pointer;
     font-size: 12px;
+    line-height: 1.2;
+    white-space: normal;
 }
 
 .filter-button.active {
@@ -133,6 +143,8 @@ $availableQuoteStatuses = [
 .admin-table td {
     padding: 10px 12px;
     vertical-align: top;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
 }
 
 .status-badge {
@@ -146,7 +158,9 @@ $availableQuoteStatuses = [
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .02em;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.2;
+    text-align: center;
 }
 
 .status-badge--en_attente {
@@ -184,9 +198,80 @@ $availableQuoteStatuses = [
     color: #075985;
 }
 
+.status-badge--annule,
+.status-badge--non_paye {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-badge--partiel {
+    background: #fef3c7;
+    color: #92400e;
+}
+
 .status-badge--inconnu {
     background: #e2e8f0;
     color: #334155;
+}
+
+.action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    max-width: 180px;
+}
+
+.inline-action {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.inline-action select {
+    min-width: 0;
+    width: 126px;
+    max-width: 100%;
+    padding: 7px 8px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 12px;
+}
+
+.action-button,
+.link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1.2;
+    white-space: normal;
+    text-align: center;
+}
+
+.action-button.secondary,
+.link-button.secondary {
+    background: #475467;
+}
+
+.action-button.success {
+    background: #16a34a;
+}
+
+.action-button.danger {
+    background: #dc2626;
 }
 
 .table-section {
@@ -201,6 +286,7 @@ $availableQuoteStatuses = [
     margin-bottom: 8px;
     padding-bottom: 8px;
     border-bottom: 1px solid #eef2f7;
+    min-width: 220px;
 }
 
 .quantity-editor:last-child {
@@ -210,9 +296,11 @@ $availableQuoteStatuses = [
 }
 
 .quantity-editor span {
-    max-width: 170px;
+    max-width: 190px;
     font-size: 12px;
     color: #475467;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
 .quantity-input {
@@ -241,6 +329,10 @@ $availableQuoteStatuses = [
 @media (max-width: 600px) {
     .status-card {
         width: 100%;
+    }
+
+    .action-stack {
+        max-width: none;
     }
 }
 </style>
@@ -298,6 +390,7 @@ $availableQuoteStatuses = [
                             <th>Statut paiement</th>
                             <th>Statut commande</th>
                             <th>Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -346,6 +439,35 @@ $availableQuoteStatuses = [
                                 </td>
 
                                 <td><?= htmlspecialchars($order['created_at'] ?? '') ?></td>
+                                <td>
+                                    <div class="action-stack">
+                                        <form method="post" action="adminPage.php?page=orders" class="inline-action" data-loading-text="Mise à jour de la commande...">
+                                            <input type="hidden" name="action" value="order_status">
+                                            <input type="hidden" name="order_id" value="<?= (int) ($order['id'] ?? 0) ?>">
+                                            <select name="status" aria-label="Statut commande">
+                                                <?php foreach (['en_attente' => 'En attente', 'en_cours' => 'En cours', 'livre' => 'Livré', 'annule' => 'Annulé'] as $value => $label): ?>
+                                                    <option value="<?= htmlspecialchars($value) ?>" <?= ($order['statut_commande'] ?? '') === $value ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($label) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <button type="submit" class="action-button secondary">OK</button>
+                                        </form>
+
+                                        <form method="post" action="adminPage.php?page=orders" class="inline-action" data-loading-text="Mise à jour du paiement...">
+                                            <input type="hidden" name="action" value="payment_status">
+                                            <input type="hidden" name="order_id" value="<?= (int) ($order['id'] ?? 0) ?>">
+                                            <select name="status" aria-label="Statut paiement">
+                                                <?php foreach (['non_paye' => 'Non payé', 'partiel' => 'Partiel', 'paie' => 'Payé'] as $value => $label): ?>
+                                                    <option value="<?= htmlspecialchars($value) ?>" <?= ($order['statut_paiement'] ?? '') === $value ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($label) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <button type="submit" class="action-button secondary">OK</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -408,6 +530,7 @@ $availableQuoteStatuses = [
                             <th>Statut</th>
                             <th>Notes</th>
                             <th>Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -456,6 +579,37 @@ $availableQuoteStatuses = [
 
                                 <td><?= htmlspecialchars($quote['notes'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($quote['created_at'] ?? '') ?></td>
+                                <td>
+                                    <div class="action-stack">
+                                        <a
+                                            class="link-button secondary"
+                                            href="../../api/generate_quote_pdf.php?id=<?= (int) ($quote['id'] ?? 0) ?>"
+                                            target="_blank"
+                                            rel="noopener"
+                                        >
+                                            PDF
+                                        </a>
+
+                                        <form method="post" action="adminPage.php?page=orders" data-loading-text="Validation du devis...">
+                                            <input type="hidden" name="action" value="validate_quote">
+                                            <input type="hidden" name="quote_id" value="<?= (int) ($quote['id'] ?? 0) ?>">
+                                            <button type="submit" class="action-button success">Valider</button>
+                                        </form>
+
+                                        <form method="post" action="adminPage.php?page=orders" class="inline-action" data-loading-text="Mise à jour du devis...">
+                                            <input type="hidden" name="action" value="quote_status">
+                                            <input type="hidden" name="quote_id" value="<?= (int) ($quote['id'] ?? 0) ?>">
+                                            <select name="status" aria-label="Statut devis">
+                                                <?php foreach (['en_attente' => 'En attente', 'accepte' => 'Accepté', 'refuse' => 'Refusé', 'expire' => 'Expiré'] as $value => $label): ?>
+                                                    <option value="<?= htmlspecialchars($value) ?>" <?= ($quote['statut'] ?? '') === $value ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($label) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <button type="submit" class="action-button secondary">OK</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -508,9 +662,12 @@ document.querySelectorAll('.quantity-input').forEach(input => {
 
         this.classList.add('is-saving');
         this.classList.remove('is-error');
+        if (typeof showPageLoader === 'function') {
+            showPageLoader('Mise à jour de la quantité...');
+        }
 
         try {
-            const response = await fetch('/SITEECOFI/app/api/update_line_quantity.php', {
+            const response = await fetch('../../api/update_line_quantity.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -537,6 +694,9 @@ document.querySelectorAll('.quantity-input').forEach(input => {
             alert(error.message);
         } finally {
             this.classList.remove('is-saving');
+            if (typeof hidePageLoader === 'function') {
+                hidePageLoader();
+            }
         }
     });
 });

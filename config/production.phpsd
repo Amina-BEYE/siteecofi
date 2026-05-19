@@ -1,0 +1,11 @@
+<?php
+return [
+    // Copiez ce fichier en config/production.php et remplacez les valeurs ci-dessous
+    // par les identifiants fournis par a2switch.
+    'host' => 'localhost',
+    'port' => '3306',
+    'dbname' => 'votre_nom_de_base',
+    'username' => 'votre_utilisateur',
+    'password' => 'votre_mot_de_passe',
+    'charset' => 'utf8mb4',
+];

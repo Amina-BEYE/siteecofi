@@ -1,6 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Administration ECOFI';
-$adminName = $_SESSION['user_name'] ?? 'Admin ECOFI';
+$adminName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin ECOFI';
 ?>
 
 <header class="topbar">

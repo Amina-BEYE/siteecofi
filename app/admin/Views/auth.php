@@ -32,10 +32,10 @@ $messageType = $messageType ?? 'success';
     </p>
 
     <div class="row">
-        <div class="card">
+        <div class="card admin-form-card">
             <h3 style="margin-bottom: 15px;">Créer un utilisateur</h3>
 
-            <form method="post" action="adminPage.php?page=auth">
+            <form method="post" action="adminPage.php?page=auth" class="admin-form" data-loading-text="Création de l’utilisateur...">
                 <input type="hidden" name="action" value="add_user">
 
                 <div class="form-group">
@@ -69,7 +69,7 @@ $messageType = $messageType ?? 'success';
             </form>
         </div>
 
-        <div class="card">
+        <div class="card admin-list-card">
             <h3 style="margin-bottom: 15px;">Liste des accès</h3>
 
             <div class="table-container">

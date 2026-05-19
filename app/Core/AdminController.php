@@ -2,9 +2,6 @@
 
 require_once __DIR__ . '/../admin/Models/OrderModel.php';
 require_once __DIR__ . '/../admin/Models/ProduitCategoryModel.php';
-require_once __DIR__ . '/../admin/Models/NotificationModel.php';
-require_once __DIR__ . '/../admin/Models/ProgrammeImmobilierModel.php';
-require_once __DIR__ . '/../admin/Models/AuthModel.php';
 
 class AdminController
 {
@@ -26,17 +23,17 @@ class AdminController
             case 'orders':
                 return $this->orders();
 
+            case 'programme-immo':
+                return $this->programmeImmo();
+
+            case 'settings':
+                return $this->settings();
+
             case 'employees':
                 return $this->employees();
 
             case 'notifications':
                 return $this->notifications();
-
-            case 'inscriptions':
-                return $this->inscriptions();
-
-            case 'programmes-immobiliers':
-                return $this->programmesImmobiliers();
 
             default:
                 return $this->dashboard();
@@ -260,14 +257,130 @@ class AdminController
     {
         $model = new OrderModel();
 
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? '';
+
+            if ($action === 'quote_status') {
+                $quoteId = (int) ($_POST['quote_id'] ?? 0);
+                $status = trim($_POST['status'] ?? '');
+                $ok = $model->updateQuoteStatus($quoteId, $status);
+                $message = $ok ? 'Statut du devis mis à jour.' : 'Impossible de modifier le statut du devis.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+
+            if ($action === 'validate_quote') {
+                $quoteId = (int) ($_POST['quote_id'] ?? 0);
+                $ok = $model->validateQuote($quoteId);
+                $message = $ok ? 'Devis validé et commande créée.' : 'Impossible de valider ce devis.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+
+            if ($action === 'order_status') {
+                $orderId = (int) ($_POST['order_id'] ?? 0);
+                $status = trim($_POST['status'] ?? '');
+                $ok = $model->updateOrderStatus($orderId, $status);
+                $message = $ok ? 'Statut de commande mis à jour.' : 'Impossible de modifier le statut de commande.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+
+            if ($action === 'payment_status') {
+                $orderId = (int) ($_POST['order_id'] ?? 0);
+                $status = trim($_POST['status'] ?? '');
+                $ok = $model->updatePaymentStatus($orderId, $status);
+                $message = $ok ? 'Statut de paiement mis à jour.' : 'Impossible de modifier le paiement.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+        }
+
         return [
             'currentPage' => 'orders',
             'pageTitle'   => 'Commandes & devis',
             'view'        => 'orders.php',
             'orders'      => $model->getAllOrders(),
             'quotes'      => $model->getAllQuotes(),
-            'message'     => null,
-            'messageType' => null,
+            'message'     => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
+    private function programmeImmo(): array
+    {
+        require_once __DIR__ . '/../admin/Models/ImmoProgramModel.php';
+
+        $model = new ImmoProgramModel();
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? '';
+            $adhesionId = (int) ($_POST['adhesion_id'] ?? 0);
+
+            if ($action === 'update_status') {
+                $status = trim($_POST['status'] ?? '');
+                $ok = $model->updateStatus($adhesionId, $status);
+                $message = $ok ? 'Statut de l’adhésion mis à jour.' : 'Impossible de modifier cette adhésion.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+
+            if ($action === 'add_note') {
+                $note = trim($_POST['note'] ?? '');
+                $adminId = isset($_SESSION['admin_id']) ? (int) $_SESSION['admin_id'] : null;
+                $ok = $model->addNote($adhesionId, $adminId, $note);
+                $message = $ok ? 'Note ajoutée au dossier.' : 'Impossible d’ajouter la note.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+
+            if ($action === 'delete') {
+                $ok = $model->deleteAdhesion($adhesionId);
+                $message = $ok ? 'Adhésion supprimée.' : 'Impossible de supprimer cette adhésion.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+        }
+
+        $selectedId = (int) ($_GET['id'] ?? 0);
+
+        return [
+            'currentPage' => 'programme-immo',
+            'pageTitle' => 'Programme Immo',
+            'view' => 'programme-immo.php',
+            'adhesions' => $model->getAllAdhesions(),
+            'stats' => $model->getStats(),
+            'selectedAdhesion' => $selectedId > 0 ? $model->getAdhesionById($selectedId) : null,
+            'selectedNotes' => $selectedId > 0 ? $model->getNotes($selectedId) : [],
+            'message' => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
+    private function settings(): array
+    {
+        require_once __DIR__ . '/../admin/Models/SettingsModel.php';
+
+        $model = new SettingsModel();
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? '';
+
+            if ($action === 'save_settings') {
+                $settings = $_POST['settings'] ?? [];
+                $ok = is_array($settings) && $model->updateSettings($settings);
+                $message = $ok ? 'Paramètres enregistrés avec succès.' : 'Impossible d’enregistrer les paramètres.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+        }
+
+        return [
+            'currentPage' => 'settings',
+            'pageTitle' => 'Paramétrage général',
+            'view' => 'settings.php',
+            'settingGroups' => $model->getGroupedSettings(),
+            'message' => $message,
+            'messageType' => $messageType,
         ];
     }
 
@@ -284,192 +397,12 @@ class AdminController
 
     private function notifications(): array
     {
-        $model = new NotificationModel();
-
-        $message = null;
-        $messageType = 'success';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = $_POST['action'] ?? '';
-
-            if ($action === 'update_status') {
-                $id = (int) ($_POST['id'] ?? 0);
-                $status = trim($_POST['status'] ?? '');
-
-                if ($id <= 0 || $status === '') {
-                    $message = 'Action invalide.';
-                    $messageType = 'error';
-                } else {
-                    $ok = $model->updateInscriptionStatus($id, $status);
-
-                    if ($ok) {
-                        $message = 'Statut de l\'inscription mis à jour.';
-                    } else {
-                        $message = 'Erreur lors de la mise à jour.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-
-            if ($action === 'delete_inscription') {
-                $id = (int) ($_POST['id'] ?? 0);
-
-                if ($id <= 0) {
-                    $message = 'ID invalide.';
-                    $messageType = 'error';
-                } else {
-                    $ok = $model->deleteInscription($id);
-
-                    if ($ok) {
-                        $message = 'Inscription supprimée.';
-                    } else {
-                        $message = 'Erreur lors de la suppression.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-        }
-
         return [
             'currentPage' => 'notifications',
-            'pageTitle'   => 'Notifications Système',
+            'pageTitle'   => 'Notifications',
             'view'        => 'notifications.php',
-            'message'     => $message,
-            'messageType' => $messageType,
-        ];
-    }
-
-    private function inscriptions(): array
-    {
-        $notificationModel = new NotificationModel();
-        $orderModel = new OrderModel();
-        $authModel = new AuthModel();
-
-        $message = null;
-        $messageType = 'success';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = $_POST['action'] ?? '';
-
-            if ($action === 'update_inscription_status') {
-                $id = (int) ($_POST['id'] ?? 0);
-                $status = trim($_POST['status'] ?? '');
-
-                if ($id <= 0 || $status === '') {
-                    $message = 'Action invalide.';
-                    $messageType = 'error';
-                } else {
-                    $ok = $notificationModel->updateInscriptionStatus($id, $status);
-
-                    if ($ok) {
-                        $message = 'Statut de l\'inscription mis à jour.';
-                    } else {
-                        $message = 'Erreur lors de la mise à jour.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-
-            if ($action === 'delete_inscription') {
-                $id = (int) ($_POST['id'] ?? 0);
-
-                if ($id <= 0) {
-                    $message = 'ID invalide.';
-                    $messageType = 'error';
-                } else {
-                    $ok = $notificationModel->deleteInscription($id);
-
-                    if ($ok) {
-                        $message = 'Inscription supprimée.';
-                    } else {
-                        $message = 'Erreur lors de la suppression.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-        }
-
-        return [
-            'currentPage' => 'inscriptions',
-            'pageTitle'   => 'Inscriptions & Demandes',
-            'view'        => 'inscriptions.php',
-            'inscriptions' => $notificationModel->getAllInscriptions(),
-            'quotes' => $orderModel->getAllQuotes(),
-            'users' => $authModel->getAllUsers(),
-            'message'     => $message,
-            'messageType' => $messageType,
-        ];
-    }
-
-    private function programmesImmobiliers(): array
-    {
-        $model = new ProgrammeImmobilierModel();
-
-        $message = null;
-        $messageType = 'success';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = $_POST['action'] ?? '';
-
-            if ($action === 'add_programme') {
-                $nom = trim($_POST['nom'] ?? '');
-                $localisation = trim($_POST['localisation'] ?? '');
-                $description = trim($_POST['description'] ?? '');
-                $surface_totale = (float) ($_POST['surface_totale'] ?? 0);
-                $prix = (float) ($_POST['prix'] ?? 0);
-                $nombre_unites = (int) ($_POST['nombre_unites'] ?? 0);
-                $status = trim($_POST['status'] ?? 'planning');
-
-                if ($nom === '' || $localisation === '' || $description === '') {
-                    $message = 'Veuillez remplir tous les champs obligatoires.';
-                    $messageType = 'error';
-                } else {
-                    $ok = $model->addProgramme(
-                        $nom,
-                        $localisation,
-                        $description,
-                        $surface_totale,
-                        $prix,
-                        $nombre_unites,
-                        $status
-                    );
-
-                    if ($ok) {
-                        $message = 'Programme immobilier ajouté avec succès.';
-                    } else {
-                        $message = 'Erreur lors de l\'ajout du programme.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-
-            if ($action === 'delete_programme') {
-                $id = (int) ($_POST['id'] ?? 0);
-
-                if ($id <= 0) {
-                    $message = 'ID du programme invalide.';
-                    $messageType = 'error';
-                } else {
-                    $ok = $model->deleteProgramme($id);
-
-                    if ($ok) {
-                        $message = 'Programme immobilier supprimé avec succès.';
-                    } else {
-                        $message = 'Erreur lors de la suppression du programme.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-        }
-
-        return [
-            'currentPage' => 'programmes-immobiliers',
-            'pageTitle'   => 'Programmes immobiliers',
-            'view'        => 'programmeImmobilier.php',
-            'programmes'  => $model->getAllProgrammes(),
-            'statistics'  => $model->getStatistics(),
-            'message'     => $message,
-            'messageType' => $messageType,
+            'message'     => null,
+            'messageType' => null,
         ];
     }
 }
