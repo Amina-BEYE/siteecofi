@@ -1,5 +1,6 @@
 <?php
 $users = $users ?? [];
+$roles = $roles ?? ['admin' => 'Administrateur', 'manager' => 'Manager', 'agent' => 'Agent'];
 $message = $message ?? null;
 $messageType = $messageType ?? 'success';
 ?>
@@ -51,9 +52,9 @@ $messageType = $messageType ?? 'success';
                 <div class="form-group">
                     <label for="role">Rôle</label>
                     <select id="role" name="role" class="form-control">
-                        <option value="admin">Administrateur</option>
-                        <option value="manager">Manager</option>
-                        <option value="agent">Agent</option>
+                        <?php foreach ($roles as $roleKey => $roleLabel): ?>
+                            <option value="<?= htmlspecialchars($roleKey) ?>"><?= htmlspecialchars($roleLabel) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -72,8 +73,22 @@ $messageType = $messageType ?? 'success';
         <div class="card admin-list-card">
             <h3 style="margin-bottom: 15px;">Liste des accès</h3>
 
+            <div class="admin-list-toolbar">
+                <label class="admin-search-box">
+                    <i class="fas fa-search"></i>
+                    <input
+                        type="search"
+                        class="admin-search-input"
+                        data-admin-search
+                        data-target="#usersTable tbody tr"
+                        placeholder="Rechercher par nom, email ou profil"
+                        aria-label="Rechercher un accès"
+                    >
+                </label>
+            </div>
+
             <div class="table-container">
-                <table>
+                <table id="usersTable">
                     <thead>
                         <tr>
                             <th>Nom</th>

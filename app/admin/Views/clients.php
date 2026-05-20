@@ -89,8 +89,22 @@ $messageType = $messageType ?? 'success';
 <section class="card">
     <h2 style="margin-bottom: 20px;">Liste des clients</h2>
 
+    <div class="admin-list-toolbar">
+        <label class="admin-search-box">
+            <i class="fas fa-search"></i>
+            <input
+                type="search"
+                class="admin-search-input"
+                data-admin-search
+                data-target="#clientsTable tbody tr"
+                placeholder="Rechercher par nom, email ou téléphone"
+                aria-label="Rechercher un client"
+            >
+        </label>
+    </div>
+
     <div class="table-container">
-        <table>
+        <table id="clientsTable">
             <thead>
                 <tr>
                     <th>ID</th>

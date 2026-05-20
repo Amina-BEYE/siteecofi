@@ -373,6 +373,20 @@ $availableQuoteStatuses = [
         <?php endforeach; ?>
     </div>
 
+    <div class="admin-list-toolbar">
+        <label class="admin-search-box">
+            <i class="fas fa-search"></i>
+            <input
+                type="search"
+                class="admin-search-input"
+                data-admin-search
+                data-target="#ordersTable tbody tr"
+                placeholder="Rechercher par client, email, téléphone ou N° commande"
+                aria-label="Rechercher une commande"
+            >
+        </label>
+    </div>
+
     <?php if (empty($orders)): ?>
         <p>Aucune commande trouvée.</p>
     <?php else: ?>
@@ -513,6 +527,20 @@ $availableQuoteStatuses = [
         <?php endforeach; ?>
     </div>
 
+    <div class="admin-list-toolbar">
+        <label class="admin-search-box">
+            <i class="fas fa-search"></i>
+            <input
+                type="search"
+                class="admin-search-input"
+                data-admin-search
+                data-target="#quotesTable tbody tr"
+                placeholder="Rechercher par client, email, téléphone ou N° devis"
+                aria-label="Rechercher un devis"
+            >
+        </label>
+    </div>
+
     <?php if (empty($quotes)): ?>
         <p>Aucune demande de devis trouvée.</p>
     <?php else: ?>
@@ -633,6 +661,14 @@ document.querySelectorAll('.filter-button').forEach(button => {
 
         const table = document.getElementById(target + 'Table');
         if (!table) return;
+
+        table.dataset.adminStatusFilter = status;
+
+        const searchInput = document.querySelector('[data-admin-search][data-target="#' + target + 'Table tbody tr"]');
+        if (searchInput && typeof window.applyAdminSearch === 'function') {
+            window.applyAdminSearch(searchInput);
+            return;
+        }
 
         table.querySelectorAll('tbody tr').forEach(row => {
             const rowStatus = row.dataset.status || 'inconnu';

@@ -3,6 +3,7 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/app/Core/Database.php';
 require_once __DIR__ . '/app/Core/Settings.php';
+require_once __DIR__ . '/app/admin/Models/PaymentScheduleModel.php';
 require_once __DIR__ . '/app/lib/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/app/lib/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/app/lib/PHPMailer/src/SMTP.php';
@@ -110,7 +111,7 @@ function buildInfoRows(array $rows): string
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: index.php#programme-immo');
+    header('Location: actualites.php#programme-immo');
     exit;
 }
 
@@ -153,7 +154,7 @@ if ($errors) {
         $errorHtml .= '<li>' . $error . '</li>';
     }
     $errorHtml .= '</ul>';
-    echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Erreur d\'adhésion - ECOFI</title><link rel="stylesheet" href="style.css"></head><body><div class="container" style="padding:4rem 0; max-width:720px;"><h1>Erreur lors de l\'envoi</h1><p>Votre formulaire n\'a pas pu être envoyé pour les raisons suivantes :</p>' . $errorHtml . '<p><a href="index.php#programme-immo" class="submit-btn-elegant">Retour au formulaire</a></p></div></body></html>';
+    echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Erreur d\'adhésion - ECOFI</title><link rel="stylesheet" href="style.css"></head><body><div class="container" style="padding:4rem 0; max-width:720px;"><h1>Erreur lors de l\'envoi</h1><p>Votre formulaire n\'a pas pu être envoyé pour les raisons suivantes :</p>' . $errorHtml . '<p><a href="actualites.php#adhesionForm" class="submit-btn-elegant">Retour au formulaire</a></p></div></body></html>';
     exit;
 }
 
@@ -174,10 +175,11 @@ try {
         ':status' => 'Nouveau',
     ]);
     $adhesionId = $pdo->lastInsertId();
+    (new PaymentScheduleModel())->ensureScheduleForAdhesion((int) $adhesionId);
 } catch (Throwable $e) {
     error_log('[adhesion] Database error: ' . $e->getMessage());
 
-    echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Erreur base de données - ECOFI</title><link rel="stylesheet" href="style.css"></head><body><div class="container" style="padding:4rem 0; max-width:720px;"><h1>Erreur de base de données</h1><p>Impossible d\'enregistrer votre demande. Merci de réessayer plus tard.</p><p><a href="index.php#programme-immo" class="submit-btn-elegant">Retour au formulaire</a></p></div></body></html>';
+    echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Erreur base de données - ECOFI</title><link rel="stylesheet" href="style.css"></head><body><div class="container" style="padding:4rem 0; max-width:720px;"><h1>Erreur de base de données</h1><p>Impossible d\'enregistrer votre demande. Merci de réessayer plus tard.</p><p><a href="actualites.php#adhesionForm" class="submit-btn-elegant">Retour au formulaire</a></p></div></body></html>';
     exit;
 }
 

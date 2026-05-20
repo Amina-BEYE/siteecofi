@@ -1,7 +1,12 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/../app/admin/Models/ImmoProgramModel.php';
+require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/app/Core/Database.php';
+require_once __DIR__ . '/app/Core/Settings.php';
+require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
+
+use App\Core\Settings;
 
 if (!class_exists('ImmoProgramModel')) {
     $programmes = [];
@@ -18,10 +23,25 @@ if (!class_exists('ImmoProgramModel')) {
     }
 }
 
-$site_title = "Actualités - ECOFI";
-$email_contact = "service.ecofi01@gmail.com";
-$tel_fixe = "33 998 50 72";
-$tel_mobile = "71 039 75 75";
+$site_title = 'Actualités - ' . Settings::get('site_title');
+$email_contact = Settings::get('contact_email');
+$tel_fixe = Settings::get('phone_fixed');
+$tel_mobile = Settings::get('phone_mobile');
+$facebook_url = Settings::get('facebook_url');
+$instagram_url = Settings::get('instagram_url');
+$linkedin_url = Settings::get('linkedin_url');
+$twitter_url = Settings::get('twitter_url');
+$youtube_url = Settings::get('youtube_url');
+$tiktok_url = Settings::get('tiktok_url');
+$program_title = Settings::get('program_title');
+$program_subtitle = Settings::get('program_subtitle');
+$program_location = Settings::get('program_location');
+$program_surface = Settings::get('program_surface');
+$program_deposit = Settings::get('program_deposit');
+$program_monthly_payment = Settings::get('program_monthly_payment');
+$mail_contact_url = 'https://mail.google.com/mail/?view=cm&fs=1&to=' . rawurlencode($email_contact) . '&su=Contact%20ECOFI&body=Bonjour%20ECOFI,%0D%0A%0D%0AJe%20vous%20contacte%20au%20sujet%20de...';
+$tel_fixe_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_fixe);
+$tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
 
 // Date actuelle formatée
 $today = date('d/m/Y');
@@ -68,7 +88,7 @@ $terrains = [
         'type'       => 'Résidentiel',
         'disponible' => true,
         'date'       => '10/05/2026',
-        'img'        => '../app/IMG/carte.png',
+        'img'        => 'app/IMG/carte.png',
         'desc'       => 'Terrain titré et borné, accès voie bitumée, eau et électricité disponibles. Idéal pour maison individuelle ou immeuble R+2.',
         'bornage'    => true,
         'titre_foncier' => true,
@@ -81,7 +101,7 @@ $terrains = [
         'type'       => 'Résidentiel',
         'disponible' => true,
         'date'       => '02/05/2026',
-        'img'        => '../app/IMG/gnss.jpg',
+        'img'        => 'app/IMG/gnss.jpg',
         'desc'       => 'Parcelle plane dans quartier calme. Proche écoles et marchés. Titre foncier disponible. Financement possible.',
         'bornage'    => true,
         'titre_foncier' => true,
@@ -94,7 +114,7 @@ $terrains = [
         'type'       => 'Commercial',
         'disponible' => true,
         'date'       => '15/04/2026',
-        'img'        => '../app/IMG/expertise.jpeg',
+        'img'        => 'app/IMG/expertise.jpeg',
         'desc'       => 'Terrain en façade sur route principale, très fort passage. Parfait pour commerce, station-service ou immeuble mixte.',
         'bornage'    => true,
         'titre_foncier' => false,
@@ -111,9 +131,9 @@ $projets = [
         'debut'      => 'Janvier 2026',
         'livraison'  => 'Décembre 2026',
         'desc'       => '12 appartements T3 et T4, parkings couverts, groupe électrogène, sécurité 24h/24. Financement échelonné disponible.',
-        'img'        => '../app/IMG/chantier.jpg',
-        'video'      => '../app/IMG/amenage1.mp4',
-        'poster'     => '../app/IMG/chantier.jpg',
+        'img'        => 'app/IMG/chantier.jpg',
+        'video'      => 'app/IMG/amenage1.mp4',
+        'poster'     => 'app/IMG/chantier.jpg',
         'etapes'     => ['Fondations ✓', 'Gros œuvre ✓', 'Toiture (en cours)', 'Finitions', 'Livraison'],
         'etape_actuelle' => 2,
     ],
@@ -125,9 +145,9 @@ $projets = [
         'debut'      => 'Mars 2026',
         'livraison'  => 'Février 2027',
         'desc'       => 'Villa moderne 4 chambres, 2 salons, jardin paysagé, piscine optionnelle. Sur mesure pour la famille.',
-        'img'        => '../app/IMG/plan.jpeg',
-        'video'      => '../app/IMG/amenage3.mp4',
-        'poster'     => '../app/IMG/ma.jpg',
+        'img'        => 'app/IMG/plan.jpeg',
+        'video'      => 'app/IMG/amenage3.mp4',
+        'poster'     => 'app/IMG/ma.jpg',
         'etapes'     => ['Terrassement ✓', 'Fondations ✓', 'Gros œuvre (en cours)', 'Second œuvre', 'Livraison'],
         'etape_actuelle' => 2,
     ],
@@ -139,7 +159,7 @@ $projets = [
         'debut'      => 'Avril 2026',
         'livraison'  => 'Juin 2027',
         'desc'       => 'Rez-de-chaussée commercial, bureaux aux étages, façade moderne. Excellent emplacement en cœur de ville.',
-        'img'        => '../app/IMG/drone.jpg',
+        'img'        => 'app/IMG/drone.jpg',
         'video'      => null,
         'poster'     => null,
         'etapes'     => ['Fondations (en cours)', 'Gros œuvre', 'Toiture', 'Finitions', 'Livraison'],
@@ -149,12 +169,12 @@ $projets = [
 
 // Médias galerie chantier
 $mediaChantier = [
-    ['type' => 'video', 'src' => '../app/IMG/amenage1.mp4', 'poster' => '../app/IMG/chantier.jpg', 'titre' => 'Avancement gros œuvre – Les Palmiers'],
-    ['type' => 'image', 'src' => '../app/IMG/chantier.jpg', 'titre' => 'Suivi qualité chantier'],
-    ['type' => 'video', 'src' => '../app/IMG/amenage3.mp4', 'poster' => '../app/IMG/ma.jpg', 'titre' => 'Finitions et second œuvre'],
-    ['type' => 'image', 'src' => '../app/IMG/drone.jpg', 'titre' => 'Vue aérienne du site – Drone ECOFI'],
-    ['type' => 'image', 'src' => '../app/IMG/plan.jpeg', 'titre' => 'Plans architecturaux validés'],
-    ['type' => 'video', 'src' => '../app/IMG/VID.mp4', 'poster' => '../app/IMG/plan.jpeg', 'titre' => 'Projection 3D – Rendu final'],
+    ['type' => 'video', 'src' => 'app/IMG/amenage1.mp4', 'poster' => 'app/IMG/chantier.jpg', 'titre' => 'Avancement gros œuvre – Les Palmiers'],
+    ['type' => 'image', 'src' => 'app/IMG/chantier.jpg', 'titre' => 'Suivi qualité chantier'],
+    ['type' => 'video', 'src' => 'app/IMG/amenage3.mp4', 'poster' => 'app/IMG/ma.jpg', 'titre' => 'Finitions et second œuvre'],
+    ['type' => 'image', 'src' => 'app/IMG/drone.jpg', 'titre' => 'Vue aérienne du site – Drone ECOFI'],
+    ['type' => 'image', 'src' => 'app/IMG/plan.jpeg', 'titre' => 'Plans architecturaux validés'],
+    ['type' => 'video', 'src' => 'app/IMG/VID.mp4', 'poster' => 'app/IMG/plan.jpeg', 'titre' => 'Projection 3D – Rendu final'],
 ];
 ?>
 <!DOCTYPE html>
@@ -169,7 +189,7 @@ $mediaChantier = [
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="actualites.css">
-    <link rel="icon" href="../app/IMG/logo-ecofi.png" type="image/png">
+    <link rel="icon" href="app/IMG/logo-ecofi.png" type="image/png">
 
  
 </head>
@@ -180,25 +200,25 @@ $mediaChantier = [
     <div class="top-navbar">
         <div class="container">
             <div class="contact-info">
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=service.ecofi01@gmail.com" target="_blank">
-                    <i class="fas fa-envelope"></i> service.ecofi01@gmail.com
+                <a href="<?= esc($mail_contact_url); ?>" target="_blank">
+                    <i class="fas fa-envelope"></i> <?= esc($email_contact); ?>
                 </a>
-                <a href="tel:+221339985072"><i class="fas fa-phone"></i> 33 998 50 72</a>
-                <a href="tel:+221710397575"><i class="fas fa-mobile-alt"></i> 71 039 75 75</a>
+                <a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a>
+                <a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a>
             </div>
             <div class="social-links">
-                <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/ecofiservice?igsh=MTVnY2xwcGFicm00Zw==" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
+                <a href="<?= esc($facebook_url); ?>" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="<?= esc($instagram_url); ?>" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="<?= esc($linkedin_url); ?>" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="<?= esc($twitter_url); ?>" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="<?= esc($tiktok_url); ?>" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
     </div>
     <div class="main-navbar">
         <div class="container">
             <div class="logo">
-                <img src="../app/IMG/logo-ecofi.png" alt="ECOFI" class="custom-logo">
+                <img src="app/IMG/logo-ecofi.png" alt="ECOFI" class="custom-logo">
                 <div class="logo-definition">
                     <div class="definition-main">Etablissement de Conseils</div>
                     <div class="definition-sub">sur le Foncier et l'Immobilier</div>
@@ -261,7 +281,7 @@ $mediaChantier = [
         <h1>L'actualité <em>immobilière</em><br>ECOFI en direct</h1>
         <p>Programmes, terrains disponibles, projets en cours : retrouvez toutes les informations et mises à jour de nos opérations foncières et immobilières.</p>
         <div class="hero-cta-row">
-            <a class="btn-hero-primary" href="#programmes"><i class="fas fa-building"></i> Voir les programmes</a>
+            <a class="btn-hero-primary" href="#programme-immo"><i class="fas fa-building"></i> Voir le programme</a>
             <a class="btn-hero-outline" href="index.php#contact"><i class="fas fa-phone"></i> Contacter ECOFI</a>
         </div>
     </div>
@@ -279,6 +299,136 @@ $mediaChantier = [
 <!-- ===== MAIN CONTENT ===== -->
 <main>
     <div class="actu-main">
+        <section id="programme-immo" class="programme-immo programme-immo-actu">
+            <div class="programme-banner">
+                <div class="programme-banner-left">
+                    <img src="app/IMG/logo-ecofi.png" alt="Logo ECOFI Construction">
+                    <div class="programme-banner-info">
+                        <span class="section-label">Programme immobilier ECOFI Construction</span>
+                        <h2><?= esc($program_title); ?></h2>
+                        <p><?= esc($program_subtitle); ?> Une offre claire, accessible et sécurisée pour investir dès aujourd’hui.</p>
+                    </div>
+                </div>
+                <a class="programme-cta" href="#adhesionForm">Adhérer au programme</a>
+            </div>
+
+            <div class="programme-info-grid">
+                <div>
+                    <article class="programme-card">
+                        <img src="app/IMG/chantier.jpg" alt="Terrain ECOFI Construction">
+                        <div class="programme-card-body">
+                            <h3>Présentation du terrain</h3>
+                            <p>Terrains de <?= esc($program_surface); ?> situés à <?= esc($program_location); ?> avec accès sécurisé, environnement calme et proximité des infrastructures locales.</p>
+                            <div class="programme-summary">
+                                <div class="programme-summary-item">
+                                    <strong>Offre</strong>
+                                    <span><?= esc($program_title); ?></span>
+                                </div>
+                                <div class="programme-summary-item">
+                                    <strong>Localisation</strong>
+                                    <span><?= esc($program_location); ?></span>
+                                </div>
+                                <div class="programme-summary-item">
+                                    <strong>Repère</strong>
+                                    <span><?= esc($program_subtitle); ?></span>
+                                </div>
+                                <div class="programme-summary-item">
+                                    <strong>Documents</strong>
+                                    <span>Papier juridique et notification de bail</span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="payment-card">
+                        <h3>Modalités de paiement</h3>
+                        <ul>
+                            <li><span>Acompte</span><strong><?= esc($program_deposit); ?></strong></li>
+                            <li><span>Mensualité</span><strong><?= esc($program_monthly_payment); ?></strong></li>
+                            <li><span>Durée</span><strong>24 mois</strong></li>
+                            <li><span>Frais de dossier</span><strong>25 000 F CFA</strong></li>
+                        </ul>
+                        <p>Les documents obligatoires comprennent le dossier juridique complet et la notification de bail pour validation rapide.</p>
+                    </aside>
+                </div>
+
+                <div class="programme-form-wrapper">
+                    <div class="programme-form-card">
+                        <h3>Formulaire d’adhésion</h3>
+                        <p>Complétez vos informations pour rejoindre le programme immobilier ECOFI Construction.</p>
+                        <form id="adhesionForm" action="adhesion.php" method="POST">
+                            <div class="form-row-elegant">
+                                <div class="form-group-elegant">
+                                    <label for="nom">Nom</label>
+                                    <input id="nom" name="nom" type="text" placeholder="Nom" required>
+                                </div>
+                                <div class="form-group-elegant">
+                                    <label for="prenom">Prénom</label>
+                                    <input id="prenom" name="prenom" type="text" placeholder="Prénom" required>
+                                </div>
+                            </div>
+                            <div class="form-row-elegant">
+                                <div class="form-group-elegant">
+                                    <label for="date_naissance">Date de naissance</label>
+                                    <input id="date_naissance" name="date_naissance" type="date" required>
+                                </div>
+                                <div class="form-group-elegant">
+                                    <label for="lieu_naissance">Lieu de naissance</label>
+                                    <input id="lieu_naissance" name="lieu_naissance" type="text" placeholder="Lieu de naissance" required>
+                                </div>
+                            </div>
+                            <div class="form-group-elegant">
+                                <label for="adresse">Adresse</label>
+                                <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required>
+                            </div>
+                            <div class="form-row-elegant">
+                                <div class="form-group-elegant">
+                                    <label for="telephone">Téléphone</label>
+                                    <input id="telephone" name="telephone" type="tel" placeholder="<?= esc($tel_fixe); ?>" required>
+                                </div>
+                                <div class="form-group-elegant">
+                                    <label for="cni">N°CNI / Passeport</label>
+                                    <input id="cni" name="cni" type="text" placeholder="N°CNI / Passeport" required>
+                                </div>
+                            </div>
+                            <div class="form-group-elegant">
+                                <label for="email">Email</label>
+                                <input id="email" name="email" type="email" placeholder="<?= esc($email_contact); ?>" required>
+                            </div>
+                            <div class="form-group-elegant">
+                                <label for="mode_paiement">Mode de paiement</label>
+                                <select id="mode_paiement" name="mode_paiement" required>
+                                    <option value="">Sélectionnez un mode</option>
+                                    <option>Espèces</option>
+                                    <option>Virement bancaire</option>
+                                    <option>Mobile money</option>
+                                    <option>Chèque</option>
+                                </select>
+                            </div>
+                            <div class="form-group-elegant">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" placeholder="Message (optionnel)" rows="4"></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn-elegant">Adhérer au programme</button>
+                            <div class="form-message" id="adhesionFormMessage"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="condition-block">
+                <h3>Conditions importantes</h3>
+                <ul>
+                    <li>L’adhésion devient définitive après validation complète du dossier.</li>
+                    <li>L’attribution du terrain intervient après paiement intégral, validation administrative et disponibilité du terrain.</li>
+                    <li>Le membre doit respecter les échéances de paiement.</li>
+                    <li>Les remboursements éventuels peuvent être soumis à des frais de gestion de 10%.</li>
+                    <li>Toute cession du droit d’attribution est interdite sans autorisation écrite préalable.</li>
+                </ul>
+            </div>
+        </section>
+
+        <hr class="sec-separator">
 
         <!-- === PROGRAMMES IMMOBILIERS === -->
         <section id="programmes">
@@ -289,7 +439,7 @@ $mediaChantier = [
             <div class="programmes-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <article class="prog-card" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
                     <div style="position: relative; width: 100%; height: 250px; overflow: hidden;">
-                        <img src="../app/IMG/plan.jpeg" alt="Résidence Nguinth" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="app/IMG/plan.jpeg" alt="Résidence Nguinth" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 10px; right: 10px; background: #FF8533; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">En cours</div>
                     </div>
                     <div style="padding: 1.5rem;">
@@ -301,12 +451,14 @@ $mediaChantier = [
                             <span><i class="fas fa-key" style="color: #FF8533;"></i> Titre foncier</span>
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem;">15 000 000 FCFA</div>
-                        <a href="#contact" style="display: inline-block; background: #FF8533; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.3s ease;" onmouseover="this.style.background='#e06a1a'" onmouseout="this.style.background='#FF8533'">S'inscrire</a>
+                        <button type="button" class="actu-detail-btn" data-actualite-title="Résidence Nguinth" data-actualite-type="Programme immobilier" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
                 <article class="prog-card" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
                     <div style="position: relative; width: 100%; height: 250px; overflow: hidden;">
-                        <img src="../app/IMG/chantier.jpg" alt="Villa Keur Salam" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="app/IMG/chantier.jpg" alt="Villa Keur Salam" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 10px; right: 10px; background: #666; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">Planification</div>
                     </div>
                     <div style="padding: 1.5rem;">
@@ -318,12 +470,14 @@ $mediaChantier = [
                             <span><i class="fas fa-key" style="color: #FF8533;"></i> Titre foncier</span>
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem;">25 000 000 FCFA</div>
-                        <a href="#contact" style="display: inline-block; background: #FF8533; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.3s ease;" onmouseover="this.style.background='#e06a1a'" onmouseout="this.style.background='#FF8533'">S'inscrire</a>
+                        <button type="button" class="actu-detail-btn" data-actualite-title="Villa Keur Salam" data-actualite-type="Programme immobilier" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
                 <article class="prog-card" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
                     <div style="position: relative; width: 100%; height: 250px; overflow: hidden;">
-                        <img src="../app/IMG/drone.jpg" alt="Cité des Artisans" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="app/IMG/drone.jpg" alt="Cité des Artisans" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; top: 10px; right: 10px; background: #FF8533; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;">En cours</div>
                     </div>
                     <div style="padding: 1.5rem;">
@@ -335,7 +489,9 @@ $mediaChantier = [
                             <span><i class="fas fa-key" style="color: #FF8533;"></i> Titre foncier</span>
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem;">9 500 000 FCFA</div>
-                        <a href="#contact" style="display: inline-block; background: #FF8533; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.3s ease;" onmouseover="this.style.background='#e06a1a'" onmouseout="this.style.background='#FF8533'">S'inscrire</a>
+                        <button type="button" class="actu-detail-btn" data-actualite-title="Cité des Artisans" data-actualite-type="Programme immobilier" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
             </div>
@@ -352,7 +508,7 @@ $mediaChantier = [
             </div>
             <div class="terrains-list" style="display: flex; flex-direction: column; gap: 1.5rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="../app/IMG/carte.png" alt="Terrain Nguinth Extension" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <img src="app/IMG/carte.png" alt="Terrain Nguinth Extension" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
                     <div style="flex: 1; padding: 1.5rem;">
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Terrain viabilisé – Nguinth Extension</h3>
                         <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Nguinth, Thiès</p>
@@ -363,10 +519,13 @@ $mediaChantier = [
                             <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">8 500 000 FCFA</div>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Terrain viabilisé – Nguinth Extension" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="../app/IMG/gnss.jpg" alt="Parcelle Cité Lamy" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <img src="app/IMG/gnss.jpg" alt="Parcelle Cité Lamy" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
                     <div style="flex: 1; padding: 1.5rem;">
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Parcelle à bâtir – Cité Lamy</h3>
                         <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Cité Lamy, Thiès</p>
@@ -377,10 +536,13 @@ $mediaChantier = [
                             <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 200 m²</span>
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">5 000 000 FCFA</div>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Parcelle à bâtir – Cité Lamy" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="../app/IMG/expertise.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <img src="app/IMG/expertise.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
                     <div style="flex: 1; padding: 1.5rem;">
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Zone commerciale – RN1 Thiès</h3>
                         <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Route Nationale 1, Thiès</p>
@@ -391,6 +553,9 @@ $mediaChantier = [
                             <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 500 m²</span>
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">22 000 000 FCFA</div>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Zone commerciale – RN1 Thiès" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
             </div>
@@ -408,7 +573,7 @@ $mediaChantier = [
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                     <div style="position: relative; width: 100%; height: 220px; overflow: hidden;">
-                        <img src="../app/IMG/chantier.jpg" alt="Résidence Les Palmiers" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="app/IMG/chantier.jpg" alt="Résidence Les Palmiers" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.8rem; border-radius: 6px;">
                             <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement: <strong style="color: #FF8533;">65%</strong></div>
                             <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden;">
@@ -426,13 +591,15 @@ $mediaChantier = [
                             <div><strong>Début:</strong> Janvier 2026</div>
                             <div><strong>Livraison:</strong> Décembre 2026</div>
                         </div>
-                        <a href="#contact" style="display: inline-block; background: #FF8533; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.3s ease;" onmouseover="this.style.background='#e06a1a'" onmouseout="this.style.background='#FF8533'"><i class="fas fa-eye"></i> Suivre</a>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Résidence Les Palmiers" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
+                            <i class="fas fa-eye"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
 
                 <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                     <div style="position: relative; width: 100%; height: 220px; overflow: hidden;">
-                        <img src="../app/IMG/plan.jpeg" alt="Villa Duplex Keur Salam" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="app/IMG/plan.jpeg" alt="Villa Duplex Keur Salam" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.8rem; border-radius: 6px;">
                             <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement: <strong style="color: #FF8533;">40%</strong></div>
                             <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden;">
@@ -450,13 +617,15 @@ $mediaChantier = [
                             <div><strong>Début:</strong> Mars 2026</div>
                             <div><strong>Livraison:</strong> Février 2027</div>
                         </div>
-                        <a href="#contact" style="display: inline-block; background: #FF8533; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.3s ease;" onmouseover="this.style.background='#e06a1a'" onmouseout="this.style.background='#FF8533'"><i class="fas fa-eye"></i> Suivre</a>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Villa Duplex Keur Salam" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
+                            <i class="fas fa-eye"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
 
                 <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                     <div style="position: relative; width: 100%; height: 220px; overflow: hidden;">
-                        <img src="../app/IMG/drone.jpg" alt="Immeuble Commercial Darou" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="app/IMG/drone.jpg" alt="Immeuble Commercial Darou" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.8rem; border-radius: 6px;">
                             <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement: <strong style="color: #FF8533;">15%</strong></div>
                             <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden;">
@@ -474,7 +643,9 @@ $mediaChantier = [
                             <div><strong>Début:</strong> Avril 2026</div>
                             <div><strong>Livraison:</strong> Juin 2027</div>
                         </div>
-                        <a href="#contact" style="display: inline-block; background: #FF8533; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.3s ease;" onmouseover="this.style.background='#e06a1a'" onmouseout="this.style.background='#FF8533'"><i class="fas fa-eye"></i> Suivre</a>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Immeuble Commercial Darou" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
+                            <i class="fas fa-eye"></i> Plus de détail
+                        </button>
                     </div>
                 </article>
             </div>
@@ -491,32 +662,32 @@ $mediaChantier = [
                 <p>Photos & Vidéos de chantier. Documentation visuelle de nos opérations. Mises à jour régulières pour nos investisseurs.</p>
             </div>
             <div class="galerie-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
-                <div class="galerie-item" data-type="image" data-src="../app/IMG/chantier.jpg" data-title="Avancement gros œuvre" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/chantier.jpg" alt="Avancement gros œuvre" style="width:100%;height:200px;object-fit:cover;display:block;">
+                <div class="galerie-item" data-type="image" data-src="app/IMG/chantier.jpg" data-title="Avancement gros œuvre" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                    <img src="app/IMG/chantier.jpg" alt="Avancement gros œuvre" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Avancement gros œuvre</div>
                 </div>
-                <div class="galerie-item" data-type="image" data-src="../app/IMG/drone.jpg" data-title="Vue aérienne du site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/drone.jpg" alt="Vue aérienne du site" style="width:100%;height:200px;object-fit:cover;display:block;">
+                <div class="galerie-item" data-type="image" data-src="app/IMG/drone.jpg" data-title="Vue aérienne du site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                    <img src="app/IMG/drone.jpg" alt="Vue aérienne du site" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Vue aérienne du site</div>
                 </div>
-                <div class="galerie-item" data-type="image" data-src="../app/IMG/plan.jpeg" data-title="Plans architecturaux" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/plan.jpeg" alt="Plans architecturaux" style="width:100%;height:200px;object-fit:cover;display:block;">
+                <div class="galerie-item" data-type="image" data-src="app/IMG/plan.jpeg" data-title="Plans architecturaux" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                    <img src="app/IMG/plan.jpeg" alt="Plans architecturaux" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Plans architecturaux</div>
                 </div>
-                <div class="galerie-item" data-type="image" data-src="../app/IMG/expertise.jpeg" data-title="Travaux de finition" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/expertise.jpeg" alt="Travaux de finition" style="width:100%;height:200px;object-fit:cover;display:block;">
+                <div class="galerie-item" data-type="image" data-src="app/IMG/expertise.jpeg" data-title="Travaux de finition" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                    <img src="app/IMG/expertise.jpeg" alt="Travaux de finition" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Travaux de finition</div>
                 </div>
-                <div class="galerie-item" data-type="image" data-src="../app/IMG/ma.jpg" data-title="Aménagement paysager" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/ma.jpg" alt="Aménagement paysager" style="width:100%;height:200px;object-fit:cover;display:block;">
+                <div class="galerie-item" data-type="image" data-src="app/IMG/ma.jpg" data-title="Aménagement paysager" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                    <img src="app/IMG/ma.jpg" alt="Aménagement paysager" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Aménagement paysager</div>
                 </div>
-                <div class="galerie-item" data-type="image" data-src="../app/IMG/gnss.jpg" data-title="Équipe sur site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/gnss.jpg" alt="Équipe sur site" style="width:100%;height:200px;object-fit:cover;display:block;">
+                <div class="galerie-item" data-type="image" data-src="app/IMG/gnss.jpg" data-title="Équipe sur site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                    <img src="app/IMG/gnss.jpg" alt="Équipe sur site" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Équipe sur site</div>
                 </div>
                 <div class="galerie-item" data-type="video" data-src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1" data-title="Vidéo drone (remplacez VIDEO_ID)" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="../app/IMG/drone.jpg" alt="Vidéo drone" style="width:100%;height:200px;object-fit:cover;display:block;">
+                    <img src="app/IMG/drone.jpg" alt="Vidéo drone" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Vidéo drone</div>
                     <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;"><i class="fas fa-play" style="font-size:36px;color:rgba(255,255,255,0.9);text-shadow:0 2px 6px rgba(0,0,0,0.5);"></i></div>
                 </div>
@@ -572,7 +743,7 @@ $mediaChantier = [
             <div class="footer-column">
                 <div class="footer-logo-container">
                     <div class="footer-logo">
-                        <img src="../app/IMG/logo-ecofi.png" alt="ECOFI Logo" class="footer-logo-img">
+                        <img src="app/IMG/logo-ecofi.png" alt="ECOFI Logo" class="footer-logo-img">
                     </div>
                     <p class="footer-description">ECOFI transforme vos projets immobiliers en réalités durables. De la conception à la réalisation, nous vous accompagnons à chaque étape.</p>
                     <div class="ecofi-badge"><i class="fas fa-certificate"></i><span>Entreprise certifiée au Sénégal</span></div>
@@ -586,12 +757,13 @@ $mediaChantier = [
                     <li><a href="actualites.php"><i class="fas fa-newspaper"></i> Actualités</a></li>
                     <li><a href="index.php#services"><i class="fas fa-cogs"></i> Services</a></li>
                     <li><a href="index.php#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="app/admin/Views/login.php"><i class="fas fa-user"></i> Espace personnel</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Actualités</h3>
                 <ul class="footer-links">
-                    <li><a href="#programmes"><i class="fas fa-building"></i> Programmes</a></li>
+                    <li><a href="#programme-immo"><i class="fas fa-building"></i> Programme immo</a></li>
                     <li><a href="#terrains"><i class="fas fa-map"></i> Terrains</a></li>
                     <li><a href="#projets"><i class="fas fa-helmet-safety"></i> Projets en cours</a></li>
                     <li><a href="#galerie"><i class="fas fa-camera"></i> Galerie chantier</a></li>
@@ -602,9 +774,9 @@ $mediaChantier = [
                 <h3>Contactez-nous</h3>
                 <ul class="footer-links">
                     <li><a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal" target="_blank"><i class="fas fa-map-marker-alt"></i><span>Zac Nguinth Thiès, Sénégal</span></a></li>
-                    <li><a href="tel:+221339985072"><i class="fas fa-phone"></i> 33 998 50 72</a></li>
-                    <li><a href="tel:+221710397575"><i class="fas fa-mobile-alt"></i> 71 039 75 75</a></li>
-                    <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=service.ecofi01@gmail.com" target="_blank"><i class="fas fa-envelope"></i> service.ecofi01@gmail.com</a></li>
+                    <li><a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a></li>
+                    <li><a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a></li>
+                    <li><a href="<?= esc($mail_contact_url); ?>" target="_blank"><i class="fas fa-envelope"></i> <?= esc($email_contact); ?></a></li>
                 </ul>
                 <div class="footer-social-icons">
                     <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
@@ -620,6 +792,58 @@ $mediaChantier = [
         </div>
     </div>
 </footer>
+
+<!-- Contact actualité -->
+<div class="actualite-contact-modal" id="actualiteContactModal" aria-hidden="true">
+    <div class="actualite-contact-panel" role="dialog" aria-modal="true" aria-labelledby="actualiteContactTitle">
+        <button type="button" class="actualite-contact-close" onclick="closeActualiteContact()" aria-label="Fermer">&times;</button>
+        <div class="actualite-contact-head">
+            <span>Demande d'information</span>
+            <h3 id="actualiteContactTitle">Plus de détail</h3>
+            <p id="actualiteContactSubtitle">Laissez vos coordonnées, l’équipe ECOFI vous recontacte rapidement.</p>
+        </div>
+
+        <form id="actualiteContactForm" class="actualite-contact-form">
+            <input type="hidden" id="actualiteTypeInput" name="actualite_type">
+            <input type="hidden" id="actualiteTitleInput" name="actualite_title">
+
+            <div class="actualite-contact-selected">
+                <i class="fas fa-newspaper"></i>
+                <div>
+                    <strong id="selectedActualiteTitle">Actualité</strong>
+                    <small id="selectedActualiteType">Type</small>
+                </div>
+            </div>
+
+            <div class="actualite-form-grid">
+                <label>
+                    Nom complet
+                    <input type="text" name="nom" id="actualiteNom" required>
+                </label>
+                <label>
+                    Téléphone
+                    <input type="tel" name="telephone" id="actualiteTelephone" required>
+                </label>
+            </div>
+
+            <label>
+                Email
+                <input type="email" name="email" id="actualiteEmail" required>
+            </label>
+
+            <label>
+                Message
+                <textarea name="message" id="actualiteMessage" rows="4" required></textarea>
+            </label>
+
+            <button type="submit" class="actualite-contact-submit">
+                <i class="fas fa-paper-plane"></i>
+                Envoyer la demande
+            </button>
+            <div class="form-messages" id="actualiteContactMessage"></div>
+        </form>
+    </div>
+</div>
 
 <!-- Notification -->
 <div class="notification" id="notification">
@@ -663,8 +887,8 @@ $mediaChantier = [
     </div>
 </div>
 
-<script src="../public/actualites.js"></script>
+<script src="actualites.js"></script>
 
-<script src="../public/app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

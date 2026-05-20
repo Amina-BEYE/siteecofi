@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../app/Core/Database.php';
+require_once __DIR__ . '/../app/admin/Models/AccessControlModel.php';
 
 use App\Core\Database;
 
@@ -76,6 +77,7 @@ function login_admin(array $admin): void
     $_SESSION['admin_name'] = $admin['fullname'] ?? 'Administrateur';
     $_SESSION['admin_email'] = $admin['email'] ?? '';
     $_SESSION['admin_role'] = $admin['role'] ?? 'admin';
+    (new AccessControlModel())->loadSessionFeatures((string) $_SESSION['admin_role']);
 }
 
 function flash_message(string $message): void

@@ -2,8 +2,14 @@
 
 require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../Core/Database.php';
+require_once __DIR__ . '/../../Core/Settings.php';
+require_once __DIR__ . '/../../lib/PHPMailer/src/Exception.php';
+require_once __DIR__ . '/../../lib/PHPMailer/src/PHPMailer.php';
+require_once __DIR__ . '/../../lib/PHPMailer/src/SMTP.php';
 
 use App\Core\Database;
+use App\Core\Settings;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class ImmoProgramModel
 {
@@ -148,5 +154,107 @@ class ImmoProgramModel
         ");
 
         return $stmt->execute([':id' => $id]);
+    }
+
+    public function ensureContractTable(): void
+    {
+        $this->db->exec("
+            CREATE TABLE IF NOT EXISTS adhesion_contracts (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                adhesion_id INT UNSIGNED NOT NULL UNIQUE,
+                contract_content LONGTEXT NOT NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                CONSTRAINT fk_adhesion_contracts_adhesion
+                    FOREIGN KEY (adhesion_id) REFERENCES adhesions(id)
+                    ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+    }
+
+    public function getContract(int $adhesionId): ?array
+    {
+        $this->ensureContractTable();
+        $this->ensureContract($adhesionId);
+
+        $stmt = $this->db->prepare("SELECT * FROM adhesion_contracts WHERE adhesion_id = :adhesion_id LIMIT 1");
+        $stmt->execute([':adhesion_id' => $adhesionId]);
+        $contract = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $contract ?: null;
+    }
+
+    public function saveContract(int $adhesionId, string $content): bool
+    {
+        $this->ensureContractTable();
+        if ($adhesionId <= 0 || trim($content) === '') {
+            return false;
+        }
+
+        $stmt = $this->db->prepare("
+            INSERT INTO adhesion_contracts (adhesion_id, contract_content)
+            VALUES (:adhesion_id, :content)
+            ON DUPLICATE KEY UPDATE contract_content = VALUES(contract_content), updated_at = NOW()
+        ");
+
+        return $stmt->execute([
+            ':adhesion_id' => $adhesionId,
+            ':content' => trim($content),
+        ]);
+    }
+
+    public function sendContractByEmail(int $adhesionId): bool
+    {
+        $adhesion = $this->getAdhesionById($adhesionId);
+        $contract = $this->getContract($adhesionId);
+
+        if (!$adhesion || !$contract || empty($adhesion['email'])) {
+            return false;
+        }
+
+        $smtpUser = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
+        $smtpPass = $_ENV['SMTP_PASS'] ?? 'rocu nndd vkyu usaz';
+
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = Settings::get('smtp_host', 'smtp.gmail.com');
+        $mail->SMTPAuth = true;
+        $mail->Username = $smtpUser;
+        $mail->Password = $smtpPass;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = (int) Settings::get('smtp_port', '587');
+        $mail->CharSet = 'UTF-8';
+        $mail->setFrom($smtpUser, Settings::get('smtp_from_name', 'ECOFI Construction'));
+        $mail->addAddress($adhesion['email'], trim(($adhesion['prenom'] ?? '') . ' ' . ($adhesion['nom'] ?? '')));
+        $mail->isHTML(true);
+        $mail->Subject = 'Votre contrat programme immobilier ECOFI';
+        $mail->Body = '<p>Bonjour,</p><p>Veuillez trouver ci-dessous votre contrat ECOFI.</p><div style="white-space:pre-line;border:1px solid #eee;padding:16px">' . htmlspecialchars($contract['contract_content']) . '</div>';
+
+        return $mail->send();
+    }
+
+    private function ensureContract(int $adhesionId): void
+    {
+        $adhesion = $this->getAdhesionById($adhesionId);
+        if (!$adhesion) {
+            return;
+        }
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM adhesion_contracts WHERE adhesion_id = :adhesion_id");
+        $stmt->execute([':adhesion_id' => $adhesionId]);
+        if ((int) $stmt->fetchColumn() > 0) {
+            return;
+        }
+
+        $content = "CONTRAT D'ADHÉSION AU PROGRAMME IMMOBILIER ECOFI\n\n"
+            . "Client : " . trim(($adhesion['prenom'] ?? '') . ' ' . ($adhesion['nom'] ?? '')) . "\n"
+            . "CNI/Passeport : " . ($adhesion['cni'] ?? '') . "\n"
+            . "Programme : " . Settings::get('program_title') . "\n"
+            . "Localisation : " . Settings::get('program_location') . "\n"
+            . "Acompte : " . Settings::get('program_deposit') . "\n"
+            . "Mensualité : " . Settings::get('program_monthly_payment') . "\n\n"
+            . "Le client s'engage à respecter les échéances de paiement et les conditions du programme.";
+
+        $this->saveContract($adhesionId, $content);
     }
 }

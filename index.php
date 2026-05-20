@@ -90,7 +90,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                             <li><a href="#accueil">Accueil</a></li>
                             <li><a href="#apropos">À propos</a></li>
                             <li><a href="#services">Services</a></li>
-                            <li><a href="public/actualites.php">Actualités</a></li>
+                            <li><a href="actualites.php">Actualités</a></li>
                             <li><a href="#contact">Contact</a></li>
                         </ul>
                     </nav>
@@ -167,7 +167,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                         <span>Notification de bail</span>
                         <span>Accompagnement dédié</span>
                     </div>
-                    <a href="#adhesionForm" class="btn btn-accent">Adhérer au programme</a>
+                    <a href="actualites.php#adhesionForm" class="btn btn-accent">Adhérer au programme</a>
                 </div>
             </div>
 
@@ -679,8 +679,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
             </div>
         </div>
     </section>
-
-    <section id="programme-immo" class="programme-immo">
+    <section id="programme-immo" class="programme-immo-link">
         <div class="container">
             <div class="programme-banner">
                 <div class="programme-banner-left">
@@ -688,125 +687,10 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                     <div class="programme-banner-info">
                         <span class="section-label">Programme immobilier ECOFI Construction</span>
                         <h2><?= htmlspecialchars($program_title) ?></h2>
-                        <p><?= htmlspecialchars($program_subtitle) ?> Une offre claire, accessible et sécurisée pour investir dès aujourd’hui.</p>
+                        <p>Le détail du programme, les conditions et le formulaire sont maintenant centralisés dans la page actualités.</p>
                     </div>
                 </div>
-                <a class="programme-cta" href="#adhesionForm">Adhérer au programme</a>
-            </div>
-
-            <div class="programme-info-grid">
-                <div>
-                    <article class="programme-card">
-                        <img src="app/IMG/chantier.jpg" alt="Terrain ECOFI Construction">
-                        <div class="programme-card-body">
-                            <h3>Présentation du terrain</h3>
-                            <p>Terrains de <?= htmlspecialchars($program_surface) ?> situés à <?= htmlspecialchars($program_location) ?> avec accès sécurisé, environnement calme et proximité des infrastructures locales.</p>
-                            <div class="programme-summary">
-                                <div class="programme-summary-item">
-                                    <strong>Offre</strong>
-                                    <span>Terrains de 200 m²</span>
-                                </div>
-                                <div class="programme-summary-item">
-                                    <strong>Localisation</strong>
-                                    <span><?= htmlspecialchars($program_location) ?></span>
-                                </div>
-                                <div class="programme-summary-item">
-                                    <strong>Repère</strong>
-                                    <span><?= htmlspecialchars($program_subtitle) ?></span>
-                                </div>
-                                <div class="programme-summary-item">
-                                    <strong>Documents</strong>
-                                    <span>Papier juridique et notification de bail</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                    <aside class="payment-card">
-                        <h3>Modalités de paiement</h3>
-                        <ul>
-                            <li><span>Acompte</span><strong><?= htmlspecialchars($program_deposit) ?></strong></li>
-                            <li><span>Mensualité</span><strong><?= htmlspecialchars($program_monthly_payment) ?></strong></li>
-                            <li><span>Durée</span><strong>24 mois</strong></li>
-                            <li><span>Frais de dossier</span><strong>25 000 F CFA</strong></li>
-                        </ul>
-                        <p>Les documents obligatoires comprennent le dossier juridique complet et la notification de bail pour validation rapide.</p>
-                    </aside>
-                </div>
-
-                <div class="programme-form-wrapper">
-                    <div class="programme-form-card">
-                        <h3>Formulaire d’adhésion</h3>
-                        <p>Complétez vos informations pour rejoindre le programme immobilier ECOFI Construction.</p>
-                        <form id="adhesionForm" action="adhesion.php" method="POST">
-                            <div class="form-row-elegant">
-                                <div class="form-group-elegant">
-                                    <label for="nom">Nom</label>
-                                    <input id="nom" name="nom" type="text" placeholder="Nom" required>
-                                </div>
-                                <div class="form-group-elegant">
-                                    <label for="prenom">Prénom</label>
-                                    <input id="prenom" name="prenom" type="text" placeholder="Prénom" required>
-                                </div>
-                            </div>
-                            <div class="form-row-elegant">
-                                <div class="form-group-elegant">
-                                    <label for="date_naissance">Date de naissance</label>
-                                    <input id="date_naissance" name="date_naissance" type="date" required>
-                                </div>
-                                <div class="form-group-elegant">
-                                    <label for="lieu_naissance">Lieu de naissance</label>
-                                    <input id="lieu_naissance" name="lieu_naissance" type="text" placeholder="Lieu de naissance" required>
-                                </div>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="adresse">Adresse</label>
-                                <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required>
-                            </div>
-                            <div class="form-row-elegant">
-                                <div class="form-group-elegant">
-                                    <label for="telephone">Téléphone</label>
-                                    <input id="telephone" name="telephone" type="tel" placeholder="33 999 50 72" required>
-                                </div>
-                                <div class="form-group-elegant">
-                                    <label for="cni">N°CNI / Passeport</label>
-                                    <input id="cni" name="cni" type="text" placeholder="N°CNI / Passeport" required>
-                                </div>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="email">Email</label>
-                                <input id="email" name="email" type="email" placeholder="<?= htmlspecialchars($email_contact) ?>" required>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="mode_paiement">Mode de paiement</label>
-                                <select id="mode_paiement" name="mode_paiement" required>
-                                    <option value="">Sélectionnez un mode</option>
-                                    <option>Espèces</option>
-                                    <option>Virement bancaire</option>
-                                    <option>Mobile money</option>
-                                    <option>Chèque</option>
-                                </select>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="message">Message</label>
-                                <textarea id="message" name="message" placeholder="Message (optionnel)" rows="4"></textarea>
-                            </div>
-                            <button type="submit" class="submit-btn-elegant">Adhérer au programme</button>
-                            <div class="form-message" id="adhesionFormMessage"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="condition-block">
-                <h3>Conditions importantes</h3>
-                <ul>
-                    <li>L’adhésion devient définitive après validation complète du dossier.</li>
-                    <li>L’attribution du terrain intervient après paiement intégral, validation administrative et disponibilité du terrain.</li>
-                    <li>Le membre doit respecter les échéances de paiement.</li>
-                    <li>Les remboursements éventuels peuvent être soumis à des frais de gestion de 10%.</li>
-                    <li>Toute cession du droit d’attribution est interdite sans autorisation écrite préalable.</li>
-                </ul>
+                <a class="programme-cta" href="actualites.php#programme-immo">Voir le programme</a>
             </div>
         </div>
     </section>
@@ -837,7 +721,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                         <li><a href="#apropos"><i class="fas fa-info-circle"></i> À propos</a></li>
                         <li><a href="#services"><i class="fas fa-cogs"></i> Nos services</a></li>
                         <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                        <li><a href="./admin/login.php"><i class="fas fa-user"></i> Espace
+                        <li><a href="app/admin/Views/login.php"><i class="fas fa-user"></i> Espace
                                 personnel</a></li>
                     </ul>
                 </div>
