@@ -680,6 +680,7 @@ button.is-loading {
 .cart-total-header {
     font-weight: bold;
     margin-left: 5px;
+    white-space: nowrap;
 }
 
 /* Panier déroulant */
@@ -1948,6 +1949,7 @@ select:focus {
     color: var(--primary-color);
     line-height: 1.1;
     margin-bottom: 0;
+    
 }
 
 .hero-content-modern h1 span {
