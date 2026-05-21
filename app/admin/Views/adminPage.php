@@ -9,6 +9,11 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 require_once __DIR__ . '/../../Core/Router.php';
+require_once __DIR__ . '/../Models/AccessControlModel.php';
+
+if (!empty($_SESSION['admin_role'])) {
+    (new AccessControlModel())->loadSessionFeatures((string) $_SESSION['admin_role']);
+}
 
 $page = $_GET['page'] ?? 'dashboard';
 
@@ -200,6 +205,60 @@ $viewPath = __DIR__ . '/' . $view;
 
                 showPageLoader(form.dataset.loadingText || 'Enregistrement en cours...');
             });
+        });
+
+        function normalizeAdminSearch(value) {
+            return (value || '')
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function applyAdminSearch(input) {
+            const targetSelector = input.dataset.target || '';
+            const items = targetSelector ? document.querySelectorAll(targetSelector) : [];
+            const query = normalizeAdminSearch(input.value);
+            let visibleCount = 0;
+
+            items.forEach(item => {
+                const table = item.closest('table');
+                const activeStatus = table ? (table.dataset.adminStatusFilter || 'toutes') : 'toutes';
+                const itemStatus = item.dataset.status || 'inconnu';
+                const matchesStatus = activeStatus === 'toutes' || itemStatus === activeStatus;
+                const haystack = normalizeAdminSearch((item.dataset.search || '') + ' ' + item.textContent);
+                const matchesSearch = !query || haystack.includes(query);
+                const shouldShow = matchesStatus && matchesSearch;
+
+                item.style.display = shouldShow ? '' : 'none';
+                if (shouldShow) {
+                    visibleCount++;
+                }
+            });
+
+            const emptyId = input.dataset.emptyId;
+            const emptyState = emptyId ? document.getElementById(emptyId) : null;
+            if (emptyState) {
+                emptyState.classList.toggle('is-visible', visibleCount === 0 && items.length > 0);
+            }
+        }
+
+        window.applyAdminSearch = applyAdminSearch;
+
+        document.querySelectorAll('[data-admin-search]').forEach(input => {
+            const emptyState = document.createElement('p');
+            emptyState.className = 'admin-search-empty';
+            emptyState.textContent = 'Aucun résultat pour cette recherche.';
+            emptyState.id = 'admin-search-empty-' + Math.random().toString(36).slice(2);
+            input.dataset.emptyId = emptyState.id;
+
+            const toolbar = input.closest('.admin-list-toolbar');
+            if (toolbar && toolbar.parentNode) {
+                toolbar.parentNode.insertBefore(emptyState, toolbar.nextSibling);
+            }
+
+            input.addEventListener('input', () => applyAdminSearch(input));
         });
 
         document.querySelectorAll('a[href]').forEach(link => {

@@ -1,6 +1,19 @@
 <?php
 // sidebar.php
 $currentPage = $currentPage ?? 'dashboard';
+require_once __DIR__ . '/../Models/AccessControlModel.php';
+
+$accessModel = new AccessControlModel();
+$adminRole = (string) ($_SESSION['admin_role'] ?? 'agent');
+$menuPages = $accessModel->getAccessiblePages($adminRole);
+
+$menuGroups = [
+    'Pilotage' => ['dashboard'],
+    'Gestion commerciale' => ['clients', 'orders', 'programme-immo', 'payment-schedules'],
+    'Catalogue' => ['products'],
+    'Gestion personnel' => ['employees'],
+    'Administration' => ['auth', 'access-control', 'settings', 'notifications'],
+];
 ?>
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -12,49 +25,46 @@ $currentPage = $currentPage ?? 'dashboard';
     </div>
 
     <nav class="sidebar-menu">
-        <a href="adminPage.php?page=dashboard" class="menu-item <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
-            <i class="fas fa-chart-line"></i>
-            <span>Tableau de bord</span>
+        <a href="../../../index.php" class="menu-item menu-item--site">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour au site</span>
         </a>
 
-        <a href="adminPage.php?page=auth" class="menu-item <?= $currentPage === 'auth' ? 'active' : '' ?>">
-            <i class="fas fa-user-shield"></i>
-            <span>Authentification & rôles</span>
-        </a>
+        <?php foreach ($menuGroups as $groupLabel => $pageKeys): ?>
+            <?php
+            $groupItems = array_intersect_key($menuPages, array_flip($pageKeys));
+            if (empty($groupItems)) {
+                continue;
+            }
+            ?>
+            <div class="menu-group">
+                <div class="menu-group-title"><?= htmlspecialchars($groupLabel) ?></div>
 
-        <a href="adminPage.php?page=clients" class="menu-item <?= $currentPage === 'clients' ? 'active' : '' ?>">
-            <i class="fas fa-users"></i>
-            <span>Clients & contacts</span>
-        </a>
+                <?php foreach ($pageKeys as $pageKey): ?>
+                    <?php if (empty($menuPages[$pageKey])) continue; ?>
+                    <?php $pageConfig = $menuPages[$pageKey]; ?>
+                    <a href="adminPage.php?page=<?= htmlspecialchars($pageKey) ?>" class="menu-item <?= $currentPage === $pageKey ? 'active' : '' ?>">
+                        <i class="fas <?= htmlspecialchars($pageConfig['icon'] ?? 'fa-circle') ?>"></i>
+                        <span><?= htmlspecialchars($pageConfig['label'] ?? $pageKey) ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endforeach; ?>
 
-        <a href="adminPage.php?page=products" class="menu-item <?= $currentPage === 'products' ? 'active' : '' ?>">
-            <i class="fas fa-box"></i>
-            <span>Produits & stock</span>
-        </a>
-
-        <a href="adminPage.php?page=orders" class="menu-item <?= $currentPage === 'orders' ? 'active' : '' ?>">
-            <i class="fas fa-file-invoice"></i>
-            <span>Commandes & factures</span>
-        </a>
-
-        <a href="adminPage.php?page=programme-immo" class="menu-item <?= $currentPage === 'programme-immo' ? 'active' : '' ?>">
-            <i class="fas fa-building"></i>
-            <span>Programme Immo</span>
-        </a>
-
-        <a href="adminPage.php?page=settings" class="menu-item <?= $currentPage === 'settings' ? 'active' : '' ?>">
-            <i class="fas fa-sliders"></i>
-            <span>Paramétrage général</span>
-        </a>
-
-        <a href="adminPage.php?page=employees" class="menu-item <?= $currentPage === 'employees' ? 'active' : '' ?>">
-            <i class="fas fa-user-tie"></i>
-            <span>Personnel</span>
-        </a>
-
-        <a href="adminPage.php?page=notifications" class="menu-item <?= $currentPage === 'notifications' ? 'active' : '' ?>">
-            <i class="fas fa-bell"></i>
-            <span>Notifications</span>
-        </a>
+        <?php
+        $groupedPages = array_merge(...array_values($menuGroups));
+        $ungroupedPages = array_diff_key($menuPages, array_flip($groupedPages));
+        ?>
+        <?php if (!empty($ungroupedPages)): ?>
+            <div class="menu-group">
+                <div class="menu-group-title">Autres</div>
+                <?php foreach ($ungroupedPages as $pageKey => $pageConfig): ?>
+                    <a href="adminPage.php?page=<?= htmlspecialchars($pageKey) ?>" class="menu-item <?= $currentPage === $pageKey ? 'active' : '' ?>">
+                        <i class="fas <?= htmlspecialchars($pageConfig['icon'] ?? 'fa-circle') ?>"></i>
+                        <span><?= htmlspecialchars($pageConfig['label'] ?? $pageKey) ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </nav>
 </aside>

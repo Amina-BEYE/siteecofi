@@ -17,6 +17,11 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin ECOFI';
     </div>
 
     <div class="topbar-right">
+        <a class="site-return-btn" href="../../../index.php">
+            <i class="fas fa-arrow-left"></i>
+            <span>Retour au site</span>
+        </a>
+
         <span class="welcome">Bienvenue : <?= htmlspecialchars($adminName) ?></span>
 
         <div class="topbar-icons">

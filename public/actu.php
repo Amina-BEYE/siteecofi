@@ -1,4 +1,7 @@
 <?php
+header('Location: ../actualites.php', true, 302);
+exit;
+
 session_start();
 
 require_once __DIR__ . '/../app/admin/Models/ImmoProgramModel.php';

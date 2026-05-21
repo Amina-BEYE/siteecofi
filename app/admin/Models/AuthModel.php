@@ -62,7 +62,7 @@ class AuthModel
             ':fullname' => trim($fullname),
             ':email' => trim($email),
             ':password' => password_hash($password, PASSWORD_DEFAULT),
-            ':role' => in_array($role, ['admin', 'manager', 'agent'], true) ? $role : 'agent',
+            ':role' => preg_match('/^[a-z0-9_-]{2,50}$/', $role) ? $role : 'agent',
             ':status' => 'active',
         ]);
     }

@@ -138,8 +138,22 @@ $messageType = $messageType ?? 'success';
 <section class="card">
     <h2>Liste des produits</h2>
 
+    <div class="admin-list-toolbar">
+        <label class="admin-search-box">
+            <i class="fas fa-search"></i>
+            <input
+                type="search"
+                class="admin-search-input"
+                data-admin-search
+                data-target="#productsTable tbody tr"
+                placeholder="Rechercher par nom, catégorie ou statut"
+                aria-label="Rechercher un produit"
+            >
+        </label>
+    </div>
+
     <div class="table-container">
-        <table>
+        <table id="productsTable">
             <thead>
                 <tr>
                     <th>ID</th>
