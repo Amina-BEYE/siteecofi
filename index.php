@@ -39,6 +39,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="app/IMG/logo-ecofi.png" type="image/png">
+
 </head>
 
 <body>
@@ -90,7 +91,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                             <li><a href="#accueil">Accueil</a></li>
                             <li><a href="#apropos">À propos</a></li>
                             <li><a href="#services">Services</a></li>
-                            <li><a href="public/actualites.php">Actualités</a></li>
+                            <li><a href="actualites.php">Actualités</a></li>
                             <li><a href="#contact">Contact</a></li>
                         </ul>
                     </nav>

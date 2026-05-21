@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/../app/admin/Models/ImmoProgramModel.php';
+require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
 
-if (!class_exists('ImmoProgramModel')) {
+if (!class_exists('ImmoProgramModel'){
     $programmes = [];
 } else {
     $model = new ImmoProgramModel();
@@ -168,7 +168,7 @@ $mediaChantier = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="actualites.css">
+    <!--<link rel="stylesheet" href="actualites.css">-->
     <link rel="icon" href="../app/IMG/logo-ecofi.png" type="image/png">
 
  
@@ -192,6 +192,8 @@ $mediaChantier = [
                 <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
                 <a href="#" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
                 <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
+                <a link="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-youtube"></i></a>
+                <a link="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
     </div>
