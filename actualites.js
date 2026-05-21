@@ -10,18 +10,57 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
 
-// Lecture auto des vidéos galerie au hover
-document.querySelectorAll('.galerie-item video, .projet-media video').forEach((video) => {
-    const parent = video.closest('.galerie-item, .projet-card');
-    if (!parent) return;
-    parent.addEventListener('mouseenter', () => {
-        video.play().catch(() => {});
+// Vidéos : play quand visible, pause hors écran, hover play (galerie) et clic pour son
+(() => {
+    const galleryVideos = Array.from(document.querySelectorAll('.galerie-item video'));
+    const projectVideos = Array.from(document.querySelectorAll('.projet-media video'));
+
+    // IntersectionObserver: play when at least half visible, pause otherwise
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const v = entry.target;
+                try {
+                    if (entry.isIntersecting) {
+                        v.muted = true; // keep autoplay muted
+                        v.play().catch(() => {});
+                    } else {
+                        v.pause();
+                    }
+                } catch (e) {}
+            });
+        }, { threshold: 0.5 });
+
+        projectVideos.forEach(v => io.observe(v));
+    } else {
+        projectVideos.forEach(v => { v.muted = true; try { v.play(); } catch (e) {} });
+    }
+
+    // Galerie: keep hover behaviour for quick preview
+    galleryVideos.forEach((video) => {
+        const parent = video.closest('.galerie-item');
+        if (!parent) return;
+        parent.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
+        parent.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
     });
-    parent.addEventListener('mouseleave', () => {
-        video.pause();
-        video.currentTime = 0;
+
+    // Click on project media toggles mute and pauses other videos
+    document.querySelectorAll('.projet-media').forEach(media => {
+        media.addEventListener('click', function (e) {
+            const v = this.querySelector('video');
+            if (!v) return;
+            const willUnmute = v.muted;
+            document.querySelectorAll('.projet-media video').forEach(other => {
+                if (other !== v) {
+                    other.muted = true;
+                    try { other.pause(); } catch (e) {}
+                }
+            });
+            v.muted = !willUnmute;
+            try { if (!v.paused) v.play(); } catch (e) {}
+        });
     });
-});
+})();
 
 // Formulaire d'inscription
 function handleInscription(e) {

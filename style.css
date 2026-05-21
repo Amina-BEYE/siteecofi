@@ -1970,57 +1970,7 @@ select:focus {
     margin-top: 0.5rem;
 }
 
-.hero-programme-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 24px;
-    padding: 1.8rem;
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.08);
-    margin-top: 1.5rem;
-    border: 1px solid rgba(255, 133, 51, 0.18);
-    max-width: 620px;
-}
 
-.hero-programme-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.55rem 1rem;
-    border-radius: 999px;
-    background: rgba(255, 133, 51, 0.15);
-    color: var(--accent-color);
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.hero-programme-card h3 {
-    font-size: 1.75rem;
-    margin-bottom: 0.9rem;
-    color: #111;
-}
-
-.hero-programme-card p {
-    color: #444;
-    line-height: 1.75;
-    margin-bottom: 1rem;
-}
-
-.hero-programme-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.hero-programme-items span {
-    background: #fff4e0;
-    color: #8a4b07;
-    padding: 0.7rem 1rem;
-    border-radius: 999px;
-    font-size: 0.95rem;
-    border: 1px solid rgba(255, 133, 51, 0.2);
-}
 
 .hero-image-modern img {
     width: 100%;

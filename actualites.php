@@ -1,18 +1,14 @@
 <?php
 session_start();
 
-<<<<<<< HEAD
-require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
-=======
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/app/Core/Database.php';
 require_once __DIR__ . '/app/Core/Settings.php';
-require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
 
 use App\Core\Settings;
->>>>>>> 23aca9e8e5a2c558312c44c7e198e51262b1436f
+require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
 
-if (!class_exists('ImmoProgramModel'){
+if (!class_exists('ImmoProgramModel')){
     $programmes = [];
 } else {
     $model = new ImmoProgramModel();
@@ -92,7 +88,7 @@ $terrains = [
         'type'       => 'Résidentiel',
         'disponible' => true,
         'date'       => '10/05/2026',
-        'img'        => 'app/IMG/carte.png',
+        'img'        => 'app/IMG/terrain1.jpeg',
         'desc'       => 'Terrain titré et borné, accès voie bitumée, eau et électricité disponibles. Idéal pour maison individuelle ou immeuble R+2.',
         'bornage'    => true,
         'titre_foncier' => true,
@@ -105,7 +101,7 @@ $terrains = [
         'type'       => 'Résidentiel',
         'disponible' => true,
         'date'       => '02/05/2026',
-        'img'        => 'app/IMG/gnss.jpg',
+        'img'        => 'app/IMG/terraain2.jpg',
         'desc'       => 'Parcelle plane dans quartier calme. Proche écoles et marchés. Titre foncier disponible. Financement possible.',
         'bornage'    => true,
         'titre_foncier' => true,
@@ -118,7 +114,49 @@ $terrains = [
         'type'       => 'Commercial',
         'disponible' => true,
         'date'       => '15/04/2026',
-        'img'        => 'app/IMG/expertise.jpeg',
+        'img'        => 'app/IMG/terrain3.jpeg',
+        'desc'       => 'Terrain en façade sur route principale, très fort passage. Parfait pour commerce, station-service ou immeuble mixte.',
+        'bornage'    => true,
+        'titre_foncier' => false,
+    ],
+
+     [
+        'titre'      => 'Zone commerciale – RN1 Thiès',
+        'surface'    => '500',
+        'prix'       => '22 000 000',
+        'localisation'=> 'Route Nationale 1, Thiès',
+        'type'       => 'Commercial',
+        'disponible' => true,
+        'date'       => '15/04/2026',
+        'img'        => 'app/IMG/terrain4.jpeg',
+        'desc'       => 'Terrain en façade sur route principale, très fort passage. Parfait pour commerce, station-service ou immeuble mixte.',
+        'bornage'    => true,
+        'titre_foncier' => false,
+    ],
+
+     [
+        'titre'      => 'Zone commerciale – RN1 Thiès',
+        'surface'    => '500',
+        'prix'       => '22 000 000',
+        'localisation'=> 'Route Nationale 1, Thiès',
+        'type'       => 'Commercial',
+        'disponible' => true,
+        'date'       => '15/04/2026',
+        'img'        => 'app/IMG/terrain5.jpeg',
+        'desc'       => 'Terrain en façade sur route principale, très fort passage. Parfait pour commerce, station-service ou immeuble mixte.',
+        'bornage'    => true,
+        'titre_foncier' => false,
+    ],
+
+     [
+        'titre'      => 'Zone commerciale – RN1 Thiès',
+        'surface'    => '500',
+        'prix'       => '22 000 000',
+        'localisation'=> 'Route Nationale 1, Thiès',
+        'type'       => 'Commercial',
+        'disponible' => true,
+        'date'       => '15/04/2026',
+        'img'        => 'app/IMG/terrain6.jpeg',
         'desc'       => 'Terrain en façade sur route principale, très fort passage. Parfait pour commerce, station-service ou immeuble mixte.',
         'bornage'    => true,
         'titre_foncier' => false,
@@ -192,13 +230,8 @@ $mediaChantier = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-<<<<<<< HEAD
-    <!--<link rel="stylesheet" href="actualites.css">-->
-    <link rel="icon" href="../app/IMG/logo-ecofi.png" type="image/png">
-=======
     <link rel="stylesheet" href="actualites.css">
-    <link rel="icon" href="app/IMG/logo-ecofi.png" type="image/png">
->>>>>>> 23aca9e8e5a2c558312c44c7e198e51262b1436f
+    <link rel="icon" href="../app/IMG/logo-ecofi.png" type="image/png">
 
  
 </head>
@@ -216,7 +249,6 @@ $mediaChantier = [
                 <a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a>
             </div>
             <div class="social-links">
-<<<<<<< HEAD
                 <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
                 <a href="https://www.instagram.com/ecofiservice?igsh=MTVnY2xwcGFicm00Zw==" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
                 <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
@@ -224,13 +256,6 @@ $mediaChantier = [
                 <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
                 <a link="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-youtube"></i></a>
                 <a link="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-whatsapp"></i></a>
-=======
-                <a href="<?= esc($facebook_url); ?>" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
-                <a href="<?= esc($instagram_url); ?>" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="<?= esc($linkedin_url); ?>" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
-                <a href="<?= esc($twitter_url); ?>" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="<?= esc($tiktok_url); ?>" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
->>>>>>> 23aca9e8e5a2c558312c44c7e198e51262b1436f
             </div>
         </div>
     </div>
@@ -317,13 +342,19 @@ $mediaChantier = [
 
 <!-- ===== MAIN CONTENT ===== -->
 <main>
-    <div class="actu-main">
+      <!-- === PROGRAMMES IMMOBILIERS === -->
+    <section id="programmes">
+        <div class="container">
+            <h2>Programmes immobiliers</h2>
+            <p>Appartements & Logements neufs. Des logements conçus pour durer, avec un accompagnement.</p>
+        </div>
+        <div class="actu-main">
         <section id="programme-immo" class="programme-immo programme-immo-actu">
             <div class="programme-banner">
                 <div class="programme-banner-left">
                     <img src="app/IMG/logo-ecofi.png" alt="Logo ECOFI Construction">
                     <div class="programme-banner-info">
-                        <span class="section-label">Programme immobilier ECOFI Construction</span>
+                        <span class="section-label">Programme immobilier ECOFI Services</span>
                         <h2><?= esc($program_title); ?></h2>
                         <p><?= esc($program_subtitle); ?> Une offre claire, accessible et sécurisée pour investir dès aujourd’hui.</p>
                     </div>
@@ -334,7 +365,7 @@ $mediaChantier = [
             <div class="programme-info-grid">
                 <div>
                     <article class="programme-card">
-                        <img src="app/IMG/chantier.jpg" alt="Terrain ECOFI Construction">
+                        <img src="app/IMG/PROGRAMMEIMO.jpeg" alt="Terrain ECOFI Construction">
                         <div class="programme-card-body">
                             <h3>Présentation du terrain</h3>
                             <p>Terrains de <?= esc($program_surface); ?> situés à <?= esc($program_location); ?> avec accès sécurisé, environnement calme et proximité des infrastructures locales.</p>
@@ -447,15 +478,8 @@ $mediaChantier = [
             </div>
         </section>
 
-        <hr class="sec-separator">
-
-        <!-- === PROGRAMMES IMMOBILIERS === -->
-        <section id="programmes">
-            <div class="container">
-                <h2>Programmes immobiliers</h2>
-                <p>Appartements & Logements neufs. Des logements conçus pour durer, avec un accompagnement.</p>
-            </div>
-            <div class="programmes-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
+      
+            <!-- <div class="programmes-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <article class="prog-card" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
                     <div style="position: relative; width: 100%; height: 250px; overflow: hidden;">
                         <img src="app/IMG/plan.jpeg" alt="Résidence Nguinth" style="width: 100%; height: 100%; object-fit: cover;">
@@ -471,7 +495,7 @@ $mediaChantier = [
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem;">15 000 000 FCFA</div>
                         <button type="button" class="actu-detail-btn" data-actualite-title="Résidence Nguinth" data-actualite-type="Programme immobilier" onclick="openActualiteContact(this)">
-                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
@@ -490,7 +514,7 @@ $mediaChantier = [
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem;">25 000 000 FCFA</div>
                         <button type="button" class="actu-detail-btn" data-actualite-title="Villa Keur Salam" data-actualite-type="Programme immobilier" onclick="openActualiteContact(this)">
-                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
@@ -509,14 +533,13 @@ $mediaChantier = [
                         </div>
                         <div style="color: #FF8533; font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem;">9 500 000 FCFA</div>
                         <button type="button" class="actu-detail-btn" data-actualite-title="Cité des Artisans" data-actualite-type="Programme immobilier" onclick="openActualiteContact(this)">
-                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
-            </div>
+            </div> -->
 
-        </section>
-
+    </section>
         <hr class="sec-separator">
 
         <!-- === TERRAINS DISPONIBLES === -->
@@ -527,56 +550,74 @@ $mediaChantier = [
             </div>
             <div class="terrains-list" style="display: flex; flex-direction: column; gap: 1.5rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/carte.png" alt="Terrain Nguinth Extension" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <img src="app/IMG/terrain1.jpeg" alt="Terrain Nguinth Extension" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
                     <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Terrain viabilisé – Nguinth Extension</h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Nguinth, Thiès</p>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Terrain viabilisé – Thies </h3>
+                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Thiès Zac Nguinth </p>
                         <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Terrain titré et borné, accès voie bitumée, eau et électricité disponibles.</p>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
                             <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Titre foncier</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> -----</span>
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 225 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">8 500 000 FCFA</div>
+                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">prix sur demande</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Terrain viabilisé – Nguinth Extension" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
-                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/gnss.jpg" alt="Parcelle Cité Lamy" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <img src="app/IMG/terraain2.jpeg" alt="Parcelle Cité Lamy" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
                     <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Parcelle à bâtir – Cité Lamy</h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Cité Lamy, Thiès</p>
-                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Parcelle plane dans quartier calme. Proche écoles et marchés. Titre foncier disponible.</p>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Parcelle à bâtir – Sen Iran</h3>
+                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Thiès Nord Est Sen Iran</p>
+                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;"> disponible.</p>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
                             <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Titre foncier</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 200 m²</span>
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i>Sans titre</span>
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">5 000 000 FCFA</div>
+                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">6 500 000 FCFA</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Parcelle à bâtir – Cité Lamy" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
-                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/expertise.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <img src="app/IMG/terrain5.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
                     <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Zone commerciale – RN1 Thiès</h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Route Nationale 1, Thiès</p>
-                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Terrain en façade sur route principale, très fort passage. Parfait pour commerce.</p>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Zone commerciale – Tivaoune Thiès</h3>
+                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Ndiobene route de Tivaoune</p>
+                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;"> Parfait pour commerce.</p>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
                             <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
                             <span><i class="fas fa-close" style="color: #999;"></i> Sans titre</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 500 m²</span>
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">22 000 000 FCFA</div>
+                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">3 000 000 FCFA</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Zone commerciale – RN1 Thiès" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
-                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détail
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
+                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
+                    <img src="app/IMG/terrein6.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
+                    <div style="flex: 1; padding: 1.5rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Route Nationale 1 – Lalane</h3>
+                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Thiès, Lalane</p>
+                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Terrain en façade sur route principale, très fort passage. </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
+                            <span><i class="fas fa-close" style="color: #999;"></i> Sans titre</span>
+                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
+                        </div>
+                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">3 000 000 FCFA</div>
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Zone commerciale – RN1 Thiès" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
+                            <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
+                        </button>
+                    </div>
+                </article>
+               
             </div>
 
         </section>
@@ -589,38 +630,45 @@ $mediaChantier = [
                 <h2>Projets en cours</h2>
                 <p>Chantiers & Réalisations 2026. Suivi en temps réel de l'avancement de chaque chantier. Transparence totale pour nos investisseurs et clients.</p>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
-                <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                    <div style="position: relative; width: 100%; height: 220px; overflow: hidden;">
-                        <img src="app/IMG/chantier.jpg" alt="Résidence Les Palmiers" style="width: 100%; height: 100%; object-fit: cover;">
-                        <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.8rem; border-radius: 6px;">
-                            <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement: <strong style="color: #FF8533;">65%</strong></div>
-                            <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden;">
-                                <div style="height: 100%; width: 65%; background: #FF8533;"></div>
+            <div class="projets-grid">
+                <article class="projet-card">
+                    <div class="projet-media">
+                        <video autoplay muted loop playsinline>
+                            <source src="app/IMG/fondation.mp4" type="video/mp4">
+                            Votre navigateur ne supporte pas la vidéo.
+                        </video>
+                        <div class="projet-type-badge">Projet en cours</div>
+                        <div class="projet-avance">
+                            <div class="avance-label">
+                                <span>Avancement :</span>
+                                <strong>45%</strong>
+                            </div>
+                            <div class="avance-bar">
+                                <div class="avance-fill" style="width: 65%;"></div>
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 1.5rem;">
+                    <div class="projet-body">
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Résidence Les Palmiers</h3>
                         <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;"><i class="fas fa-location-dot" style="color: #FF8533;"></i> Nguinth, Thiès</p>
                         <p style="background: #f5f5f5; padding: 0.8rem; border-radius: 6px; color: #666; font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.5;">
-                            Immeuble R+3 avec 12 appartements T3 et T4. Parkings couverts, groupe électrogène, sécurité 24h/24.
+                            Construction Immeuble R+3 . Usage commercial et habitation.
                         </p>
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
                             <div><strong>Début:</strong> Janvier 2026</div>
-                            <div><strong>Livraison:</strong> Décembre 2026</div>
+                            <div><strong>Livraison:</strong> Décembre 2028</div>
                         </div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Résidence Les Palmiers" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
-                            <i class="fas fa-eye"></i> Plus de détail
+                            <i class="fas fa-eye"></i> Plus de détails
                         </button>
                     </div>
                 </article>
 
-                <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <!-- <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                     <div style="position: relative; width: 100%; height: 220px; overflow: hidden;">
                         <img src="app/IMG/plan.jpeg" alt="Villa Duplex Keur Salam" style="width: 100%; height: 100%; object-fit: cover;">
                         <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.8rem; border-radius: 6px;">
-                            <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement: <strong style="color: #FF8533;">40%</strong></div>
+                            <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement : <strong style="color: #FF8533;">40%</strong></div>
                             <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden;">
                                 <div style="height: 100%; width: 40%; background: #FF8533;"></div>
                             </div>
@@ -637,22 +685,27 @@ $mediaChantier = [
                             <div><strong>Livraison:</strong> Février 2027</div>
                         </div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Villa Duplex Keur Salam" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
-                            <i class="fas fa-eye"></i> Plus de détail
+                            <i class="fas fa-eye"></i> Plus de détails
                         </button>
                     </div>
-                </article>
+                </article> -->
 
-                <article style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                    <div style="position: relative; width: 100%; height: 220px; overflow: hidden;">
-                        <img src="app/IMG/drone.jpg" alt="Immeuble Commercial Darou" style="width: 100%; height: 100%; object-fit: cover;">
-                        <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.8rem; border-radius: 6px;">
-                            <div style="font-size: 0.85rem; margin-bottom: 0.3rem;">Avancement: <strong style="color: #FF8533;">15%</strong></div>
-                            <div style="height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden;">
-                                <div style="height: 100%; width: 15%; background: #FF8533;"></div>
+
+                <article class="projet-card">
+                    <div class="projet-media">
+                        <img src="app/IMG/fon.jpg" alt="Immeuble Commercial Darou">
+                        <div class="projet-type-badge">Projet en cours</div>
+                        <div class="projet-avance">
+                            <div class="avance-label">
+                                <span>Avancement :</span>
+                                <strong>15%</strong>
+                            </div>
+                            <div class="avance-bar">
+                                <div class="avance-fill" style="width: 15%;"></div>
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 1.5rem;">
+                    <div class="projet-body">
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Immeuble Commercial Darou</h3>
                         <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;"><i class="fas fa-location-dot" style="color: #FF8533;"></i> Centre-ville Thiès</p>
                         <p style="background: #f5f5f5; padding: 0.8rem; border-radius: 6px; color: #666; font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.5;">
@@ -663,9 +716,43 @@ $mediaChantier = [
                             <div><strong>Livraison:</strong> Juin 2027</div>
                         </div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Immeuble Commercial Darou" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
-                            <i class="fas fa-eye"></i> Plus de détail
+                            <i class="fas fa-eye"></i> Plus de détails
                         </button>
                     </div>
+                </article>
+
+                <article class="projet-card">
+                    <div class="projet-media">
+                        <video autoplay muted loop playsinline>
+                            <source src="app/IMG/logement.mp4" type="video/mp4">
+                            Votre navigateur ne supporte pas la vidéo.
+                        </video>
+                        <div class="projet-type-badge" style="background: rgba(34,197,94,0.95);">Disponible maintenant</div>
+                    </div>
+                    <div class="projet-body">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Maison de logement disponible</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;">
+                            <i class="fas fa-location-dot" style="color: #FF8533;"></i> Nguinth, Thiès
+                        </p>
+                        <p style="font-size: 1.15rem; font-weight: 800; color: #1a2340; margin-bottom: 1rem;">
+                            Prix sur demande
+                        </p>
+                        <p style="background: #f5f5f5; padding: 0.8rem; border-radius: 6px; color: #666; font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem;">
+                            Maison 4 chambres, 2 salons, jardin paysagé, proche accès route nationale et services.
+                        </p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="background: #ecfdf5; color: #166534; padding: 0.55rem 0.9rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700;">
+                                4 chambres
+                            </span>
+                            <span style="background: #ecfdf5; color: #166534; padding: 0.55rem 0.9rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700;">
+                                180 m²
+                            </span>
+                        </div>
+                        <button type="button" class="actu-detail-btn compact" style="background: #22c55e;" data-actualite-title="maison de logement" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
+                            <i class="fas fa-calendar-check"></i> Réserver
+                        </button>
+                       
+                      </div>
                 </article>
             </div>
            
@@ -682,7 +769,7 @@ $mediaChantier = [
             </div>
             <div class="galerie-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <div class="galerie-item" data-type="image" data-src="app/IMG/chantier.jpg" data-title="Avancement gros œuvre" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/chantier.jpg" alt="Avancement gros œuvre" style="width:100%;height:200px;object-fit:cover;display:block;">
+                    <img src="app/IMG/gallerie1.mp4" alt="Avancement gros œuvre" style="width:100%;height:200px;object-fit:cover;display:block;">
                     <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Avancement gros œuvre</div>
                 </div>
                 <div class="galerie-item" data-type="image" data-src="app/IMG/drone.jpg" data-title="Vue aérienne du site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
@@ -792,7 +879,7 @@ $mediaChantier = [
             <div class="footer-column">
                 <h3>Contactez-nous</h3>
                 <ul class="footer-links">
-                    <li><a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal" target="_blank"><i class="fas fa-map-marker-alt"></i><span>Zac Nguinth Thiès, Sénégal</span></a></li>
+                    <li><a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal" target="_blank"><i class="fas fa-location-dot"></i><span>Zac Nguinth Thiès, Sénégal</span></a></li>
                     <li><a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a></li>
                     <li><a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a></li>
                     <li><a href="<?= esc($mail_contact_url); ?>" target="_blank"><i class="fas fa-envelope"></i> <?= esc($email_contact); ?></a></li>
@@ -818,7 +905,7 @@ $mediaChantier = [
         <button type="button" class="actualite-contact-close" onclick="closeActualiteContact()" aria-label="Fermer">&times;</button>
         <div class="actualite-contact-head">
             <span>Demande d'information</span>
-            <h3 id="actualiteContactTitle">Plus de détail</h3>
+            <h3 id="actualiteContactTitle">Plus de détails</h3>
             <p id="actualiteContactSubtitle">Laissez vos coordonnées, l’équipe ECOFI vous recontacte rapidement.</p>
         </div>
 

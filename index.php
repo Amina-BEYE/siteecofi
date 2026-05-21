@@ -159,17 +159,6 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                     <a href="#services" class="btn btn-accent">Explorer nos services</a>
                     <a href="#contact" class="btn btn-outline">Demander un devis gratuit</a>
                 </div>
-                <div class="hero-programme-card">
-                    <div class="hero-programme-badge">Programme Immo</div>
-                    <h3><?= htmlspecialchars($program_title) ?></h3>
-                    <p>Acompte <?= htmlspecialchars($program_deposit) ?>, mensualités <?= htmlspecialchars($program_monthly_payment) ?>. Terrain sécurisé, proche des infrastructures locales.</p>
-                    <div class="hero-programme-items">
-                        <span>Documents juridiques inclus</span>
-                        <span>Notification de bail</span>
-                        <span>Accompagnement dédié</span>
-                    </div>
-                    <a href="actualites.php#adhesionForm" class="btn btn-accent">Adhérer au programme</a>
-                </div>
             </div>
 
             <div class="hero-image-modern">
