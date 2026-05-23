@@ -811,11 +811,28 @@
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
             margin-bottom: 0.5rem;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
         }
 
         .actualite-contact-head p {
-            color: rgba(255, 255, 255, 0.74);
+            color: rgba(255, 255, 255, 0.88);
             line-height: 1.6;
+        }
+
+        .actualite-contact-head span,
+        .actualite-contact-selected strong,
+        .actualite-contact-selected small {
+            color: #ffffff;
+        }
+
+        .actualite-contact-selected {
+            background: linear-gradient(135deg, #1f2937, #334155);
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .actualite-contact-selected i {
+            color: #ffffff;
         }
 
         .actualite-contact-form {
@@ -830,12 +847,12 @@
             gap: 12px;
             padding: 1rem;
             border-radius: var(--radius-md);
-            background: var(--orange-light);
-            border: 1px solid rgba(255, 133, 51, 0.18);
+            background: linear-gradient(135deg, #1f2937, #334155);
+            border: 1px solid rgba(255, 255, 255, 0.14);
         }
 
         .actualite-contact-selected i {
-            color: var(--accent);
+            color: #ffffff;
             font-size: 1.3rem;
         }
 
@@ -845,11 +862,11 @@
         }
 
         .actualite-contact-selected strong {
-            color: var(--primary);
+            color: #ffffff;
         }
 
         .actualite-contact-selected small {
-            color: var(--gray);
+            color: rgba(255, 255, 255, 0.78);
             margin-top: 3px;
         }
 

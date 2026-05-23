@@ -12,7 +12,7 @@ $menuGroups = [
     'Gestion commerciale' => ['clients', 'orders', 'programme-immo', 'payment-schedules'],
     'Catalogue' => ['products'],
     'Gestion personnel' => ['employees'],
-    'Administration' => ['auth', 'access-control', 'settings', 'notifications'],
+    'Administration' => ['newsletter', 'messaging', 'auth', 'access-control', 'settings', 'profile', 'notifications'],
 ];
 ?>
 <aside class="sidebar" id="sidebar">

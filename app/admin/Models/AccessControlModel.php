@@ -25,8 +25,11 @@ class AccessControlModel
         'orders' => ['label' => 'Commandes & factures', 'icon' => 'fa-file-invoice'],
         'programme-immo' => ['label' => 'Programme Immo', 'icon' => 'fa-building'],
         'payment-schedules' => ['label' => 'Échéances paiement', 'icon' => 'fa-calendar-check'],
+        'newsletter' => ['label' => 'Newsletter', 'icon' => 'fa-bullhorn'],
+        'messaging' => ['label' => 'Messagerie', 'icon' => 'fa-envelope-open-text'],
         'settings' => ['label' => 'Paramétrage général', 'icon' => 'fa-sliders'],
         'employees' => ['label' => 'Personnel', 'icon' => 'fa-user-tie'],
+        'profile' => ['label' => 'Mon profil', 'icon' => 'fa-user-gear'],
         'notifications' => ['label' => 'Notifications', 'icon' => 'fa-bell'],
     ];
 
@@ -310,7 +313,7 @@ class AccessControlModel
             return !in_array($page, ['auth', 'access-control', 'settings'], true);
         }
 
-        return in_array($page, ['dashboard', 'clients', 'orders', 'programme-immo', 'payment-schedules', 'notifications'], true);
+        return in_array($page, ['dashboard', 'clients', 'orders', 'programme-immo', 'payment-schedules', 'newsletter', 'messaging', 'profile', 'notifications'], true);
     }
 
     private function ensureRoleTableOnly(): void
@@ -329,7 +332,7 @@ class AccessControlModel
 
     private function forcedAccess(string $role, string $page): bool
     {
-        return $role === 'admin' && in_array($page, ['dashboard', 'access-control'], true);
+        return $page === 'profile' || ($role === 'admin' && in_array($page, ['dashboard', 'access-control'], true));
     }
 
     private function canAccessFromStorage(string $role, string $page): bool

@@ -12,6 +12,17 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL DEFAULT 'admin',
   status VARCHAR(50) NOT NULL DEFAULT 'active',
+  email_address VARCHAR(180) NULL,
+  imap_host VARCHAR(180) NULL,
+  imap_port INT UNSIGNED NULL DEFAULT 993,
+  imap_encryption VARCHAR(10) NULL DEFAULT 'ssl',
+  imap_username VARCHAR(180) NULL,
+  imap_password TEXT NULL,
+  smtp_host VARCHAR(180) NULL,
+  smtp_port INT UNSIGNED NULL DEFAULT 465,
+  smtp_encryption VARCHAR(10) NULL DEFAULT 'ssl',
+  smtp_username VARCHAR(180) NULL,
+  smtp_password TEXT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -242,6 +253,20 @@ CREATE TABLE IF NOT EXISTS demandes_contact (
   message TEXT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_demandes_contact_type (type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS newletter (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  phone VARCHAR(40) NOT NULL,
+  email VARCHAR(180) NOT NULL UNIQUE,
+  interest VARCHAR(80) NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'active',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_newletter_status (status),
+  INDEX idx_newletter_interest (interest),
+  INDEX idx_newletter_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS quote_types (

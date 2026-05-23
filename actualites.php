@@ -820,13 +820,13 @@ $mediaChantier = [
                     </div>
                 </div>
             </div>
-            <form class="inscription-form" onsubmit="handleInscription(event)">
+            <form class="inscription-form" id="inscriptionForm" onsubmit="handleInscription(event)">
                 <div class="inscription-row">
-                    <input class="inscription-input" type="text" id="inscNom" placeholder="Votre nom" required>
-                    <input class="inscription-input" type="tel" id="inscTel" placeholder="Téléphone" required>
+                    <input class="inscription-input" type="text" id="inscNom" name="name" placeholder="Votre nom" required>
+                    <input class="inscription-input" type="tel" id="inscTel" name="phone" placeholder="Téléphone" required>
                 </div>
-                <input class="inscription-input" type="email" id="inscEmail" placeholder="Adresse email" required>
-                <select class="inscription-input" id="inscInteret" style="cursor:pointer;">
+                <input class="inscription-input" type="email" id="inscEmail" name="email" placeholder="Adresse email" required>
+                <select class="inscription-input" id="inscInteret" name="interest" style="cursor:pointer;">
                     <option value="">Votre intérêt principal…</option>
                     <option value="programme">Programme immobilier</option>
                     <option value="terrain">Terrain / Parcelle</option>

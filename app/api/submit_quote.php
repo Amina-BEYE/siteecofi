@@ -7,12 +7,14 @@ header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/../Core/Settings.php';
+require_once __DIR__ . '/../Core/MailTransportConfig.php';
 
 require_once __DIR__ . '/../lib/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/../lib/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/../lib/PHPMailer/src/SMTP.php';
 
 use App\Core\Database;
+use App\Core\MailTransportConfig;
 use App\Core\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -265,20 +267,22 @@ function buildMailer(): PHPMailer
 {
     $mail = new PHPMailer(true);
 
-    $smtpUser = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
-    $smtpPass = $_ENV['SMTP_PASS'] ?? 'rocu nndd vkyu usaz';
+    $smtpUser = MailTransportConfig::smtpUser();
+    $smtpPass = MailTransportConfig::smtpPassword();
 
     if ($smtpPass === '') {
         throw new RuntimeException('SMTP_PASS manquant.');
     }
 
     $mail->isSMTP();
-    $mail->Host = Settings::get('smtp_host', 'smtp.gmail.com');
+    $mail->Host = MailTransportConfig::smtpHost();
     $mail->SMTPAuth = true;
     $mail->Username = $smtpUser;
     $mail->Password = $smtpPass;
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = (int) Settings::get('smtp_port', '587');
+    $mail->SMTPSecure = MailTransportConfig::smtpEncryption() === 'ssl'
+        ? PHPMailer::ENCRYPTION_SMTPS
+        : PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = MailTransportConfig::smtpPort();
     $mail->CharSet = 'UTF-8';
 
     return $mail;
@@ -287,7 +291,7 @@ function buildMailer(): PHPMailer
 function sendEcofiNotification(PDO $pdo, int $devisId, string $type, string $clientMessage = '', array $items = [], array $clientData = []): void
 {
     $ecofiEmail = $_ENV['ECOFI_EMAIL'] ?? Settings::get('quote_email', Settings::get('contact_email'));
-    $smtpUser = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
+    $smtpUser = MailTransportConfig::smtpUser();
     $devis = fetchDevisForMail($pdo, $devisId);
     
     $mail = buildMailer();
@@ -427,7 +431,7 @@ function sendQuoteEmail(int $devisId): void
         error_log('[submit_quote_pdf_mail] ' . $e->getMessage());
     }
 
-    $senderEmail = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
+    $senderEmail = MailTransportConfig::smtpUser();
     $senderName = $_ENV['MAIL_FROM_NAME'] ?? Settings::get('smtp_from_name', 'ECOFI');
 
     $mail = buildMailer();

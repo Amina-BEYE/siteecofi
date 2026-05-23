@@ -3,12 +3,14 @@
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/app/Core/Database.php';
 require_once __DIR__ . '/app/Core/Settings.php';
+require_once __DIR__ . '/app/Core/MailTransportConfig.php';
 require_once __DIR__ . '/app/admin/Models/PaymentScheduleModel.php';
 require_once __DIR__ . '/app/lib/PHPMailer/src/Exception.php';
 require_once __DIR__ . '/app/lib/PHPMailer/src/PHPMailer.php';
 require_once __DIR__ . '/app/lib/PHPMailer/src/SMTP.php';
 
 use App\Core\Database;
+use App\Core\MailTransportConfig;
 use App\Core\Settings;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -24,20 +26,22 @@ function clean_input(string $value): string
 function sendEcofiMail(string $to, string $subject, string $body, string $replyTo = '', string $altBody = ''): bool
 {
     try {
-        $smtpUser = $_ENV['SMTP_USER'] ?? Settings::get('contact_email');
-        $smtpPass = $_ENV['SMTP_PASS'] ?? 'rocu nndd vkyu usaz';
+        $smtpUser = MailTransportConfig::smtpUser();
+        $smtpPass = MailTransportConfig::smtpPassword();
 
         $mail = new PHPMailer(true);
         $mail->isSMTP();
-        $mail->Host = Settings::get('smtp_host', 'smtp.gmail.com');
+        $mail->Host = MailTransportConfig::smtpHost();
         $mail->SMTPAuth = true;
         $mail->Username = $smtpUser;
         $mail->Password = $smtpPass;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = (int) Settings::get('smtp_port', '587');
+        $mail->SMTPSecure = MailTransportConfig::smtpEncryption() === 'ssl'
+            ? PHPMailer::ENCRYPTION_SMTPS
+            : PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = MailTransportConfig::smtpPort();
         $mail->CharSet = 'UTF-8';
 
-        $mail->setFrom($smtpUser, Settings::get('smtp_from_name', 'ECOFI Construction'));
+        $mail->setFrom($smtpUser, MailTransportConfig::fromName());
         $mail->addAddress($to);
 
         if ($replyTo !== '' && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {

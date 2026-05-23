@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../admin/Models/OrderModel.php';
 require_once __DIR__ . '/../admin/Models/ProduitCategoryModel.php';
 require_once __DIR__ . '/../admin/Models/AccessControlModel.php';
+require_once __DIR__ . '/MailConfigImporter.php';
 
 class AdminController
 {
@@ -50,6 +51,15 @@ class AdminController
             case 'settings':
                 return $this->settings();
 
+            case 'profile':
+                return $this->profile();
+
+            case 'messaging':
+                return $this->messaging();
+
+            case 'newsletter':
+                return $this->newsletter();
+
             case 'employees':
                 return $this->employees();
 
@@ -83,14 +93,33 @@ class AdminController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? 'add_user';
+            $isMailTest = isset($_POST['test_mail_config']);
 
-            if ($action === 'add_user') {
+            if ($isMailTest) {
+                require_once __DIR__ . '/../admin/Models/AdminMailboxModel.php';
+
+                [$mailConfig, $configError] = $this->extractMailConfig($_POST);
+                if ($configError !== null) {
+                    $message = $configError;
+                    $messageType = 'error';
+                } else {
+                    $result = (new AdminMailboxModel())->testConfig($mailConfig);
+                    $message = $result['message'] ?? 'Test terminé.';
+                    $messageType = !empty($result['success']) ? 'success' : 'error';
+                }
+            }
+
+            if (!$isMailTest && $action === 'add_user') {
                 $fullname = trim($_POST['fullname'] ?? '');
                 $email = trim($_POST['email'] ?? '');
                 $role = trim($_POST['role'] ?? 'agent');
                 $password = $_POST['password'] ?? '';
+                [$mailConfig, $configError] = $this->extractMailConfig($_POST);
 
-                if ($fullname === '' || $email === '' || $password === '') {
+                if ($configError !== null) {
+                    $message = $configError;
+                    $messageType = 'error';
+                } elseif ($fullname === '' || $email === '' || $password === '') {
                     $message = 'Veuillez remplir tous les champs obligatoires.';
                     $messageType = 'error';
                 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -100,7 +129,7 @@ class AdminController
                     $message = 'Cet email existe déjà.';
                     $messageType = 'error';
                 } else {
-                    $ok = $model->addUser($fullname, $email, $password, $role);
+                    $ok = $model->addUser($fullname, $email, $password, $role, $mailConfig);
 
                     if ($ok) {
                         $message = 'Utilisateur créé avec succès.';
@@ -111,7 +140,7 @@ class AdminController
                 }
             }
 
-            if ($action === 'toggle_status') {
+            if (!$isMailTest && $action === 'toggle_status') {
                 $userId = (int) ($_POST['user_id'] ?? 0);
                 $status = trim($_POST['status'] ?? '');
 
@@ -127,6 +156,44 @@ class AdminController
                         $message = 'Impossible de modifier le statut.';
                         $messageType = 'error';
                     }
+                }
+            }
+
+            if (!$isMailTest && $action === 'edit_user') {
+                $userId = (int) ($_POST['user_id'] ?? 0);
+                $fullname = trim($_POST['fullname'] ?? '');
+                $email = trim($_POST['email'] ?? '');
+                $role = trim($_POST['role'] ?? 'agent');
+                $status = trim($_POST['status'] ?? 'active');
+                [$mailConfig, $configError] = $this->extractMailConfig($_POST);
+
+                if ($configError !== null) {
+                    $message = $configError;
+                    $messageType = 'error';
+                } elseif ($userId <= 0 || $fullname === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $message = 'Veuillez vérifier les informations utilisateur.';
+                    $messageType = 'error';
+                } elseif ($model->emailExistsForAnotherUser($email, $userId)) {
+                    $message = 'Cet email est déjà utilisé par un autre utilisateur.';
+                    $messageType = 'error';
+                } else {
+                    $ok = $model->updateUser($userId, $fullname, $email, $role, $status, $mailConfig);
+                    $message = $ok ? 'Utilisateur modifié avec succès.' : 'Impossible de modifier cet utilisateur.';
+                    $messageType = $ok ? 'success' : 'error';
+                }
+            }
+
+            if (!$isMailTest && $action === 'reset_password') {
+                $userId = (int) ($_POST['user_id'] ?? 0);
+                $password = (string) ($_POST['new_password'] ?? '');
+
+                if ($userId <= 0 || strlen($password) < 6) {
+                    $message = 'Le nouveau mot de passe doit contenir au moins 6 caractères.';
+                    $messageType = 'error';
+                } else {
+                    $ok = $model->updatePassword($userId, $password);
+                    $message = $ok ? 'Mot de passe réinitialisé.' : 'Impossible de réinitialiser le mot de passe.';
+                    $messageType = $ok ? 'success' : 'error';
                 }
             }
         }
@@ -525,6 +592,309 @@ class AdminController
         ];
     }
 
+    private function profile(): array
+    {
+        require_once __DIR__ . '/../admin/Models/AuthModel.php';
+
+        $model = new AuthModel();
+        $message = null;
+        $messageType = 'success';
+        $adminId = (int) ($_SESSION['admin_id'] ?? 0);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $currentPassword = (string) ($_POST['current_password'] ?? '');
+            $newPassword = (string) ($_POST['new_password'] ?? '');
+            $confirmPassword = (string) ($_POST['confirm_password'] ?? '');
+
+            if ($adminId <= 0) {
+                $message = 'Le compte de développement ne peut pas être modifié ici.';
+                $messageType = 'error';
+            } elseif ($newPassword !== $confirmPassword) {
+                $message = 'Les deux nouveaux mots de passe ne correspondent pas.';
+                $messageType = 'error';
+            } elseif (strlen($newPassword) < 6) {
+                $message = 'Le nouveau mot de passe doit contenir au moins 6 caractères.';
+                $messageType = 'error';
+            } else {
+                $ok = $model->changePassword($adminId, $currentPassword, $newPassword);
+                $message = $ok ? 'Mot de passe modifié avec succès.' : 'Mot de passe actuel incorrect.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+        }
+
+        return [
+            'currentPage' => 'profile',
+            'pageTitle' => 'Mon profil',
+            'view' => 'profile.php',
+            'profileUser' => $adminId > 0 ? $model->getUserById($adminId) : null,
+            'message' => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
+    private function messaging(): array
+    {
+        require_once __DIR__ . '/../admin/Models/AdminMailboxModel.php';
+
+        $model = new AdminMailboxModel();
+        $adminId = (int) ($_SESSION['admin_id'] ?? 0);
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $uid = (int) ($_POST['uid'] ?? 0);
+            $body = trim($_POST['body'] ?? '');
+            $result = $model->reply($adminId, $uid, $body);
+            $message = $result['message'] ?? 'Réponse traitée.';
+            $messageType = !empty($result['success']) ? 'success' : 'error';
+        }
+
+        $selectedUid = (int) ($_GET['uid'] ?? 0);
+        $selectedMail = $selectedUid > 0 ? $model->getMessage($adminId, $selectedUid) : null;
+        $messages = $model->getInbox($adminId);
+
+        return [
+            'currentPage' => 'messaging',
+            'pageTitle' => 'Messagerie',
+            'view' => 'messaging.php',
+            'mailMessages' => $messages,
+            'selectedMail' => $selectedMail,
+            'mailStats' => $model->getStats($messages),
+            'mailError' => $model->getLastError(),
+            'message' => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
+    private function extractMailConfig(array $source): array
+    {
+        $manualConfig = [
+            'email_address' => trim($source['email_address'] ?? ''),
+            'imap_host' => trim($source['imap_host'] ?? ''),
+            'imap_port' => (int) ($source['imap_port'] ?? 993),
+            'imap_encryption' => trim($source['imap_encryption'] ?? 'ssl'),
+            'imap_username' => trim($source['imap_username'] ?? ''),
+            'imap_password' => (string) ($source['imap_password'] ?? ''),
+            'smtp_host' => trim($source['smtp_host'] ?? ''),
+            'smtp_port' => (int) ($source['smtp_port'] ?? 465),
+            'smtp_encryption' => trim($source['smtp_encryption'] ?? 'ssl'),
+            'smtp_username' => trim($source['smtp_username'] ?? ''),
+            'smtp_password' => (string) ($source['smtp_password'] ?? ''),
+        ];
+
+        [$jsonConfig, $error] = $this->readUploadedMailConfig();
+        if ($error !== null) {
+            return [$manualConfig, $error];
+        }
+
+        $config = $jsonConfig !== null
+            ? array_merge($manualConfig, array_filter($jsonConfig, static fn ($value): bool => $value !== null && $value !== ''))
+            : $manualConfig;
+
+        return [$this->autoConfigureO2switch($config), null];
+    }
+
+    private function readUploadedMailConfig(): array
+    {
+        [$mobileConfig, $mobileError] = $this->readUploadedMobileConfig();
+        if ($mobileError !== null || $mobileConfig !== null) {
+            return [$mobileConfig, $mobileError];
+        }
+
+        $file = $_FILES['imap_config'] ?? null;
+        if (!is_array($file) || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return [null, null];
+        }
+
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            return [null, 'Impossible de lire le fichier JSON uploadé.'];
+        }
+
+        if ((int) ($file['size'] ?? 0) > 64 * 1024) {
+            return [null, 'Le fichier JSON de configuration ne doit pas dépasser 64 Ko.'];
+        }
+
+        $name = (string) ($file['name'] ?? '');
+        if (strtolower(pathinfo($name, PATHINFO_EXTENSION)) !== 'json') {
+            return [null, 'Le fichier de configuration doit être au format JSON.'];
+        }
+
+        $tmp = (string) ($file['tmp_name'] ?? '');
+        if ($tmp === '' || !is_uploaded_file($tmp)) {
+            return [null, 'Fichier JSON invalide.'];
+        }
+
+        $raw = file_get_contents($tmp);
+        @unlink($tmp);
+
+        if ($raw === false || trim($raw) === '') {
+            return [null, 'Fichier JSON vide ou illisible.'];
+        }
+
+        try {
+            $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Throwable $e) {
+            return [null, 'Le fichier uploadé n’est pas un JSON valide.'];
+        }
+
+        if (!is_array($data)) {
+            return [null, 'Le JSON doit contenir un objet de configuration.'];
+        }
+
+        $allowed = [
+            'email_address', 'imap_host', 'imap_port', 'imap_encryption', 'imap_username', 'imap_password',
+            'smtp_host', 'smtp_port', 'smtp_encryption', 'smtp_username', 'smtp_password',
+        ];
+
+        $config = [];
+        foreach ($allowed as $key) {
+            $config[$key] = $data[$key] ?? null;
+        }
+
+        $config['config_source'] = 'json';
+
+        return [$config, null];
+    }
+
+    private function readUploadedMobileConfig(): array
+    {
+        $file = $_FILES['mail_config_file'] ?? null;
+        if (!is_array($file) || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return [null, null];
+        }
+
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            return [null, 'Impossible de lire le fichier mobileconfig uploadé.'];
+        }
+
+        if ((int) ($file['size'] ?? 0) > 256 * 1024) {
+            return [null, 'Le fichier mobileconfig ne doit pas dépasser 256 Ko.'];
+        }
+
+        $name = (string) ($file['name'] ?? '');
+        $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        if (!in_array($extension, ['mobileconfig', 'xml'], true)) {
+            return [null, 'Le fichier doit être au format .mobileconfig ou .xml.'];
+        }
+
+        $tmp = (string) ($file['tmp_name'] ?? '');
+        if ($tmp === '' || !is_uploaded_file($tmp)) {
+            return [null, 'Fichier mobileconfig invalide.'];
+        }
+
+        $mime = '';
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo) {
+                $mime = (string) finfo_file($finfo, $tmp);
+                finfo_close($finfo);
+            }
+        }
+
+        $allowedMimes = [
+            'text/xml',
+            'application/xml',
+            'application/x-apple-aspen-config',
+            'application/octet-stream',
+            'application/x-plist',
+            'text/plain',
+        ];
+        if ($mime !== '' && !in_array($mime, $allowedMimes, true)) {
+            @unlink($tmp);
+            return [null, 'Type MIME du fichier mobileconfig non autorisé : ' . $mime . '.'];
+        }
+
+        try {
+            $config = \App\Core\MailConfigImporter::parseMobileConfig($tmp);
+        } catch (Throwable $e) {
+            @unlink($tmp);
+            return [null, $e->getMessage()];
+        }
+
+        @unlink($tmp);
+
+        return [$config, null];
+    }
+
+    private function autoConfigureO2switch(array $config): array
+    {
+        $email = trim((string) ($config['email_address'] ?? ''));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $config;
+        }
+
+        $domain = substr(strrchr($email, '@') ?: '', 1);
+        if ($domain === '') {
+            return $config;
+        }
+
+        $host = 'mail.' . $domain;
+
+        $config['imap_host'] = trim((string) ($config['imap_host'] ?? '')) !== '' ? $config['imap_host'] : $host;
+        $config['imap_port'] = (int) ($config['imap_port'] ?? 0) > 0 ? $config['imap_port'] : 993;
+        $config['imap_encryption'] = trim((string) ($config['imap_encryption'] ?? '')) !== '' ? $config['imap_encryption'] : 'ssl';
+        $config['imap_username'] = trim((string) ($config['imap_username'] ?? '')) !== '' ? $config['imap_username'] : $email;
+        $config['smtp_host'] = trim((string) ($config['smtp_host'] ?? '')) !== '' ? $config['smtp_host'] : $host;
+        $config['smtp_port'] = (int) ($config['smtp_port'] ?? 0) > 0 ? $config['smtp_port'] : 465;
+        $config['smtp_encryption'] = trim((string) ($config['smtp_encryption'] ?? '')) !== '' ? $config['smtp_encryption'] : 'ssl';
+        $config['smtp_username'] = trim((string) ($config['smtp_username'] ?? '')) !== '' ? $config['smtp_username'] : $email;
+
+        return $config;
+    }
+
+    private function newsletter(): array
+    {
+        require_once __DIR__ . '/../admin/Models/NewsletterModel.php';
+
+        $model = new NewsletterModel();
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? '';
+
+            if ($action === 'send_campaign') {
+                [$attachments, $attachmentError] = $this->extractCampaignAttachments();
+
+                if ($attachmentError !== null) {
+                    $message = $attachmentError;
+                    $messageType = 'error';
+                } else {
+                $result = $model->sendCampaign(
+                    trim($_POST['subject'] ?? ''),
+                    trim($_POST['content'] ?? ''),
+                    trim($_POST['interest'] ?? ''),
+                    $attachments
+                );
+                $message = $result['message'] ?? 'Campagne traitée.';
+                $messageType = !empty($result['success']) ? 'success' : 'error';
+
+                if (!empty($result['success']) && (int) ($result['failed'] ?? 0) > 0) {
+                    $message .= ' Échecs : ' . (int) $result['failed'] . '.';
+                }
+                }
+            }
+
+            if ($action === 'update_status') {
+                $subscriberId = (int) ($_POST['subscriber_id'] ?? 0);
+                $status = trim($_POST['status'] ?? '');
+                $ok = $model->updateStatus($subscriberId, $status);
+                $message = $ok ? 'Statut abonné mis à jour.' : 'Impossible de modifier cet abonné.';
+                $messageType = $ok ? 'success' : 'error';
+            }
+        }
+
+        return [
+            'currentPage' => 'newsletter',
+            'pageTitle' => 'Newsletter',
+            'view' => 'newsletter.php',
+            'subscribers' => $model->getAll(),
+            'newsletterStats' => $model->getStats(),
+            'message' => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
     private function employees(): array
     {
         require_once __DIR__ . '/../admin/Models/AuthModel.php';
@@ -551,5 +921,39 @@ class AdminController
             'message' => null,
             'messageType' => null,
         ];
+    }
+
+    private function extractCampaignAttachments(): array
+    {
+        $file = $_FILES['campaign_attachment'] ?? null;
+        if (!is_array($file) || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return [[], null];
+        }
+
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            return [[], 'Impossible de lire la pièce jointe uploadée.'];
+        }
+
+        if ((int) ($file['size'] ?? 0) > 10 * 1024 * 1024) {
+            return [[], 'La pièce jointe ne doit pas dépasser 10 Mo.'];
+        }
+
+        $tmp = (string) ($file['tmp_name'] ?? '');
+        if ($tmp === '' || !is_uploaded_file($tmp)) {
+            return [[], 'Pièce jointe invalide.'];
+        }
+
+        $originalName = basename((string) ($file['name'] ?? 'piece-jointe'));
+        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        $allowed = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx', 'txt'];
+
+        if (!in_array($extension, $allowed, true)) {
+            return [[], 'Format de pièce jointe non autorisé. Formats acceptés : PDF, image, Word, Excel, TXT.'];
+        }
+
+        return [[[
+            'path' => $tmp,
+            'name' => $originalName !== '' ? $originalName : 'piece-jointe.' . $extension,
+        ]], null];
     }
 }

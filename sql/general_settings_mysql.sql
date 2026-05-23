@@ -35,6 +35,13 @@ VALUES
 ('mail', 'smtp_from_name', 'Nom expéditeur email', 'ECOFI Construction', 'text', 1),
 ('mail', 'smtp_host', 'Serveur SMTP', 'smtp.gmail.com', 'text', 1),
 ('mail', 'smtp_port', 'Port SMTP', '587', 'number', 1),
+('mail', 'smtp_user', 'Utilisateur SMTP', '', 'text', 1),
+('mail', 'smtp_password', 'Mot de passe SMTP', '', 'password', 1),
+('mail', 'smtp_encryption', 'Sécurité SMTP', 'tls', 'text', 1),
+('mail', 'imap_host', 'Serveur IMAP réception', '', 'text', 1),
+('mail', 'imap_port', 'Port IMAP', '993', 'number', 1),
+('mail', 'imap_flags', 'Options IMAP', '/imap/ssl', 'text', 1),
+('mail', 'imap_user', 'Utilisateur IMAP', '', 'text', 1),
 
 ('programme_immo', 'program_title', 'Titre programme immo', 'Terrains de 200 m² à Berokh Extension', 'text', 1),
 ('programme_immo', 'program_subtitle', 'Sous-titre programme immo', 'Derrière chez Sophie, en face des 3000 logements sociaux.', 'textarea', 1),

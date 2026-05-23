@@ -25,9 +25,9 @@ $adminName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin ECOFI';
         <span class="welcome">Bienvenue : <?= htmlspecialchars($adminName) ?></span>
 
         <div class="topbar-icons">
-            <button class="icon-btn" type="button" aria-label="Notifications">
+            <a class="icon-btn" href="adminPage.php?page=messaging" aria-label="Messagerie">
                 <i class="fas fa-bell"></i>
-            </button>
+            </a>
 
             <div class="user-menu">
                 <button

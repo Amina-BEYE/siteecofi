@@ -23,24 +23,24 @@ document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
                 try {
                     if (entry.isIntersecting) {
                         v.muted = true; // keep autoplay muted
-                        v.play().catch(() => {});
+                        v.play().catch(() => { });
                     } else {
                         v.pause();
                     }
-                } catch (e) {}
+                } catch (e) { }
             });
         }, { threshold: 0.5 });
 
         projectVideos.forEach(v => io.observe(v));
     } else {
-        projectVideos.forEach(v => { v.muted = true; try { v.play(); } catch (e) {} });
+        projectVideos.forEach(v => { v.muted = true; try { v.play(); } catch (e) { } });
     }
 
     // Galerie: keep hover behaviour for quick preview
     galleryVideos.forEach((video) => {
         const parent = video.closest('.galerie-item');
         if (!parent) return;
-        parent.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
+        parent.addEventListener('mouseenter', () => { video.play().catch(() => { }); });
         parent.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
     });
 
@@ -53,40 +53,169 @@ document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
             document.querySelectorAll('.projet-media video').forEach(other => {
                 if (other !== v) {
                     other.muted = true;
-                    try { other.pause(); } catch (e) {}
+                    try { other.pause(); } catch (e) { }
                 }
             });
             v.muted = !willUnmute;
-            try { if (!v.paused) v.play(); } catch (e) {}
+            try { if (!v.paused) v.play(); } catch (e) { }
         });
     });
 })();
+function getApiUrl(path) {
+    const basePath = window.location.pathname.includes('/SITEECOFI/')
+        ? '/SITEECOFI'
+        : '';
 
-// Formulaire d'inscription
-function handleInscription(e) {
-    e.preventDefault();
-    const nom   = document.getElementById('inscNom').value.trim();
-    const tel   = document.getElementById('inscTel').value.trim();
-    const email = document.getElementById('inscEmail').value.trim();
+    return window.location.origin + basePath + path;
+}
 
-    if (!nom || !tel || !email) {
-        afficherNotification && afficherNotification('Merci de remplir tous les champs.', 'error');
+async function handleInscription(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const btn = form.querySelector('.inscription-submit');
+
+    const payload = {
+        name: document.getElementById('inscNom')?.value.trim() || '',
+        phone: document.getElementById('inscTel')?.value.trim() || '',
+        email: document.getElementById('inscEmail')?.value.trim() || '',
+        interest: document.getElementById('inscInteret')?.value.trim() || 'programme'
+    };
+
+    if (!payload.name || !payload.phone || !payload.email) {
+        afficherNotification('Merci de remplir tous les champs.', 'error');
         return;
     }
 
-    // Simulation d'envoi (à brancher sur /app/api/submit_quote.php)
-    const btn = e.target.querySelector('.inscription-submit');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi…';
-    btn.disabled = true;
+    const originalText = btn ? btn.innerHTML : '';
 
-    setTimeout(() => {
-        btn.innerHTML = '<i class="fas fa-check"></i> Inscrit avec succès !';
-        btn.style.background = '#2e7d52';
-        e.target.reset();
-        typeof afficherNotification === 'function' &&
-            afficherNotification('Inscription confirmée ! Vous recevrez nos alertes en avant-première.', 'success');
-    }, 1400);
+    if (btn) {
+        btn.disabled = true;
+        btn.classList.add('is-loading');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+    }
+
+    try {
+        const response = await fetch(getApiUrl('/app/api/subscribe_newsletter.php'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'fetch'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Impossible de confirmer l’inscription.');
+        }
+
+        form.reset();
+
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Inscrit avec succès !';
+            btn.style.background = '#2e7d52';
+        }
+
+        afficherNotification(
+            result.message || 'Inscription confirmée avec succès.',
+            'success'
+        );
+
+    } catch (error) {
+        console.error(error);
+
+        afficherNotification(
+            error.message || 'Une erreur est survenue pendant l’inscription.',
+            'error'
+        );
+
+    } finally {
+        setTimeout(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.classList.remove('is-loading');
+                btn.innerHTML = originalText || '<i class="fas fa-paper-plane"></i> M’inscrire aux alertes';
+                btn.style.background = '';
+            }
+        }, 1400);
+    }
 }
+// Formulaire d'inscription
+/* async function handleInscription(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const nom = document.getElementById('inscNom')?.value.trim() || '';
+    const tel = document.getElementById('inscTel')?.value.trim() || '';
+    const email = document.getElementById('inscEmail')?.value.trim() || '';
+    const interet = document.getElementById('inscInteret')?.value.trim() || 'programme';
+
+    if (!nom || !tel || !email) {
+        afficherNotification('Merci de remplir tous les champs.', 'error');
+        return;
+    }
+
+    const btn = form.querySelector('.inscription-submit');
+    const originalText = btn ? btn.innerHTML : '';
+
+    if (btn) {
+        btn.disabled = true;
+        btn.classList.add('is-loading');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+    }
+
+    const payload = {
+        name: nom,
+        phone: tel,
+        email: email,
+        interest: interet
+    };
+
+    try {
+        const response = await fetch(getApiUrl('/app/api/subscribe_newsletter.php'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Impossible de confirmer l’inscription.');
+        }
+
+        form.reset();
+
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Inscrit avec succès !';
+            btn.style.background = '#2e7d52';
+        }
+
+        afficherNotification(
+            result.message || 'Inscription confirmée ! Vous recevrez nos alertes en avant-première.',
+            'success'
+        );
+
+    } catch (error) {
+        console.error(error);
+        afficherNotification(error.message, 'error');
+    } finally {
+        setTimeout(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.classList.remove('is-loading');
+                btn.innerHTML = originalText || '<i class="fas fa-paper-plane"></i> M’inscrire aux alertes';
+                btn.style.background = '';
+            }
+        }, 1400);
+    }
+} */
 
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach((a) => {
@@ -216,5 +345,42 @@ if (actualiteContactModal) {
         if (event.target === actualiteContactModal) {
             closeActualiteContact();
         }
+    });
+}
+
+
+const inscriptionForm = document.getElementById('inscriptionForm');
+
+if (inscriptionForm) {
+    inscriptionForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const payload = {
+            name: document.getElementById('inscNom').value.trim(),
+            phone: document.getElementById('inscTel').value.trim(),
+            email: document.getElementById('inscEmail').value.trim(),
+            interest: document.getElementById('inscInteret').value.trim() || 'programme'
+        };
+
+        console.log('Payload newsletter:', payload);
+
+        const response = await fetch(getApiUrl('/app/api/subscribe_newsletter.php'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await readJsonResponse(response);
+        console.log('Réponse newsletter:', result);
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Erreur inscription newsletter');
+        }
+
+        inscriptionForm.reset();
+        afficherNotification('Inscription confirmée avec succès.', 'success');
     });
 }
