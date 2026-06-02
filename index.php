@@ -699,7 +699,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                         </p>
                         <div class="ecofi-badge">
                             <i class="fas fa-certificate"></i>
-                            <span>Entreprise certifiée au Sénégal</span>
+                            <span>Entreprise immobilier au Sénégal</span>
                         </div>
                     </div>
                 </div>
