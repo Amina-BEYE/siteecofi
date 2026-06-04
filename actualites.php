@@ -7,6 +7,7 @@ require_once __DIR__ . '/app/Core/Settings.php';
 
 use App\Core\Settings;
 require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
+require_once __DIR__ . '/app/admin/Models/ActualitesModel.php';
 
 if (!class_exists('ImmoProgramModel')){
     $programmes = [];
@@ -22,6 +23,9 @@ if (!class_exists('ImmoProgramModel')){
         }
     }
 }
+
+$actualitesModel = new ActualitesModel();
+$actualites = $actualitesModel->getPublishedActualites();
 
 $site_title = 'Actualités - ' . Settings::get('site_title');
 $email_contact = Settings::get('contact_email');
@@ -339,6 +343,52 @@ $mediaChantier = [
         </div>
     </div>
 </section>
+
+    <section class="actualites-list section-light">
+        <div class="container">
+            <div class="section-header">
+                <h2>Actualités récentes</h2>
+                <p>Retrouvez ici les dernières publications et mises à jour de nos opérations.</p>
+            </div>
+
+            <?php if (empty($actualites)): ?>
+                <div class="empty-state">
+                    <p>Aucune actualité publiée pour le moment. Utilisez le panneau d'administration pour ajouter du contenu.</p>
+                </div>
+            <?php else: ?>
+                <div class="actualites-grid">
+                    <?php foreach ($actualites as $item): ?>
+                        <article class="actualite-card">
+                            <?php if (!empty($item['image'])): ?>
+                                <div class="actualite-media">
+                                    <img src="<?= esc($item['image']) ?>" alt="<?= esc($item['title']) ?>">
+                                </div>
+                            <?php elseif (!empty($item['video'])): ?>
+                                <div class="actualite-media">
+                                    <video controls muted>
+                                        <source src="<?= esc($item['video']) ?>" type="video/mp4">
+                                        Votre navigateur ne supporte pas la vidéo.
+                                    </video>
+                                </div>
+                            <?php endif; ?>
+                            <div class="actualite-body">
+                                <span class="actualite-category"><?= esc($item['category']) ?></span>
+                                <h3><?= esc($item['title']) ?></h3>
+                                <?php if (!empty($item['subtitle'])): ?>
+                                    <p class="actualite-subtitle"><?= esc($item['subtitle']) ?></p>
+                                <?php endif; ?>
+                                <p><?= nl2br(esc($item['content'])) ?></p>
+                                <div class="actualite-meta">
+                                    <span><?= esc(date('d/m/Y', strtotime($item['published_at'] ?? 'now'))) ?></span>
+                                    <span><?= esc(ucfirst($item['status'])) ?></span>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
 
 <!-- ===== MAIN CONTENT ===== -->
 <main>
@@ -761,42 +811,90 @@ $mediaChantier = [
     </div><!-- .actu-main -->
 
     <!-- ===== GALERIE CHANTIER ===== -->
+    <?php
+        $galleryFiles = [
+            'gallerie1.mp4',
+            'gallerie2.jpeg',
+            'gallerie3.jpeg',
+            'gallerie4.jpeg',
+            'gallerie5.jpeg',
+            'gallerie6.jpeg',
+            'gallerie7.jpeg',
+            'gallerie8.mp4',
+            'gallerie9.jpeg',
+            'gallerie10.jpeg',
+            'gallerie11.jpeg',
+            'gallerie12.jpeg',
+            'gallerie13.jpeg',
+            'vigallerie1.mp4',
+            'vigallerie2.mp4',
+            'vigallerie3.mp4',
+            'vigallerie4.mp4',
+            'vigallerie5.mp4',         ];
+
+        // $galleryItems = [];
+        // $galleryLabels = [
+        //     'gallerie1.mp4' => 'Vidéo chantier',
+        //     'gallerie2.jpeg' => 'Terrassement',
+        //     'gallerie3.jpeg' => 'Fondations',
+        //     'gallerie4.jpeg' => 'Gros œuvre',
+        //     'gallerie5.jpeg' => 'Pose du toit',
+        //     'gallerie6.jpeg' => 'Intérieur',
+        //     'gallerie7.jpeg' => 'Finitions',
+        //     'gallerie8.mp4' => 'Vidéo drone',
+        //     'gallerie9.jpeg' => 'Coulage',
+        //     'gallerie10.jpeg' => 'Travail d’équipe',
+        //     'gallerie11.jpeg' => 'Contrôle qualité',
+        //     'gallerie12.jpeg' => 'Livraison',
+        //     'gallerie13.jpeg' => 'Décoration',
+        //     'vigallerie1.mp4' => 'Interview chantier',
+        //     'vigallerie2.mp4' => 'Présentation site',
+        //     'vigallerie3.mp4' => 'Voix off projet',
+        //     'vigallerie4.mp4' => 'Visite interne',
+        //     'vigallerie5.mp4' => 'Commentaire technique',
+        //     'vigallerie6.mp4' => 'Processus',
+        //     'vigallerie7.mp4' => 'Explication',
+        //     'vigallerie8.mp4' => 'Bilan chantier',
+        // ];
+
+        foreach ($galleryFiles as $filename) {
+            $path = __DIR__ . '/app/IMG/' . $filename;
+            if (!file_exists($path)) {
+                continue;
+            }
+            $src = 'app/IMG/' . $filename;
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            $type = in_array($ext, ['mp4', 'webm', 'ogg']) ? 'video' : 'image';
+            $title = $galleryLabels[$filename] ?? ($type === 'video' ? 'Vidéo chantier' : 'Photo chantier');
+            $galleryItems[] = [
+                'type' => $type,
+                'src' => $src,
+                'title' => $title,
+            ];
+        }
+    ?>
     <section class="galerie-section" id="galerie">
         <div class="galerie-inner">
             <div class="container" style="color: white;">
-                <h2 >Galerie terrain</h2>
+                <h2>Galerie terrain</h2>
                 <p>Photos & Vidéos de chantier. Documentation visuelle de nos opérations. Mises à jour régulières pour nos investisseurs.</p>
             </div>
             <div class="galerie-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
-                <div class="galerie-item" data-type="image" data-src="app/IMG/chantier.jpg" data-title="Avancement gros œuvre" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/gallerie1.mp4" alt="Avancement gros œuvre" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Avancement gros œuvre</div>
-                </div>
-                <div class="galerie-item" data-type="image" data-src="app/IMG/drone.jpg" data-title="Vue aérienne du site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/drone.jpg" alt="Vue aérienne du site" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Vue aérienne du site</div>
-                </div>
-                <div class="galerie-item" data-type="image" data-src="app/IMG/plan.jpeg" data-title="Plans architecturaux" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/plan.jpeg" alt="Plans architecturaux" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Plans architecturaux</div>
-                </div>
-                <div class="galerie-item" data-type="image" data-src="app/IMG/expertise.jpeg" data-title="Travaux de finition" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/expertise.jpeg" alt="Travaux de finition" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Travaux de finition</div>
-                </div>
-                <div class="galerie-item" data-type="image" data-src="app/IMG/ma.jpg" data-title="Aménagement paysager" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/ma.jpg" alt="Aménagement paysager" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Aménagement paysager</div>
-                </div>
-                <div class="galerie-item" data-type="image" data-src="app/IMG/gnss.jpg" data-title="Équipe sur site" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/gnss.jpg" alt="Équipe sur site" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Équipe sur site</div>
-                </div>
-                <div class="galerie-item" data-type="video" data-src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1" data-title="Vidéo drone (remplacez VIDEO_ID)" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                    <img src="app/IMG/drone.jpg" alt="Vidéo drone" style="width:100%;height:200px;object-fit:cover;display:block;">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">Vidéo drone</div>
-                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;"><i class="fas fa-play" style="font-size:36px;color:rgba(255,255,255,0.9);text-shadow:0 2px 6px rgba(0,0,0,0.5);"></i></div>
-                </div>
+                <?php foreach ($galleryItems as $item): ?>
+                    <div class="galerie-item" data-type="<?= esc($item['type']); ?>" data-src="<?= esc($item['src']); ?>" data-title="<?= esc($item['title']); ?>" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                        <?php if ($item['type'] === 'image'): ?>
+                            <img src="<?= esc($item['src']); ?>" alt="<?= esc($item['title']); ?>" style="width:100%;height:200px;object-fit:cover;display:block;">
+                        <?php else: ?>
+                            <video muted autoplay loop playsinline preload="metadata" poster="app/IMG/chantier.jpg" style="width:100%;height:200px;object-fit:cover;display:block;">
+                                <source src="<?= esc($item['src']); ?>" type="video/mp4">
+                                Votre navigateur ne prend pas en charge la vidéo.
+                            </video>
+                        <?php endif; ?>
+                        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">
+                            <?= esc($item['title']); ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

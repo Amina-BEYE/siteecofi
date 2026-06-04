@@ -45,6 +45,9 @@ class AdminController
             case 'programme-immo':
                 return $this->programmeImmo();
 
+            case 'actualites':
+                return $this->actualites();
+
             case 'payment-schedules':
                 return $this->paymentSchedules();
 
@@ -286,6 +289,63 @@ class AdminController
             'pageTitle' => 'Clients & contacts',
             'view' => 'clients.php',
             'clients' => $model->getAllClients(),
+            'message' => $message,
+            'messageType' => $messageType,
+        ];
+    }
+
+    private function actualites(): array
+    {
+        require_once __DIR__ . '/../admin/Models/ActualitesModel.php';
+
+        $model = new ActualitesModel();
+
+        $message = null;
+        $messageType = 'success';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['action'] ?? '';
+
+            if ($action === 'add_actualite') {
+                $title = trim($_POST['title'] ?? '');
+                $subtitle = trim($_POST['subtitle'] ?? '');
+                $category = trim($_POST['category'] ?? 'Actualité');
+                $content = trim($_POST['content'] ?? '');
+                $image = trim($_POST['image'] ?? '');
+                $video = trim($_POST['video'] ?? '');
+                $status = trim($_POST['status'] ?? 'published');
+                $publishedAt = trim($_POST['published_at'] ?? '');
+
+                if ($title === '' || $content === '') {
+                    $message = 'Le titre et le contenu sont obligatoires.';
+                    $messageType = 'error';
+                } else {
+                    $ok = $model->addActualite(
+                        $title,
+                        $subtitle,
+                        $content,
+                        $image,
+                        $video,
+                        $category,
+                        $status,
+                        $publishedAt
+                    );
+
+                    if ($ok) {
+                        $message = 'Actualité ajoutée avec succès.';
+                    } else {
+                        $message = 'Impossible d’ajouter cette actualité.';
+                        $messageType = 'error';
+                    }
+                }
+            }
+        }
+
+        return [
+            'currentPage' => 'actualites',
+            'pageTitle' => 'Actualités',
+            'view' => 'actualites.php',
+            'actualites' => $model->getAllActualites(),
             'message' => $message,
             'messageType' => $messageType,
         ];

@@ -369,7 +369,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                     </div>
                     <div class="service-content-compact">
                         <h3>Conseil immobilier</h3>
-                        <p>Expertise et accompagnement personnalisé</p>
+                        <p>Conseil immobilier & Foncier.</p>
                         <div class="service-buttons-compact">
                             <button class="btn-service-compact btn-details-compact"
                                 data-target="conseil">Détails</button>

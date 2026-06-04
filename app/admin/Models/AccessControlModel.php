@@ -24,6 +24,7 @@ class AccessControlModel
         'products' => ['label' => 'Produits & stock', 'icon' => 'fa-box'],
         'orders' => ['label' => 'Commandes & factures', 'icon' => 'fa-file-invoice'],
         'programme-immo' => ['label' => 'Programme Immo', 'icon' => 'fa-building'],
+        'actualites' => ['label' => 'Actualités', 'icon' => 'fa-newspaper'],
         'payment-schedules' => ['label' => 'Échéances paiement', 'icon' => 'fa-calendar-check'],
         'newsletter' => ['label' => 'Newsletter', 'icon' => 'fa-bullhorn'],
         'messaging' => ['label' => 'Messagerie', 'icon' => 'fa-envelope-open-text'],

@@ -9,7 +9,7 @@ $menuPages = $accessModel->getAccessiblePages($adminRole);
 
 $menuGroups = [
     'Pilotage' => ['dashboard'],
-    'Gestion commerciale' => ['clients', 'orders', 'programme-immo', 'payment-schedules'],
+    'Gestion commerciale' => ['clients', 'orders', 'programme-immo', 'actualites', 'payment-schedules'],
     'Catalogue' => ['products'],
     'Gestion personnel' => ['employees'],
     'Administration' => ['newsletter', 'messaging', 'auth', 'access-control', 'settings', 'profile', 'notifications'],

@@ -88,12 +88,18 @@ const serviceData = {
     },
     conseil: {
         title: "Conseil immobilier",
-        description: "Expertise pour vos transactions immobilières",
+        description: "<strong>Conseil immobilier & foncier </strong>",
         products: [
-            { id: 301, name: "Évaluation de propriété", desc: "Estimation précise", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
-            { id: 302, name: "Accompagnement à l'achat", desc: "Assistance complète", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
-            { id: 303, name: "Accompagnement à la vente", desc: "Gestion complète", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false },
-            { id: 304, name: "Étude de faisabilité", desc: "Analyse technique", price: 0, price_text: "Sur devis", is_location: false, is_disponible: false }
+            { id: 301, name: "Vente de terrain", desc: "Accompagnement complet pour vendre votre terrain au meilleur prix.", price: 0, price_text: "Sur devis", img: "app/IMG/venter.jpg" },
+            { id: 302, name: "Évaluation de propriété", desc: "Estimation foncière et immobilière fiable.", price: 0, price_text: "Sur devis", img: "app/IMG/evaluation.jpg" },
+            { id: 303, name: "Démarches administratives", desc: "Gestion de tous les dossiers réglementaires.", price: 0, price_text: "Sur devis", img: "app/IMG/demarche.jpg" },
+            { id: 304, name: "Mutation de terrain", desc: "Accompagnement juridique pour mutations foncières.", price: 0, price_text: "Sur devis", img: "app/IMG/mutation.jpg" },
+            { id: 305, name: "Suivi de bail", desc: "Suivi administratif et juridique de vos contrats.", price: 0, price_text: "Sur devis", img: "app/IMG/bail.jpg" },
+            { id: 306, name: "Lotissement de terrain", desc: "Étude et accompagnement de lotissements.", price: 0, price_text: "Sur devis", img: "app/IMG/lotis.jpg" },
+            { id: 307, name: "Numérisation de terrain", desc: "Digitalisation de plans et documents fonciers.", price: 0, price_text: "Sur devis", img: "app/IMG/numerisation.jpg" },
+            { id: 308, name: "Identification de parcelle", desc: "Localisation précise des parcelles foncières.", price: 0, price_text: "Sur devis", img: "app/IMG/identification.jpg" },
+            { id: 309, name: "Délimitation de terrain", desc: "Travaux de délimitation et bornage précis.", price: 0, price_text: "Sur devis", img: "app/IMG/Délimitation.jpg" },
+            { id: 310, name: "Demande de morcellement", desc: "Accompagnement pour vos demandes de morcellement.", price: 0, price_text: "Sur devis", img: "app/IMG/morcellement.jpg" }
         ]
     },
     plans: {
@@ -1830,6 +1836,8 @@ function initZoomFeature() {
                     }
                 } else {
                     if (zoomVideo && videoContainer) {
+                        zoomVideo.muted = false;
+                        zoomVideo.controls = true;
                         const srcEl = zoomVideo.querySelector('source');
                         if (srcEl) srcEl.src = item.src;
                         else {

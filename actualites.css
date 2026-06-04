@@ -618,6 +618,130 @@
             background: var(--gray);
         }
 
+        .actualites-list {
+            padding: 3rem 0;
+        }
+
+        .actualites-list .section-header {
+            max-width: 860px;
+            margin: 0 auto 2.5rem;
+            text-align: center;
+        }
+
+        .actualites-list .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 0.8rem;
+            color: var(--primary);
+        }
+
+        .actualites-list .section-header p {
+            color: var(--gray);
+            line-height: 1.8;
+            max-width: 730px;
+            margin: 0 auto;
+        }
+
+        .actualites-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.75rem;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .actualite-card {
+            background: white;
+            border: 1px solid rgba(26, 35, 64, 0.07);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .actualite-media img,
+        .actualite-media video {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .actualite-body {
+            padding: 1.7rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .actualite-category {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(255, 133, 51, 0.12);
+            color: var(--accent);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .actualite-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            color: var(--primary);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .actualite-subtitle {
+            color: var(--accent);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .actualite-body p {
+            color: var(--gray-dark);
+            line-height: 1.75;
+            margin: 0;
+            flex: 1;
+        }
+
+        .actualite-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            color: var(--gray);
+            font-size: 0.88rem;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            color: var(--gray-dark);
+            border: 1px solid rgba(26, 35, 64, 0.08);
+            border-radius: var(--radius-md);
+            background: white;
+        }
+
+        @media (max-width: 1024px) {
+            .actualites-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .actualites-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @keyframes pulse-dot {
 
             0%,
@@ -1785,6 +1909,103 @@
             justify-content: center;
             color: white;
             font-size: 0.8rem;
+        }
+
+        .zoom-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .zoom-modal {
+            width: min(1100px, calc(100% - 2rem));
+            max-height: 90vh;
+            background: #0f0f0f;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .zoom-modal-content {
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 420px;
+            max-height: 75vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 16 / 9;
+        }
+
+        .zoom-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+            color: #fff;
+            background: transparent;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        #zoomImage,
+        #zoomVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .zoom-modal-info {
+            padding: 1.5rem;
+            color: #fff;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .zoom-modal-info h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            line-height: 1.2;
+        }
+
+        .zoom-modal-info p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+        }
+
+        .zoom-modal-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .zoom-modal-nav button {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            padding: 0.75rem 1.2rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+
+        .zoom-modal-nav button:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.16);
         }
 
         /* ===== NEWSLETTER / INSCRIPTION ===== */
