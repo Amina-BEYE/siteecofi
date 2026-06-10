@@ -598,76 +598,78 @@ $mediaChantier = [
                 <h2>Terrains disponibles</h2>
                 <p>Parcelles & Zones foncières. Tous nos terrains sont vérifiés, titrés et bornés par nos géomètres experts. Accompagnement foncier complet.</p>
             </div>
-            <div class="terrains-list" style="display: flex; flex-direction: column; gap: 1.5rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
-                <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/terrain1.jpeg" alt="Terrain Nguinth Extension" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
-                    <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Terrain viabilisé – Thies </h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Thiès Zac Nguinth </p>
+            <div class="terrains-list">
+                <article class="terrain-card">
+                    <img class="terrain-img" src="app/IMG/terrain1.jpeg" alt="Terrain Nguinth Extension">
+                    <div class="terrain-body">
+                        <h3>Terrain viabilisé – Thies</h3>
+                        <p style="color: var(--accent); font-weight:600; margin-bottom:0.5rem;"><i class="fas fa-location-dot"></i> Thiès Zac Nguinth</p>
                         <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Terrain titré et borné, accès voie bitumée, eau et électricité disponibles.</p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> -----</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 225 m²</span>
+                        <div class="terrain-meta">
+                            <span><i class="fas fa-check-circle" style="color: var(--green);"></i> Borné GNSS</span>
+                            <span>-----</span>
+                            <span><i class="fas fa-ruler-combined" style="color: var(--accent);"></i> 225 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">prix sur demande</div>
+                        <div class="terrain-price">prix sur demande</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Terrain viabilisé – Nguinth Extension" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
                             <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
-                <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/terraain2.jpeg" alt="Parcelle Cité Lamy" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
-                    <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Parcelle à bâtir – Sen Iran</h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Thiès Nord Est Sen Iran</p>
-                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;"> disponible.</p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i>Sans titre</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
+
+                <article class="terrain-card">
+                    <img class="terrain-img" src="app/IMG/terraain2.jpeg" alt="Parcelle Cité Lamy">
+                    <div class="terrain-body">
+                        <h3>Parcelle à bâtir – Sen Iran</h3>
+                        <p style="color: var(--accent); font-weight:600; margin-bottom:0.5rem;"><i class="fas fa-location-dot"></i> Thiès Nord Est Sen Iran</p>
+                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Disponible.</p>
+                        <div class="terrain-meta">
+                            <span><i class="fas fa-check-circle" style="color: var(--green);"></i> Borné GNSS</span>
+                            <span><i class="fas fa-times" style="color: #999"></i> Sans titre</span>
+                            <span><i class="fas fa-ruler-combined" style="color: var(--accent);"></i> 300 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">6 500 000 FCFA</div>
+                        <div class="terrain-price">6 500 000 FCFA</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Parcelle à bâtir – Cité Lamy" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
                             <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
-                <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/terrain5.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
-                    <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Zone commerciale – Tivaoune Thiès</h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Ndiobene route de Tivaoune</p>
-                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;"> Parfait pour commerce.</p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
-                            <span><i class="fas fa-close" style="color: #999;"></i> Sans titre</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
+
+                <article class="terrain-card">
+                    <img class="terrain-img" src="app/IMG/terrain5.jpeg" alt="Zone RN1 Thiès">
+                    <div class="terrain-body">
+                        <h3>Zone commerciale – Tivaoune Thiès</h3>
+                        <p style="color: var(--accent); font-weight:600; margin-bottom:0.5rem;"><i class="fas fa-location-dot"></i> Ndiobene route de Tivaoune</p>
+                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Parfait pour commerce.</p>
+                        <div class="terrain-meta">
+                            <span><i class="fas fa-check-circle" style="color: var(--green);"></i> Borné GNSS</span>
+                            <span><i class="fas fa-times" style="color: #999"></i> Sans titre</span>
+                            <span><i class="fas fa-ruler-combined" style="color: var(--accent);"></i> 300 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">3 000 000 FCFA</div>
+                        <div class="terrain-price">3 000 000 FCFA</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Zone commerciale – RN1 Thiès" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
                             <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
-                 <article style="display: flex; gap: 1.5rem; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: white;">
-                    <img src="app/IMG/terrein6.jpeg" alt="Zone RN1 Thiès" style="width: 280px; height: 200px; object-fit: cover; flex-shrink: 0;">
-                    <div style="flex: 1; padding: 1.5rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Route Nationale 1 – Lalane</h3>
-                        <p style="color: #FF8533; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-location-dot"></i> Thiès, Lalane</p>
-                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Terrain en façade sur route principale, très fort passage. </p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> Borné GNSS</span>
-                            <span><i class="fas fa-close" style="color: #999;"></i> Sans titre</span>
-                            <span><i class="fas fa-check-circle" style="color: #2e7d52;"></i> 300 m²</span>
+
+                <article class="terrain-card">
+                    <img class="terrain-img" src="app/IMG/terrein6.jpeg" alt="Zone RN1 Thiès">
+                    <div class="terrain-body">
+                        <h3>Route Nationale 1 – Lalane</h3>
+                        <p style="color: var(--accent); font-weight:600; margin-bottom:0.5rem;"><i class="fas fa-location-dot"></i> Thiès, Lalane</p>
+                        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">Terrain en façade sur route principale, très fort passage.</p>
+                        <div class="terrain-meta">
+                            <span><i class="fas fa-check-circle" style="color: var(--green);"></i> Borné GNSS</span>
+                            <span><i class="fas fa-times" style="color: #999"></i> Sans titre</span>
+                            <span><i class="fas fa-ruler-combined" style="color: var(--accent);"></i> 300 m²</span>
                         </div>
-                        <div style="color: #FF8533; font-weight: 700; font-size: 1.2rem;">3 000 000 FCFA</div>
+                        <div class="terrain-price">3 000 000 FCFA</div>
                         <button type="button" class="actu-detail-btn compact" data-actualite-title="Zone commerciale – RN1 Thiès" data-actualite-type="Terrain disponible" onclick="openActualiteContact(this)">
                             <i class="fas fa-arrow-up-right-from-square"></i> Plus de détails
                         </button>
                     </div>
                 </article>
-               
             </div>
 
         </section>
@@ -699,16 +701,16 @@ $mediaChantier = [
                         </div>
                     </div>
                     <div class="projet-body">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Résidence Les Palmiers</h3>
-                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;"><i class="fas fa-location-dot" style="color: #FF8533;"></i> Nguinth, Thiès</p>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;"> Maison d'habitation et commerciale</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;"><i class="fas fa-location-dot" style="color: #FF8533;"></i> Est Mont Rolland, Thiès</p>
                         <p style="background: #f5f5f5; padding: 0.8rem; border-radius: 6px; color: #666; font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.5;">
-                            Construction Immeuble R+3 . Usage commercial et habitation.
+                            Construction Immeuble R+1 . Usage commercial et habitation.
                         </p>
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
                             <div><strong>Début:</strong> Janvier 2026</div>
-                            <div><strong>Livraison:</strong> Décembre 2028</div>
+                            <div><strong>Livraison:</strong> Décembre 2026</div>
                         </div>
-                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Résidence Les Palmiers" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Immeuble d'habitation et commerciale" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
                             <i class="fas fa-eye"></i> Plus de détails
                         </button>
                     </div>
@@ -743,7 +745,10 @@ $mediaChantier = [
 
                 <article class="projet-card">
                     <div class="projet-media">
-                        <img src="app/IMG/fon.jpg" alt="Immeuble Commercial Darou">
+                         <video autoplay muted loop playsinline>
+                            <source src="app/IMG/rplus.mp4" type="video/mp4">
+                            Votre navigateur ne supporte pas la vidéo.
+                        </video>
                         <div class="projet-type-badge">Projet en cours</div>
                         <div class="projet-avance">
                             <div class="avance-label">
@@ -756,16 +761,16 @@ $mediaChantier = [
                         </div>
                     </div>
                     <div class="projet-body">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Immeuble Commercial Darou</h3>
-                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;"><i class="fas fa-location-dot" style="color: #FF8533;"></i> Centre-ville Thiès</p>
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Maison d'habitation</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;"><i class="fas fa-location-dot" style="color: #FF8533;"></i> Zac, Nguinth - Thiès</p>
                         <p style="background: #f5f5f5; padding: 0.8rem; border-radius: 6px; color: #666; font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.5;">
-                            Immeuble R+2 avec rez-de-chaussée commercial et bureaux aux étages. Façade moderne.
+                            Immeuble R+1 a usage d'habitation.
                         </p>
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
                             <div><strong>Début:</strong> Avril 2026</div>
-                            <div><strong>Livraison:</strong> Juin 2027</div>
+                            <div><strong>Livraison:</strong> janvier 2027</div>
                         </div>
-                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Immeuble Commercial Darou" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
+                        <button type="button" class="actu-detail-btn compact" data-actualite-title="Immeuble d'habitation " data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
                             <i class="fas fa-eye"></i> Plus de détails
                         </button>
                     </div>
@@ -782,7 +787,7 @@ $mediaChantier = [
                     <div class="projet-body">
                         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Maison de logement disponible</h3>
                         <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.8rem;">
-                            <i class="fas fa-location-dot" style="color: #FF8533;"></i> Nguinth, Thiès
+                            <i class="fas fa-location-dot" style="color: #FF8533;"></i> Zac, Nguinth - Thiès
                         </p>
                         <p style="font-size: 1.15rem; font-weight: 800; color: #1a2340; margin-bottom: 1rem;">
                             Prix sur demande
