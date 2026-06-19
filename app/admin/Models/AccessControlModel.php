@@ -9,6 +9,7 @@ class AccessControlModel
 {
     private PDO $db;
     private string $tableName = 'app_features';
+    private bool $defaultsEnsured = false;
 
     private array $roles = [
         'admin' => 'Administrateur',
@@ -41,6 +42,12 @@ class AccessControlModel
 
     public function ensureDefaults(): void
     {
+        if ($this->defaultsEnsured) {
+            return;
+        }
+
+        $this->defaultsEnsured = true;
+
         $this->db->exec("
             CREATE TABLE IF NOT EXISTS app_roles (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
