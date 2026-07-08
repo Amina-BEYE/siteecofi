@@ -6,10 +6,11 @@ require_once __DIR__ . '/app/Core/Database.php';
 require_once __DIR__ . '/app/Core/Settings.php';
 
 use App\Core\Settings;
+
 require_once __DIR__ . '/app/admin/Models/ImmoProgramModel.php';
 require_once __DIR__ . '/app/admin/Models/ActualitesModel.php';
 
-if (!class_exists('ImmoProgramModel')){
+if (!class_exists('ImmoProgramModel')) {
     $programmes = [];
 } else {
     $model = new ImmoProgramModel();
@@ -51,18 +52,21 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
 $today = date('d/m/Y');
 $today_full = date('l d F Y', time());
 
-function fmtDate($value): string {
+function fmtDate($value): string
+{
     if (!$value) return '';
     $ts = strtotime($value);
     if (!$ts) return (string)$value;
     return date('d/m/Y', $ts);
 }
 
-function esc($s): string {
+function esc($s): string
+{
     return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
 }
 
-function statusLabel($status): string {
+function statusLabel($status): string
+{
     $s = strtolower((string)$status);
     return match ($s) {
         'en_cours', 'en cours' => 'En cours',
@@ -72,7 +76,8 @@ function statusLabel($status): string {
     };
 }
 
-function statusClass($status): string {
+function statusClass($status): string
+{
     $s = strtolower((string)$status);
     return match ($s) {
         'en_cours', 'en cours' => 'status-active',
@@ -88,7 +93,7 @@ $terrains = [
         'titre'      => 'Terrain viabilisé – Nguinth Extension',
         'surface'    => '300',
         'prix'       => '8 500 000',
-        'localisation'=> 'Nguinth, Thiès',
+        'localisation' => 'Nguinth, Thiès',
         'type'       => 'Résidentiel',
         'disponible' => true,
         'date'       => '10/05/2026',
@@ -101,7 +106,7 @@ $terrains = [
         'titre'      => 'Parcelle à bâtir – Cité Lamy',
         'surface'    => '200',
         'prix'       => '5 000 000',
-        'localisation'=> 'Cité Lamy, Thiès',
+        'localisation' => 'Cité Lamy, Thiès',
         'type'       => 'Résidentiel',
         'disponible' => true,
         'date'       => '02/05/2026',
@@ -114,7 +119,7 @@ $terrains = [
         'titre'      => 'Zone commerciale – RN1 Thiès',
         'surface'    => '500',
         'prix'       => '22 000 000',
-        'localisation'=> 'Route Nationale 1, Thiès',
+        'localisation' => 'Route Nationale 1, Thiès',
         'type'       => 'Commercial',
         'disponible' => true,
         'date'       => '15/04/2026',
@@ -124,11 +129,11 @@ $terrains = [
         'titre_foncier' => false,
     ],
 
-     [
+    [
         'titre'      => 'Zone commerciale – RN1 Thiès',
         'surface'    => '500',
         'prix'       => '22 000 000',
-        'localisation'=> 'Route Nationale 1, Thiès',
+        'localisation' => 'Route Nationale 1, Thiès',
         'type'       => 'Commercial',
         'disponible' => true,
         'date'       => '15/04/2026',
@@ -138,11 +143,11 @@ $terrains = [
         'titre_foncier' => false,
     ],
 
-     [
+    [
         'titre'      => 'Zone commerciale – RN1 Thiès',
         'surface'    => '500',
         'prix'       => '22 000 000',
-        'localisation'=> 'Route Nationale 1, Thiès',
+        'localisation' => 'Route Nationale 1, Thiès',
         'type'       => 'Commercial',
         'disponible' => true,
         'date'       => '15/04/2026',
@@ -152,11 +157,11 @@ $terrains = [
         'titre_foncier' => false,
     ],
 
-     [
+    [
         'titre'      => 'Zone commerciale – RN1 Thiès',
         'surface'    => '500',
         'prix'       => '22 000 000',
-        'localisation'=> 'Route Nationale 1, Thiès',
+        'localisation' => 'Route Nationale 1, Thiès',
         'type'       => 'Commercial',
         'disponible' => true,
         'date'       => '15/04/2026',
@@ -172,7 +177,7 @@ $projets = [
     [
         'titre'      => 'Résidence Les Palmiers',
         'type'       => 'Immeuble R+3',
-        'localisation'=> 'Nguinth, Thiès',
+        'localisation' => 'Nguinth, Thiès',
         'avancement' => 65,
         'debut'      => 'Janvier 2026',
         'livraison'  => 'Décembre 2026',
@@ -186,7 +191,7 @@ $projets = [
     [
         'titre'      => 'Villa Duplex Keur Salam',
         'type'       => 'Villa R+1',
-        'localisation'=> 'Keur Salam, Thiès',
+        'localisation' => 'Keur Salam, Thiès',
         'avancement' => 40,
         'debut'      => 'Mars 2026',
         'livraison'  => 'Février 2027',
@@ -200,7 +205,7 @@ $projets = [
     [
         'titre'      => 'Immeuble Commercial Darou',
         'type'       => 'Immeuble R+2',
-        'localisation'=> 'Centre-ville Thiès',
+        'localisation' => 'Centre-ville Thiès',
         'avancement' => 15,
         'debut'      => 'Avril 2026',
         'livraison'  => 'Juin 2027',
@@ -225,6 +230,7 @@ $mediaChantier = [
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -237,112 +243,128 @@ $mediaChantier = [
     <link rel="stylesheet" href="actualites.css">
     <link rel="icon" href="../app/IMG/logo-ecofi.png" type="image/png">
 
- 
+
 </head>
+
 <body>
 
-<!-- ===== HEADER  ===== -->
-<header>
-    <div class="top-navbar">
-        <div class="container">
-            <div class="contact-info">
-                <a href="<?= esc($mail_contact_url); ?>" target="_blank">
-                    <i class="fas fa-envelope"></i> <?= esc($email_contact); ?>
-                </a>
-                <a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a>
-                <a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a>
-            </div>
-            <div class="social-links">
-                <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/ecofiservice?igsh=MTVnY2xwcGFicm00Zw==" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
-                <a link="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-youtube"></i></a>
-                <a link="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-whatsapp"></i></a>
+    <!-- ===== HEADER  ===== -->
+    <header>
+        <div class="top-navbar">
+            <div class="container">
+                <div class="contact-info">
+                    <a href="<?= esc($mail_contact_url); ?>" target="_blank">
+                        <i class="fas fa-envelope"></i> <?= esc($email_contact); ?>
+                    </a>
+                    <a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a>
+                    <a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ecofiservice?igsh=MTVnY2xwcGFicm00Zw==" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="footer-social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
+                    <a link="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-youtube"></i></a>
+                    <a link="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" class="footer-social-icon"><i class="fab fa-whatsapp"></i></a>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="main-navbar">
-        <div class="container">
-            <div class="logo">
-                <img src="app/IMG/logo-ecofi.png" alt="ECOFI" class="custom-logo">
-                <div class="logo-definition">
-                    <div class="definition-main">Etablissement de Conseils</div>
-                    <div class="definition-sub">sur le Foncier et l'Immobilier</div>
-                </div>
-            </div>
-            <div class="nav-search-container">
-                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-                <nav id="mainNav">
-                    <ul>
-                        <li><a href="index.php#accueil">Accueil</a></li>
-                        <li><a href="index.php#apropos">À propos</a></li>
-                        <li><a href="actualites.php" class="active">Actualités</a></li>
-                        <li><a href="index.php#services">Services</a></li>
-                        <li><a href="index.php#contact">Contact</a></li>
-                    </ul>
-                </nav>
-                <div class="search-container">
-                    <button class="search-toggle" id="searchToggle"><i class="fas fa-search"></i></button>
-                    <div class="search-box" id="searchBox">
-                        <input type="text" id="searchInput" placeholder="Rechercher un produit...">
-                        <div class="search-results" id="searchResults"></div>
+        <div class="main-navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="app/IMG/logo-ecofi.png" alt="ECOFI" class="custom-logo">
+                    <div class="logo-definition">
+                        <div class="definition-main">Etablissement de Conseils</div>
+                        <div class="definition-sub">sur le Foncier et l'Immobilier</div>
                     </div>
                 </div>
-                <div class="cart-wrapper">
-                    <div class="cart-icon" onclick="toggleCart(event)">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Panier</span>
-                        <span class="cart-count" id="cartCount">0</span>
-                        <span class="cart-total-header" id="cartHeaderTotal">0 FCFA</span>
+                <div class="nav-search-container">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <nav id="mainNav">
+                        <ul>
+                            <li><a href="index.php#accueil">Accueil</a></li>
+                            <li><a href="index.php#apropos">À propos</a></li>
+                            <li><a href="actualites.php" class="active">Actualités</a></li>
+                            <li><a href="index.php#services">Services</a></li>
+                            <li><a href="index.php#contact">Contact</a></li>
+                        </ul>
+                    </nav>
+                    <div class="search-container">
+                        <button class="search-toggle" id="searchToggle"><i class="fas fa-search"></i></button>
+                        <div class="search-box" id="searchBox">
+                            <input type="text" id="searchInput" placeholder="Rechercher un produit...">
+                            <div class="search-results" id="searchResults"></div>
+                        </div>
                     </div>
-                    <div class="cart-dropdown" id="cartDropdown">
-                        <div class="cart-header">
-                            <span><i class="fas fa-shopping-cart" style="color:var(--accent-color)"></i> Mon Panier</span>
-                            <span id="cartItemCount">0 article(s)</span>
+                    <div class="cart-wrapper">
+                        <div class="cart-icon" onclick="toggleCart(event)">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Panier</span>
+                            <span class="cart-count" id="cartCount">0</span>
+                            <span class="cart-total-header" id="cartHeaderTotal">0 FCFA</span>
                         </div>
-                        <div class="cart-items" id="cartItems">
-                            <p style="text-align:center;color:#999;padding:20px;">Votre panier est vide</p>
-                        </div>
-                        <div class="cart-footer">
-                            <div class="cart-total"><span>Total TTC</span><span id="cartTotal">0 FCFA</span></div>
-                            <div class="cart-buttons">
-                                <button class="cart-btn cart-btn-danger" onclick="viderPanier()"><i class="fas fa-trash"></i> Vider</button>
-                                <button class="cart-btn cart-btn-primary" onclick="openQuoteModal(event)"><i class="fas fa-paper-plane"></i> Demande de devis</button>
+                        <div class="cart-dropdown" id="cartDropdown">
+                            <div class="cart-header">
+                                <span><i class="fas fa-shopping-cart" style="color:var(--accent-color)"></i> Mon Panier</span>
+                                <span id="cartItemCount">0 article(s)</span>
+                            </div>
+                            <div class="cart-items" id="cartItems">
+                                <p style="text-align:center;color:#999;padding:20px;">Votre panier est vide</p>
+                            </div>
+                            <div class="cart-footer">
+                                <div class="cart-total"><span>Total TTC</span><span id="cartTotal">0 FCFA</span></div>
+                                <div class="cart-buttons">
+                                    <button class="cart-btn cart-btn-danger" onclick="viderPanier()"><i class="fas fa-trash"></i> Vider</button>
+                                    <button class="cart-btn cart-btn-primary" onclick="openQuoteModal(event)"><i class="fas fa-paper-plane"></i> Demande de devis</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<!-- ===== HERO ===== -->
-<section class="actu-hero">
-    <div class="actu-hero-bg"></div>
-    <div class="actu-hero-accent"></div>
-    <div class="actu-hero-accent2"></div>
-    <div class="actu-hero-inner">
-        <div class="hero-eyebrow"><i class="fas fa-bolt"></i> Mis à jour le <?php echo $today; ?></div>
-        <h1>L'actualité <em>immobilière</em><br>ECOFI en direct</h1>
-        <p>Programmes, terrains disponibles, projets en cours : retrouvez toutes les informations et mises à jour de nos opérations foncières et immobilières.</p>
-        <div class="hero-cta-row">
-            <a class="btn-hero-primary" href="#programme-immo"><i class="fas fa-building"></i> Voir le programme</a>
-            <a class="btn-hero-outline" href="index.php#contact"><i class="fas fa-phone"></i> Contacter ECOFI</a>
+    <!-- ===== HERO ===== -->
+    <section class="actu-hero">
+        <div class="actu-hero-bg"></div>
+        <div class="actu-hero-accent"></div>
+        <div class="actu-hero-accent2"></div>
+        <div class="actu-hero-inner">
+            <div class="hero-eyebrow"><i class="fas fa-bolt"></i> Mis à jour le <?php echo $today; ?></div>
+            <h1>L'actualité <em>immobilière</em><br>ECOFI en direct</h1>
+            <p>Programmes, terrains disponibles, projets en cours : retrouvez toutes les informations et mises à jour de nos opérations foncières et immobilières.</p>
+            <div class="hero-cta-row">
+                <a class="btn-hero-primary" href="#programme-immo"><i class="fas fa-building"></i> Voir le programme</a>
+                <a class="btn-hero-outline" href="index.php#contact"><i class="fas fa-phone"></i> Contacter ECOFI</a>
+            </div>
         </div>
-    </div>
-    <div class="hero-stats-bar">
-        <div class="hero-stats-inner">
-            <div class="hero-stat"><div class="hero-stat-val"><?php echo count($programmes) ?: 3; ?></div><div class="hero-stat-lbl">Programmes actifs</div></div>
-            <div class="hero-stat"><div class="hero-stat-val"><?php echo count($terrains); ?></div><div class="hero-stat-lbl">Terrains disponibles</div></div>
-            <div class="hero-stat"><div class="hero-stat-val"><?php echo count($projets); ?></div><div class="hero-stat-lbl">Projets en cours</div></div>
-            <div class="hero-stat"><div class="hero-stat-val">Thiès</div><div class="hero-stat-lbl">Zone principale</div></div>
-            <div class="hero-stat"><div class="hero-stat-val">2026</div><div class="hero-stat-lbl">Millésime actif</div></div>
+        <div class="hero-stats-bar">
+            <div class="hero-stats-inner">
+                <div class="hero-stat">
+                    <div class="hero-stat-val"><?php echo count($programmes) ?: 3; ?></div>
+                    <div class="hero-stat-lbl">Programmes actifs</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val"><?php echo count($terrains); ?></div>
+                    <div class="hero-stat-lbl">Terrains disponibles</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val"><?php echo count($projets); ?></div>
+                    <div class="hero-stat-lbl">Projets en cours</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val">Thiès</div>
+                    <div class="hero-stat-lbl">Zone principale</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val">2026</div>
+                    <div class="hero-stat-lbl">Millésime actif</div>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <section class="actualites-list section-light">
         <div class="container">
@@ -390,146 +412,146 @@ $mediaChantier = [
         </div>
     </section>
 
-<!-- ===== MAIN CONTENT ===== -->
-<main>
-      <!-- === PROGRAMMES IMMOBILIERS === -->
-    <section id="programmes">
-        <div class="container">
-            <h2>Programmes immobiliers</h2>
-            <p>Appartements & Logements neufs. Des logements conçus pour durer, avec un accompagnement.</p>
-        </div>
-        <div class="actu-main">
-        <section id="programme-immo" class="programme-immo programme-immo-actu">
-            <div class="programme-banner">
-                <div class="programme-banner-left">
-                    <img src="app/IMG/logo-ecofi.png" alt="Logo ECOFI Construction">
-                    <div class="programme-banner-info">
-                        <span class="section-label">Programme immobilier ECOFI Services</span>
-                        <h2><?= esc($program_title); ?></h2>
-                        <p><?= esc($program_subtitle); ?> Une offre claire, accessible et sécurisée pour investir dès aujourd’hui.</p>
-                    </div>
-                </div>
-                <a class="programme-cta" href="#adhesionForm">Adhérer au programme</a>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+        <!-- === PROGRAMMES IMMOBILIERS === -->
+        <!-- <section id="programmes">
+            <div class="container">
+                <h2>Programmes immobiliers</h2>
+                <p>Appartements & Logements neufs. Des logements conçus pour durer, avec un accompagnement.</p>
             </div>
-
-            <div class="programme-info-grid">
-                <div>
-                    <article class="programme-card">
-                        <img src="app/IMG/PROGRAMMEIMO.jpeg" alt="Terrain ECOFI Construction">
-                        <div class="programme-card-body">
-                            <h3>Présentation du terrain</h3>
-                            <p>Terrains de <?= esc($program_surface); ?> situés à <?= esc($program_location); ?> avec accès sécurisé, environnement calme et proximité des infrastructures locales.</p>
-                            <div class="programme-summary">
-                                <div class="programme-summary-item">
-                                    <strong>Offre</strong>
-                                    <span><?= esc($program_title); ?></span>
-                                </div>
-                                <div class="programme-summary-item">
-                                    <strong>Localisation</strong>
-                                    <span><?= esc($program_location); ?></span>
-                                </div>
-                                <div class="programme-summary-item">
-                                    <strong>Repère</strong>
-                                    <span><?= esc($program_subtitle); ?></span>
-                                </div>
-                                <div class="programme-summary-item">
-                                    <strong>Documents</strong>
-                                    <span>Papier juridique et notification de bail</span>
-                                </div>
+            <div class="actu-main">
+                <section id="programme-immo" class="programme-immo programme-immo-actu">
+                    <div class="programme-banner">
+                        <div class="programme-banner-left">
+                            <img src="app/IMG/logo-ecofi.png" alt="Logo ECOFI Construction">
+                            <div class="programme-banner-info">
+                                <span class="section-label">Programme immobilier ECOFI Services</span>
+                                <h2><?= esc($program_title); ?></h2>
+                                <p><?= esc($program_subtitle); ?> Une offre claire, accessible et sécurisée pour investir dès aujourd’hui.</p>
                             </div>
                         </div>
-                    </article>
-
-                    <aside class="payment-card">
-                        <h3>Modalités de paiement</h3>
-                        <ul>
-                            <li><span>Acompte</span><strong><?= esc($program_deposit); ?></strong></li>
-                            <li><span>Mensualité</span><strong><?= esc($program_monthly_payment); ?></strong></li>
-                            <li><span>Durée</span><strong>24 mois</strong></li>
-                            <li><span>Frais de dossier</span><strong>25 000 F CFA</strong></li>
-                        </ul>
-                        <p>Les documents obligatoires comprennent le dossier juridique complet et la notification de bail pour validation rapide.</p>
-                    </aside>
-                </div>
-
-                <div class="programme-form-wrapper">
-                    <div class="programme-form-card">
-                        <h3>Formulaire d’adhésion</h3>
-                        <p>Complétez vos informations pour rejoindre le programme immobilier ECOFI Construction.</p>
-                        <form id="adhesionForm" action="adhesion.php" method="POST">
-                            <div class="form-row-elegant">
-                                <div class="form-group-elegant">
-                                    <label for="nom">Nom</label>
-                                    <input id="nom" name="nom" type="text" placeholder="Nom" required>
-                                </div>
-                                <div class="form-group-elegant">
-                                    <label for="prenom">Prénom</label>
-                                    <input id="prenom" name="prenom" type="text" placeholder="Prénom" required>
-                                </div>
-                            </div>
-                            <div class="form-row-elegant">
-                                <div class="form-group-elegant">
-                                    <label for="date_naissance">Date de naissance</label>
-                                    <input id="date_naissance" name="date_naissance" type="date" required>
-                                </div>
-                                <div class="form-group-elegant">
-                                    <label for="lieu_naissance">Lieu de naissance</label>
-                                    <input id="lieu_naissance" name="lieu_naissance" type="text" placeholder="Lieu de naissance" required>
-                                </div>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="adresse">Adresse</label>
-                                <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required>
-                            </div>
-                            <div class="form-row-elegant">
-                                <div class="form-group-elegant">
-                                    <label for="telephone">Téléphone</label>
-                                    <input id="telephone" name="telephone" type="tel" placeholder="<?= esc($tel_fixe); ?>" required>
-                                </div>
-                                <div class="form-group-elegant">
-                                    <label for="cni">N°CNI / Passeport</label>
-                                    <input id="cni" name="cni" type="text" placeholder="N°CNI / Passeport" required>
-                                </div>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="email">Email</label>
-                                <input id="email" name="email" type="email" placeholder="<?= esc($email_contact); ?>" required>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="mode_paiement">Mode de paiement</label>
-                                <select id="mode_paiement" name="mode_paiement" required>
-                                    <option value="">Sélectionnez un mode</option>
-                                    <option>Espèces</option>
-                                    <option>Virement bancaire</option>
-                                    <option>Mobile money</option>
-                                    <option>Chèque</option>
-                                </select>
-                            </div>
-                            <div class="form-group-elegant">
-                                <label for="message">Message</label>
-                                <textarea id="message" name="message" placeholder="Message (optionnel)" rows="4"></textarea>
-                            </div>
-                            <button type="submit" class="submit-btn-elegant">Adhérer au programme</button>
-                            <div class="form-message" id="adhesionFormMessage"></div>
-                        </form>
+                        <a class="programme-cta" href="#adhesionForm">Adhérer au programme</a>
                     </div>
-                </div>
-            </div>
 
-            <div class="condition-block">
-                <h3>Conditions importantes</h3>
-                <ul>
-                    <li>L’adhésion devient définitive après validation complète du dossier.</li>
-                    <li>L’attribution du terrain intervient après paiement intégral, validation administrative et disponibilité du terrain.</li>
-                    <li>Le membre doit respecter les échéances de paiement.</li>
-                    <li>Les remboursements éventuels peuvent être soumis à des frais de gestion de 10%.</li>
-                    <li>Toute cession du droit d’attribution est interdite sans autorisation écrite préalable.</li>
-                </ul>
-            </div>
-        </section>
+                    <div class="programme-info-grid">
+                        <div>
+                            <article class="programme-card">
+                                <img src="app/IMG/PROGRAMMEIMO.jpeg" alt="Terrain ECOFI Construction">
+                                <div class="programme-card-body">
+                                    <h3>Présentation du terrain</h3>
+                                    <p>Terrains de <?= esc($program_surface); ?> situés à <?= esc($program_location); ?> avec accès sécurisé, environnement calme et proximité des infrastructures locales.</p>
+                                    <div class="programme-summary">
+                                        <div class="programme-summary-item">
+                                            <strong>Offre</strong>
+                                            <span><?= esc($program_title); ?></span>
+                                        </div>
+                                        <div class="programme-summary-item">
+                                            <strong>Localisation</strong>
+                                            <span><?= esc($program_location); ?></span>
+                                        </div>
+                                        <div class="programme-summary-item">
+                                            <strong>Repère</strong>
+                                            <span><?= esc($program_subtitle); ?></span>
+                                        </div>
+                                        <div class="programme-summary-item">
+                                            <strong>Documents</strong>
+                                            <span>Papier juridique et notification de bail</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
 
-      
-            <!-- <div class="programmes-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
+                            <aside class="payment-card">
+                                <h3>Modalités de paiement</h3>
+                                <ul>
+                                    <li><span>Acompte</span><strong><?= esc($program_deposit); ?></strong></li>
+                                    <li><span>Mensualité</span><strong><?= esc($program_monthly_payment); ?></strong></li>
+                                    <li><span>Durée</span><strong>24 mois</strong></li>
+                                    <li><span>Frais de dossier</span><strong>25 000 F CFA</strong></li>
+                                </ul>
+                                <p>Les documents obligatoires comprennent le dossier juridique complet et la notification de bail pour validation rapide.</p>
+                            </aside>
+                        </div>
+
+                        <div class="programme-form-wrapper">
+                            <div class="programme-form-card">
+                                <h3>Formulaire d’adhésion</h3>
+                                <p>Complétez vos informations pour rejoindre le programme immobilier ECOFI Construction.</p>
+                                <form id="adhesionForm" action="adhesion.php" method="POST">
+                                    <div class="form-row-elegant">
+                                        <div class="form-group-elegant">
+                                            <label for="nom">Nom</label>
+                                            <input id="nom" name="nom" type="text" placeholder="Nom" required>
+                                        </div>
+                                        <div class="form-group-elegant">
+                                            <label for="prenom">Prénom</label>
+                                            <input id="prenom" name="prenom" type="text" placeholder="Prénom" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row-elegant">
+                                        <div class="form-group-elegant">
+                                            <label for="date_naissance">Date de naissance</label>
+                                            <input id="date_naissance" name="date_naissance" type="date" required>
+                                        </div>
+                                        <div class="form-group-elegant">
+                                            <label for="lieu_naissance">Lieu de naissance</label>
+                                            <input id="lieu_naissance" name="lieu_naissance" type="text" placeholder="Lieu de naissance" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-elegant">
+                                        <label for="adresse">Adresse</label>
+                                        <input id="adresse" name="adresse" type="text" placeholder="Adresse complète" required>
+                                    </div>
+                                    <div class="form-row-elegant">
+                                        <div class="form-group-elegant">
+                                            <label for="telephone">Téléphone</label>
+                                            <input id="telephone" name="telephone" type="tel" placeholder="<?= esc($tel_fixe); ?>" required>
+                                        </div>
+                                        <div class="form-group-elegant">
+                                            <label for="cni">N°CNI / Passeport</label>
+                                            <input id="cni" name="cni" type="text" placeholder="N°CNI / Passeport" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group-elegant">
+                                        <label for="email">Email</label>
+                                        <input id="email" name="email" type="email" placeholder="<?= esc($email_contact); ?>" required>
+                                    </div>
+                                    <div class="form-group-elegant">
+                                        <label for="mode_paiement">Mode de paiement</label>
+                                        <select id="mode_paiement" name="mode_paiement" required>
+                                            <option value="">Sélectionnez un mode</option>
+                                            <option>Espèces</option>
+                                            <option>Virement bancaire</option>
+                                            <option>Mobile money</option>
+                                            <option>Chèque</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group-elegant">
+                                        <label for="message">Message</label>
+                                        <textarea id="message" name="message" placeholder="Message (optionnel)" rows="4"></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-btn-elegant">Adhérer au programme</button>
+                                    <div class="form-message" id="adhesionFormMessage"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="condition-block">
+                        <h3>Conditions importantes</h3>
+                        <ul>
+                            <li>L’adhésion devient définitive après validation complète du dossier.</li>
+                            <li>L’attribution du terrain intervient après paiement intégral, validation administrative et disponibilité du terrain.</li>
+                            <li>Le membre doit respecter les échéances de paiement.</li>
+                            <li>Les remboursements éventuels peuvent être soumis à des frais de gestion de 10%.</li>
+                            <li>Toute cession du droit d’attribution est interdite sans autorisation écrite préalable.</li>
+                        </ul>
+                    </div>
+                </section> -->
+
+
+                <!-- <div class="programmes-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
                 <article class="prog-card" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
                     <div style="position: relative; width: 100%; height: 250px; overflow: hidden;">
                         <img src="app/IMG/plan.jpeg" alt="Résidence Nguinth" style="width: 100%; height: 100%; object-fit: cover;">
@@ -589,7 +611,7 @@ $mediaChantier = [
                 </article>
             </div> -->
 
-    </section>
+        </section>
         <hr class="sec-separator">
 
         <!-- === TERRAINS DISPONIBLES === -->
@@ -745,7 +767,7 @@ $mediaChantier = [
 
                 <article class="projet-card">
                     <div class="projet-media">
-                         <video autoplay muted loop playsinline>
+                        <video autoplay muted loop playsinline>
                             <source src="app/IMG/rplus.mp4" type="video/mp4">
                             Votre navigateur ne supporte pas la vidéo.
                         </video>
@@ -806,17 +828,17 @@ $mediaChantier = [
                         <button type="button" class="actu-detail-btn compact" style="background: #22c55e;" data-actualite-title="maison de logement" data-actualite-type="Projet en cours" onclick="openActualiteContact(this)">
                             <i class="fas fa-calendar-check"></i> Réserver
                         </button>
-                       
-                      </div>
+
+                    </div>
                 </article>
             </div>
-           
+
         </section>
 
-    </div><!-- .actu-main -->
+        </div><!-- .actu-main -->
 
-    <!-- ===== GALERIE CHANTIER ===== -->
-    <?php
+        <!-- ===== GALERIE CHANTIER ===== -->
+        <?php
         $galleryFiles = [
             'gallerie1.mp4',
             'gallerie2.jpeg',
@@ -835,7 +857,8 @@ $mediaChantier = [
             'vigallerie2.mp4',
             'vigallerie3.mp4',
             'vigallerie4.mp4',
-            'vigallerie5.mp4',         ];
+            'vigallerie5.mp4',
+        ];
 
         // $galleryItems = [];
         // $galleryLabels = [
@@ -877,227 +900,228 @@ $mediaChantier = [
                 'title' => $title,
             ];
         }
-    ?>
-    <section class="galerie-section" id="galerie">
-        <div class="galerie-inner">
-            <div class="container" style="color: white;">
-                <h2>Galerie terrain</h2>
-                <p>Photos & Vidéos de chantier. Documentation visuelle de nos opérations. Mises à jour régulières pour nos investisseurs.</p>
+        ?>
+        <section class="galerie-section" id="galerie">
+            <div class="galerie-inner">
+                <div class="container" style="color: white;">
+                    <h2>Galerie terrain</h2>
+                    <p>Photos & Vidéos de chantier. Documentation visuelle de nos opérations. Mises à jour régulières pour nos investisseurs.</p>
+                </div>
+                <div class="galerie-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
+                    <?php foreach ($galleryItems as $item): ?>
+                        <div class="galerie-item" data-type="<?= esc($item['type']); ?>" data-src="<?= esc($item['src']); ?>" data-title="<?= esc($item['title']); ?>" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
+                            <?php if ($item['type'] === 'image'): ?>
+                                <img src="<?= esc($item['src']); ?>" alt="<?= esc($item['title']); ?>" style="width:100%;height:200px;object-fit:cover;display:block;">
+                            <?php else: ?>
+                                <video muted autoplay loop playsinline preload="metadata" poster="app/IMG/chantier.jpg" style="width:100%;height:200px;object-fit:cover;display:block;">
+                                    <source src="<?= esc($item['src']); ?>" type="video/mp4">
+                                    Votre navigateur ne prend pas en charge la vidéo.
+                                </video>
+                            <?php endif; ?>
+                            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">
+                                <?= esc($item['title']); ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-            <div class="galerie-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; width: 90%; max-width: 1200px; margin: 2rem auto;">
-                <?php foreach ($galleryItems as $item): ?>
-                    <div class="galerie-item" data-type="<?= esc($item['type']); ?>" data-src="<?= esc($item['src']); ?>" data-title="<?= esc($item['title']); ?>" style="position:relative;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:transform 0.3s ease;">
-                        <?php if ($item['type'] === 'image'): ?>
-                            <img src="<?= esc($item['src']); ?>" alt="<?= esc($item['title']); ?>" style="width:100%;height:200px;object-fit:cover;display:block;">
-                        <?php else: ?>
-                            <video muted autoplay loop playsinline preload="metadata" poster="app/IMG/chantier.jpg" style="width:100%;height:200px;object-fit:cover;display:block;">
-                                <source src="<?= esc($item['src']); ?>" type="video/mp4">
-                                Votre navigateur ne prend pas en charge la vidéo.
-                            </video>
-                        <?php endif; ?>
-                        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.8));padding:1rem;color:white;font-size:0.9rem;font-weight:600;">
-                            <?= esc($item['title']); ?>
+        </section>
+
+
+        <!-- ===== INSCRIPTION ===== -->
+        <section class="inscription-band" id="inscription">
+            <div class="inscription-inner">
+                <div class="inscription-text">
+                    <h2>Soyez informé en premier de nos nouveaux programmes</h2>
+                    <p>Inscrivez-vous pour recevoir en avant-première les lancements de terrains, les nouvelles résidences et les offres exclusives ECOFI.</p>
+                    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;">
+                        <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:.9rem;">
+                            <i class="fas fa-shield-alt" style="color:rgba(255,255,255,0.7)"></i> Aucun spam
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:.9rem;">
+                            <i class="fas fa-bell" style="color:rgba(255,255,255,0.7)"></i> Alertes personnalisées
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:.9rem;">
+                            <i class="fas fa-handshake" style="color:rgba(255,255,255,0.7)"></i> Offres exclusives
                         </div>
                     </div>
-                <?php endforeach; ?>
+                </div>
+                <form class="inscription-form" id="inscriptionForm" onsubmit="handleInscription(event)">
+                    <div class="inscription-row">
+                        <input class="inscription-input" type="text" id="inscNom" name="name" placeholder="Votre nom" required>
+                        <input class="inscription-input" type="tel" id="inscTel" name="phone" placeholder="Téléphone" required>
+                    </div>
+                    <input class="inscription-input" type="email" id="inscEmail" name="email" placeholder="Adresse email" required>
+                    <select class="inscription-input" id="inscInteret" name="interest" style="cursor:pointer;">
+                        <option value="">Votre intérêt principal…</option>
+                        <option value="programme">Programme immobilier</option>
+                        <option value="terrain">Terrain / Parcelle</option>
+                        <option value="chantier">Suivi chantier</option>
+                        <option value="investissement">Investissement</option>
+                    </select>
+                    <button class="inscription-submit" type="submit">
+                        <i class="fas fa-paper-plane"></i> M'inscrire aux alertes
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo-container">
+                        <div class="footer-logo">
+                            <img src="app/IMG/logo-ecofi.png" alt="ECOFI Logo" class="footer-logo-img">
+                        </div>
+                        <p class="footer-description">ECOFI transforme vos projets immobiliers en réalités durables. De la conception à la réalisation, nous vous accompagnons à chaque étape.</p>
+                        <div class="ecofi-badge"><i class="fas fa-certificate"></i><span>Entreprise certifiée au Sénégal</span></div>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.php#accueil"><i class="fas fa-home"></i> Accueil</a></li>
+                        <li><a href="index.php#apropos"><i class="fas fa-info-circle"></i> À propos</a></li>
+                        <li><a href="actualites.php"><i class="fas fa-newspaper"></i> Actualités</a></li>
+                        <li><a href="index.php#services"><i class="fas fa-cogs"></i> Services</a></li>
+                        <li><a href="index.php#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                        <li><a href="app/admin/Views/login.php"><i class="fas fa-user"></i> Espace personnel</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Actualités</h3>
+                    <ul class="footer-links">
+                        <li><a href="#programme-immo"><i class="fas fa-building"></i> Programme immo</a></li>
+                        <li><a href="#terrains"><i class="fas fa-map"></i> Terrains</a></li>
+                        <li><a href="#projets"><i class="fas fa-helmet-safety"></i> Projets en cours</a></li>
+                        <li><a href="#galerie"><i class="fas fa-camera"></i> Galerie chantier</a></li>
+                        <li><a href="#inscription"><i class="fas fa-bell"></i> Alertes</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contactez-nous</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal" target="_blank"><i class="fas fa-location-dot"></i><span>Zac Nguinth Thiès, Sénégal</span></a></li>
+                        <li><a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a></li>
+                        <li><a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a></li>
+                        <li><a href="<?= esc($mail_contact_url); ?>" target="_blank"><i class="fas fa-envelope"></i> <?= esc($email_contact); ?></a></li>
+                    </ul>
+                    <div class="footer-social-icons">
+                        <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/ecofiservice?igsh=MTVnY2xwcGFicm00Zw==" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 <strong>ECOFI</strong> — Etablissement de conseils sur le foncier et l'immobilier. Tous droits réservés.</p>
+                <p style="margin-top:8px;font-size:.8rem;opacity:.5">Conçu avec <i class="fas fa-heart" style="color:#FF8533"></i> pour l'excellence immobilière</p>
             </div>
         </div>
-    </section>
+    </footer>
 
-
-    <!-- ===== INSCRIPTION ===== -->
-    <section class="inscription-band" id="inscription">
-        <div class="inscription-inner">
-            <div class="inscription-text">
-                <h2>Soyez informé en premier de nos nouveaux programmes</h2>
-                <p>Inscrivez-vous pour recevoir en avant-première les lancements de terrains, les nouvelles résidences et les offres exclusives ECOFI.</p>
-                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem;">
-                    <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:.9rem;">
-                        <i class="fas fa-shield-alt" style="color:rgba(255,255,255,0.7)"></i> Aucun spam
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:.9rem;">
-                        <i class="fas fa-bell" style="color:rgba(255,255,255,0.7)"></i> Alertes personnalisées
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.8);font-size:.9rem;">
-                        <i class="fas fa-handshake" style="color:rgba(255,255,255,0.7)"></i> Offres exclusives
-                    </div>
-                </div>
+    <!-- Contact actualité -->
+    <div class="actualite-contact-modal" id="actualiteContactModal" aria-hidden="true">
+        <div class="actualite-contact-panel" role="dialog" aria-modal="true" aria-labelledby="actualiteContactTitle">
+            <button type="button" class="actualite-contact-close" onclick="closeActualiteContact()" aria-label="Fermer">&times;</button>
+            <div class="actualite-contact-head">
+                <span>Demande d'information</span>
+                <h3 id="actualiteContactTitle">Plus de détails</h3>
+                <p id="actualiteContactSubtitle">Laissez vos coordonnées, l’équipe ECOFI vous recontacte rapidement.</p>
             </div>
-            <form class="inscription-form" id="inscriptionForm" onsubmit="handleInscription(event)">
-                <div class="inscription-row">
-                    <input class="inscription-input" type="text" id="inscNom" name="name" placeholder="Votre nom" required>
-                    <input class="inscription-input" type="tel" id="inscTel" name="phone" placeholder="Téléphone" required>
+
+            <form id="actualiteContactForm" class="actualite-contact-form">
+                <input type="hidden" id="actualiteTypeInput" name="actualite_type">
+                <input type="hidden" id="actualiteTitleInput" name="actualite_title">
+
+                <div class="actualite-contact-selected">
+                    <i class="fas fa-newspaper"></i>
+                    <div>
+                        <strong id="selectedActualiteTitle">Actualité</strong>
+                        <small id="selectedActualiteType">Type</small>
+                    </div>
                 </div>
-                <input class="inscription-input" type="email" id="inscEmail" name="email" placeholder="Adresse email" required>
-                <select class="inscription-input" id="inscInteret" name="interest" style="cursor:pointer;">
-                    <option value="">Votre intérêt principal…</option>
-                    <option value="programme">Programme immobilier</option>
-                    <option value="terrain">Terrain / Parcelle</option>
-                    <option value="chantier">Suivi chantier</option>
-                    <option value="investissement">Investissement</option>
-                </select>
-                <button class="inscription-submit" type="submit">
-                    <i class="fas fa-paper-plane"></i> M'inscrire aux alertes
+
+                <div class="actualite-form-grid">
+                    <label>
+                        Nom complet
+                        <input type="text" name="nom" id="actualiteNom" required>
+                    </label>
+                    <label>
+                        Téléphone
+                        <input type="tel" name="telephone" id="actualiteTelephone" required>
+                    </label>
+                </div>
+
+                <label>
+                    Email
+                    <input type="email" name="email" id="actualiteEmail" required>
+                </label>
+
+                <label>
+                    Message
+                    <textarea name="message" id="actualiteMessage" rows="4" required></textarea>
+                </label>
+
+                <button type="submit" class="actualite-contact-submit">
+                    <i class="fas fa-paper-plane"></i>
+                    Envoyer la demande
                 </button>
+                <div class="form-messages" id="actualiteContactMessage"></div>
             </form>
         </div>
-    </section>
+    </div>
 
-</main>
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
 
-<!-- ===== FOOTER ===== -->
-<footer>
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-column">
-                <div class="footer-logo-container">
-                    <div class="footer-logo">
-                        <img src="app/IMG/logo-ecofi.png" alt="ECOFI Logo" class="footer-logo-img">
-                    </div>
-                    <p class="footer-description">ECOFI transforme vos projets immobiliers en réalités durables. De la conception à la réalisation, nous vous accompagnons à chaque étape.</p>
-                    <div class="ecofi-badge"><i class="fas fa-certificate"></i><span>Entreprise certifiée au Sénégal</span></div>
+    <!-- Quote loader -->
+    <div id="quoteLoader" class="quote-loader-overlay" style="display:none;">
+        <div class="quote-loader-box">
+            <div class="quote-spinner"></div>
+            <p id="quoteLoaderText">Envoi en cours…</p>
+        </div>
+    </div>
+    <div id="quoteStatusMessage" class="quote-status-message" style="display:none;"></div>
+
+    <!-- Zoom modal (gallery) -->
+    <div class="zoom-modal-overlay" id="zoomModalOverlay" style="display:none;">
+        <div class="zoom-modal">
+            <button class="zoom-modal-close" id="zoomModalClose">&times;</button>
+            <div class="zoom-modal-content">
+                <div id="zoomImageContainer" style="display:none;">
+                    <img id="zoomImage" src="" alt="Image agrandie" style="max-width:100%;max-height:80vh;display:block;margin:0 auto;">
+                </div>
+                <div id="zoomVideoContainer" style="display:none;">
+                    <video id="zoomVideo" controls style="max-width:100%;max-height:80vh;display:block;margin:0 auto;">
+                        <source src="" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
                 </div>
             </div>
-            <div class="footer-column">
-                <h3>Navigation</h3>
-                <ul class="footer-links">
-                    <li><a href="index.php#accueil"><i class="fas fa-home"></i> Accueil</a></li>
-                    <li><a href="index.php#apropos"><i class="fas fa-info-circle"></i> À propos</a></li>
-                    <li><a href="actualites.php"><i class="fas fa-newspaper"></i> Actualités</a></li>
-                    <li><a href="index.php#services"><i class="fas fa-cogs"></i> Services</a></li>
-                    <li><a href="index.php#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                    <li><a href="app/admin/Views/login.php"><i class="fas fa-user"></i> Espace personnel</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Actualités</h3>
-                <ul class="footer-links">
-                    <li><a href="#programme-immo"><i class="fas fa-building"></i> Programme immo</a></li>
-                    <li><a href="#terrains"><i class="fas fa-map"></i> Terrains</a></li>
-                    <li><a href="#projets"><i class="fas fa-helmet-safety"></i> Projets en cours</a></li>
-                    <li><a href="#galerie"><i class="fas fa-camera"></i> Galerie chantier</a></li>
-                    <li><a href="#inscription"><i class="fas fa-bell"></i> Alertes</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Contactez-nous</h3>
-                <ul class="footer-links">
-                    <li><a href="https://maps.google.com/?q=Zac+Nguinth+2ème+tranche,+Thiès,+Sénégal" target="_blank"><i class="fas fa-location-dot"></i><span>Zac Nguinth Thiès, Sénégal</span></a></li>
-                    <li><a href="<?= esc($tel_fixe_href); ?>"><i class="fas fa-phone"></i> <?= esc($tel_fixe); ?></a></li>
-                    <li><a href="<?= esc($tel_mobile_href); ?>"><i class="fas fa-mobile-alt"></i> <?= esc($tel_mobile); ?></a></li>
-                    <li><a href="<?= esc($mail_contact_url); ?>" target="_blank"><i class="fas fa-envelope"></i> <?= esc($email_contact); ?></a></li>
-                </ul>
-                <div class="footer-social-icons">
-                    <a href="https://www.facebook.com/profile.php?id=61584334332565&mibextid=ZbWKwL" class="footer-social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/ecofiservice?igsh=MTVnY2xwcGFicm00Zw==" class="footer-social-icon"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://www.tiktok.com/@ecofi.service.01?_r=1&_t=ZS-93Hkr11ak5K" class="footer-social-icon"><i class="fab fa-tiktok"></i></a>
+            <div class="zoom-modal-info">
+                <h4 id="zoomTitle"></h4>
+                <p id="zoomDescription"></p>
+                <div class="zoom-modal-nav">
+                    <button id="zoomPrev"><i class="fas fa-chevron-left"></i> Précédent</button>
+                    <span id="zoomCounter">1 / 1</span>
+                    <button id="zoomNext">Suivant <i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
-        <div class="copyright">
-            <p>&copy; 2026 <strong>ECOFI</strong> — Etablissement de conseils sur le foncier et l'immobilier. Tous droits réservés.</p>
-            <p style="margin-top:8px;font-size:.8rem;opacity:.5">Conçu avec <i class="fas fa-heart" style="color:#FF8533"></i> pour l'excellence immobilière</p>
-        </div>
     </div>
-</footer>
 
-<!-- Contact actualité -->
-<div class="actualite-contact-modal" id="actualiteContactModal" aria-hidden="true">
-    <div class="actualite-contact-panel" role="dialog" aria-modal="true" aria-labelledby="actualiteContactTitle">
-        <button type="button" class="actualite-contact-close" onclick="closeActualiteContact()" aria-label="Fermer">&times;</button>
-        <div class="actualite-contact-head">
-            <span>Demande d'information</span>
-            <h3 id="actualiteContactTitle">Plus de détails</h3>
-            <p id="actualiteContactSubtitle">Laissez vos coordonnées, l’équipe ECOFI vous recontacte rapidement.</p>
-        </div>
+    <script src="actualites.js"></script>
 
-        <form id="actualiteContactForm" class="actualite-contact-form">
-            <input type="hidden" id="actualiteTypeInput" name="actualite_type">
-            <input type="hidden" id="actualiteTitleInput" name="actualite_title">
-
-            <div class="actualite-contact-selected">
-                <i class="fas fa-newspaper"></i>
-                <div>
-                    <strong id="selectedActualiteTitle">Actualité</strong>
-                    <small id="selectedActualiteType">Type</small>
-                </div>
-            </div>
-
-            <div class="actualite-form-grid">
-                <label>
-                    Nom complet
-                    <input type="text" name="nom" id="actualiteNom" required>
-                </label>
-                <label>
-                    Téléphone
-                    <input type="tel" name="telephone" id="actualiteTelephone" required>
-                </label>
-            </div>
-
-            <label>
-                Email
-                <input type="email" name="email" id="actualiteEmail" required>
-            </label>
-
-            <label>
-                Message
-                <textarea name="message" id="actualiteMessage" rows="4" required></textarea>
-            </label>
-
-            <button type="submit" class="actualite-contact-submit">
-                <i class="fas fa-paper-plane"></i>
-                Envoyer la demande
-            </button>
-            <div class="form-messages" id="actualiteContactMessage"></div>
-        </form>
-    </div>
-</div>
-
-<!-- Notification -->
-<div class="notification" id="notification">
-    <i class="fas fa-check-circle"></i>
-    <span id="notificationMessage"></span>
-</div>
-
-<!-- Quote loader -->
-<div id="quoteLoader" class="quote-loader-overlay" style="display:none;">
-    <div class="quote-loader-box">
-        <div class="quote-spinner"></div>
-        <p id="quoteLoaderText">Envoi en cours…</p>
-    </div>
-</div>
-<div id="quoteStatusMessage" class="quote-status-message" style="display:none;"></div>
-
-<!-- Zoom modal (gallery) -->
-<div class="zoom-modal-overlay" id="zoomModalOverlay" style="display:none;">
-    <div class="zoom-modal">
-        <button class="zoom-modal-close" id="zoomModalClose">&times;</button>
-        <div class="zoom-modal-content">
-            <div id="zoomImageContainer" style="display:none;">
-                <img id="zoomImage" src="" alt="Image agrandie" style="max-width:100%;max-height:80vh;display:block;margin:0 auto;">
-            </div>
-            <div id="zoomVideoContainer" style="display:none;">
-                <video id="zoomVideo" controls style="max-width:100%;max-height:80vh;display:block;margin:0 auto;">
-                    <source src="" type="video/mp4">
-                    Votre navigateur ne supporte pas la vidéo.
-                </video>
-            </div>
-        </div>
-        <div class="zoom-modal-info">
-            <h4 id="zoomTitle"></h4>
-            <p id="zoomDescription"></p>
-            <div class="zoom-modal-nav">
-                <button id="zoomPrev"><i class="fas fa-chevron-left"></i> Précédent</button>
-                <span id="zoomCounter">1 / 1</span>
-                <button id="zoomNext">Suivant <i class="fas fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="actualites.js"></script>
-
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

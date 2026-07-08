@@ -669,7 +669,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
             </div>
         </div>
     </section>
-    <section id="programme-immo" class="programme-immo-link">
+    <!-- <section id="programme-immo" class="programme-immo-link">
         <div class="container">
             <div class="programme-banner">
                 <div class="programme-banner-left">
@@ -683,7 +683,7 @@ $tel_mobile_href = 'tel:+221' . preg_replace('/\D+/', '', $tel_mobile);
                 <a class="programme-cta" href="actualites.php#programme-immo">Voir le programme</a>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <footer>
         <div class="container">
